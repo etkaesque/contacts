@@ -1,27 +1,29 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Home from "../views/Home.vue";
+import Page404 from "../views/Page404.vue";
+import DetailedContact from "../views/DetailedContact.vue";
+import StructureManagment from "../views/StructureManagment.vue";
+import Login from "../views/AdminstratorLogin.vue";
+import AdminManagment from "../views/AdminAcountManagment.vue";
+import Companies from "../views/Companies.vue";
 
-Vue.use(VueRouter)
+const routes = [
+  {
+    path: "/",
+    component: Home,
+    name: Home,
+  },
 
-const router = new VueRouter({
-  mode: 'history',
-  base: import.meta.env.BASE_URL,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
-  ]
-})
+  { path: "*", component: Page404 },
 
-export default router
+  { path: "/contact/:id", component: DetailedContact },
+
+  { path: "/structure", component: StructureManagment },
+
+  { path: "/login", component: Login },
+
+  { path: "/admin", component: AdminManagment },
+
+  { path: "/companies", component: Companies },
+];
+
+export default routes;
