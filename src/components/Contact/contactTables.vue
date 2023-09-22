@@ -1,0 +1,69 @@
+<template>
+  <div>
+    <md-table>
+      <md-table-row class="headerRow">
+        <md-table-head>Vardas ir pavardė</md-table-head>
+        <md-table-head>Pozicija</md-table-head>
+        <md-table-head>Telefono numeris</md-table-head>
+        <md-table-head>Elektroninis paštas</md-table-head>
+        <md-table-head>Adresas</md-table-head>
+      </md-table-row>
+
+      <md-table-row
+        class="tableRow"
+        v-for="contact in contacts"
+        :key="contact.id"
+        @click="handleClick(contact.id)"
+      >
+        <md-table-cell>{{ contact.name }} {{ contact.surname }}</md-table-cell>
+        <md-table-cell>{{ contact.position }}</md-table-cell>
+        <md-table-cell>{{ contact.phone_number }}</md-table-cell>
+        <md-table-cell>{{ contact.email }}</md-table-cell>
+        <md-table-cell>{{ contact.expand.office_id.name }}</md-table-cell>
+        <md-table-cell>
+          <div class="flex ml-5 mb-7 mb-t">
+            <md-card-actions>
+              <div class="act">
+                <Edit></Edit>
+                <Delete></Delete>
+              </div>
+            </md-card-actions>
+          </div>
+        </md-table-cell>
+      </md-table-row>
+    </md-table>
+  </div>
+</template>
+
+<script>
+import Edit from "../Buttons/edit.vue";
+import Delete from "../Buttons/delete.vue";
+import { mapGetters } from "vuex";
+
+export default {
+  computed: {
+    ...mapGetters(["contacts"]),
+  },
+  components: {
+    Edit,
+    Delete,
+  },
+  methods: {
+    handleClick(id) {
+      this.$router.push(`contact/${id}`);
+    },
+  },
+};
+</script>
+
+<style>
+.headerRow * {
+  font-size: 20px;
+  color: black;
+}
+
+.tableRow:hover {
+  background-color: #f1f2f4 !important;
+  cursor: pointer;
+}
+</style>

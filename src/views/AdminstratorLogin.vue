@@ -1,7 +1,6 @@
 <template>
   <div>
     <Header></Header>
-
     <Main>
       <h1>Login</h1>
     </Main>

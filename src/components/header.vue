@@ -65,7 +65,7 @@ export default {};
 </script>
 
 <style>
-nav {
-  color: white;
+nav * {
+  color: white !important; 
 }
 </style>

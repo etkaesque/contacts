@@ -1,26 +1,28 @@
 <template>
-  <md-button class="add-btn md-icon-button md-raised">
+  <md-button class="pipet-btn md-icon-button md-raised">
     <md-icon style="width: 30px !important; height: 30px !important">
-      <img :src="addIcon" alt="" />
+      <img :src="pipetIcon" alt="" />
     </md-icon>
   </md-button>
 </template>
 
 <script>
-import addIcon from "../../assets/add.svg";
+import pipetIcon from "../../assets/pipet.svg";
+
 export default {
   data() {
     return {
-      addIcon,
+      pipetIcon,
     };
   },
 };
 </script>
 
 <style>
-.add-btn {
+.pipet-btn {
   background-color: #0054a6 !important;
-  width: 60px !important;
+  border-radius: 50px !important;
+  width: 75px !important;
   height: 60px !important;
   filter: drop-shadow(1px 1px 2px black) !important;
   z-index: 1 !important;

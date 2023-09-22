@@ -1,38 +1,35 @@
 <template>
   <md-button
-    class="edit-btn md-icon-button md-raised"
+    class="delete-btn md-icon-button md-raised"
     @click="handleClick($event)"
   >
     <md-icon style="width: 30px !important; height: 30px !important">
-      <img :src="editIcon" alt="" />
+      <img :src="deleteIcon" alt="" />
     </md-icon>
   </md-button>
 </template>
 
 <script>
-import editIcon from "../../assets/edit.svg";
-import { mapMutations } from "vuex";
+import deleteIcon from "../../assets/delete.svg";
 
 export default {
   data() {
     return {
-      editIcon,
+      deleteIcon,
     };
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL"]),
     handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
-      this.CONTROL_MODAL({ status: true, form: "editContact" });
     },
   },
 };
 </script>
 
 <style>
-.edit-btn {
-  background-color: #0054a6 !important;
+.delete-btn {
+  background-color: #a61a11 !important;
   width: 56px !important;
   height: 58px !important;
   filter: drop-shadow(1px 1px 2px black) !important;

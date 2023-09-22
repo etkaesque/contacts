@@ -1,7 +1,6 @@
 <template>
   <div>
     <Header></Header>
-
     <Main>
       <h1 class="text-6xl">Įmonės</h1>
     </Main>

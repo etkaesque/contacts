@@ -1,8 +1,23 @@
 <template>
-  <router-view> </router-view>
+  <div>
+    <Modal v-if="modal.status"></Modal>
+    <router-view></router-view>
+  </div>
 </template>
 
-<script></script>
+<script>
+import Modal from "./components/Popups/modal.vue"
+import {mapGetters} from "vuex";
+
+export default {
+  components: {
+    Modal,
+  },
+  computed: {
+    ...mapGetters(["modal"]),
+  },
+};
+</script>
 
 <style>
 *,
@@ -12,8 +27,8 @@
 }
 body {
   margin: 0px;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-family: "Roboto", sans-serif;
+  background-color: white !important;
 }
 
 main {
