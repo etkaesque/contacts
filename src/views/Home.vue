@@ -9,7 +9,7 @@
           <div>Search component Will Be Here</div>
           <paginationFilter></paginationFilter>
           <viewMode></viewMode>
-          <add></add>
+          <add :type="'Contact'"></add>
         </div>
 
         <div>

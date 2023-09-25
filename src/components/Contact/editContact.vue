@@ -1,14 +1,13 @@
 <template>
-  <form action="sumbit" class="grid grid-cols-3 grid-rows- gap-x-10">
-
-    <div class="w-full text-2xl col-start-1 col-end-4 row-start-1 row-end-2 flex justify-end">
-        <dissmissButton></dissmissButton>
+  <form action="sumbit" class="grid grid-cols-3 grid-rows- gap-x-14">
+    <div
+      class="w-full text-2xl col-start-1 col-end-4 row-start-1 row-end-2 flex justify-end"
+    >
+      <dissmissButton></dissmissButton>
     </div>
 
-   
-
     <div class="col-start-1 col-end-2 row-start-2 row-end-3">
-      <h2 class="text-2xl">Pridėti kontaktą:</h2>
+      <h2 class="text-2xl">Redaguoti kontaktą:</h2>
       <div>
         <md-field>
           <label>Vardas</label>
@@ -42,7 +41,7 @@
     </div>
 
     <div class="md-layout-item col-start-2 col-end-3 row-start-2 row-end-3">
-        <h2 class="text-2xl">Įmonės detalės:</h2>
+      <h2 class="text-2xl">Įmonės detalės:</h2>
       <md-field>
         <label for="company">Įmonė</label>
         <md-select v-model="formData.company_id" name="company" id="company">
@@ -82,9 +81,16 @@
         </md-select>
       </md-field>
 
-      <div class="flex justify-center">
+      <div class="fileLabelWrapper flex justify-center">
         <label class="fileLabel uppercase" for="photo">Įkelti nuotrauką</label>
-        <input type="file" name="photo" id="photo" class="fileInput" />
+        <input
+          type="file"
+          name="photo"
+          id="photo"
+          class="fileInput"
+          @change="handlePhotoUpload($event)"
+        />
+        <span class="photoValidation">{{ photoSelected ? "Nuotrauka įkelta." : "Pasirinkite nuotrauką." }}</span>
       </div>
     </div>
 
@@ -95,12 +101,12 @@
 </template>
 
 <script>
-
-import dissmissButton from "../Buttons/dissmiss.vue"
+import dissmissButton from "../Buttons/dissmiss.vue";
 
 export default {
   data() {
     return {
+      photoSelected: false,
       formData: {
         name: "",
         surname: "",
@@ -113,11 +119,21 @@ export default {
         department_id: "",
         group_id: "",
       },
+    
     };
   },
   components: {
     dissmissButton,
-  }
+  },
+  methods: {
+    handlePhotoUpload(event) {
+      if (event.target.files.length > 0) {
+        this.photoSelected = true;
+      } else {
+        this.photoSelected = false;
+      }
+    },
+  },
 };
 </script>
 
@@ -131,7 +147,23 @@ export default {
   cursor: pointer;
 }
 
+.fileLabelWrapper {
+  position: relative;
+  width: 200px;
+}
+
 .fileInput {
   display: none;
+}
+
+.photoValidation {
+  color: black;
+  position: absolute;
+  left: 210px;
+  top: 10px;
+  text-transform: initial;
+  display: block;
+  width: max-content;
+  
 }
 </style>

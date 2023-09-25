@@ -5,13 +5,12 @@ const pb = new PocketBase(SERVER_ADDR);
 let contactsAPI = (store) => {
   store.fetchContactsFromDb = async () => {
     try {
-
       const contacts = await pb.collection("employees").getList(1, 10, {
         expand: "office_id",
       });
       return contacts;
-    } catch(err) {
-      console.log(err)
+    } catch (err) {
+      console.log(err);
       throw Error("Failed to fetch data.");
     }
   };
@@ -24,9 +23,79 @@ let contactsAPI = (store) => {
         });
 
       return contact;
-    } catch(err) {
-      console.log(err)
+    } catch {
       throw Error("Failed to fetch data.");
+    }
+  };
+
+  store.fetchCompaniesFromDb = async () => {
+    try {
+      const companies = await pb.collection("companies").getFullList({
+        sort: "-created",
+      });
+
+   
+      return companies;
+    } catch {
+      throw Error("Failed to fetch data.");
+    }
+  };
+
+  store.fetchDepartmentsFromDb = async () => {
+    try {
+      const departments = await pb.collection("departments").getFullList({
+        sort: "-created",
+      });
+  
+      return departments;
+    } catch {
+      throw Error("Failed to fetch data.");
+    }
+  };
+
+  store.fetchDivisionsFromDb = async () => {
+    try {
+      const divisions = await pb.collection("divisions").getFullList({
+        sort: "-created",
+      });
+     
+      return divisions;
+    } catch {
+      throw Error("Failed to fetch data.");
+    }
+  };
+
+  store.fetchOfficesFromDb = async () => {
+    try {
+      const offices = await pb.collection("offices").getFullList({
+        sort: "-created",
+      });
+
+      return offices;
+    } catch {
+      throw Error("Failed to fetch data.");
+    }
+  };
+
+  store.fetchGroupsFromDb = async () => {
+    try {
+      const groups = await pb.collection("groups").getFullList({
+        sort: "-created",
+      });
+      console.log(groups);
+      return groups;
+    } catch {
+      throw Error("Failed to fetch data.");
+    }
+  };
+
+  store.createContactInDb = async (data) => {
+    try {
+      const contact = await pb.collection("employees").create(data);
+      return contact;
+    } catch(ClientResponseError) {
+      console.log(ClientResponseError)
+      throw Error("Failed to create a new contact. Try again later.");
     }
   };
 };

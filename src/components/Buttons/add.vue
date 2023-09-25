@@ -1,5 +1,8 @@
 <template>
-  <md-button class="add-btn md-icon-button md-raised">
+  <md-button
+    class="add-btn md-icon-button md-raised"
+    @click="handleAdd"
+  >
     <md-icon style="width: 30px !important; height: 30px !important">
       <img :src="addIcon" alt="" />
     </md-icon>
@@ -8,11 +11,23 @@
 
 <script>
 import addIcon from "../../assets/add.svg";
+import { mapMutations } from "vuex";
 export default {
+  props: {
+    type: String,
+  },
   data() {
     return {
       addIcon,
     };
+  },
+  methods: {
+    ...mapMutations(["CONTROL_MODAL"]),
+    handleAdd() {
+      if (this.type === "Contact") {
+        this.CONTROL_MODAL({ status: true, form: "createContact" });
+      }
+    },
   },
 };
 </script>

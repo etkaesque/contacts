@@ -16,7 +16,7 @@ import createContact from "../Contact/addContact.vue";
 export default {
   components: {
     editContact,
-    editContact,
+    createContact,
   },
   computed: {
     ...mapGetters(["modal"]),
@@ -35,14 +35,12 @@ export default {
 <style>
 .modal {
   min-width: 700px;
-  min-height: 700px;
-
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #f7f4f4;
-  padding: 10px 20px;
+  padding: 30px 80px !important;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   z-index: 100;
   display: flex;

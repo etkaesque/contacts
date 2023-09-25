@@ -26,7 +26,6 @@ export default {
   actions: {
     async fetchContacts({ commit }) {
       try {
-      
         const contacts = await this.fetchContactsFromDb();
         commit("SET_CONTACTS", contacts);
       } catch (error) {
@@ -37,6 +36,15 @@ export default {
       try {
         const contact = await this.fetchContactByIdFromDb(id);
         commit("SET_CONTACT", contact);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async createContact({ commit }, formData) {
+      try {
+        const contact = await this.createContactInDb(formData);
+        console.log("success")
       } catch (error) {
         console.log(error);
       }
