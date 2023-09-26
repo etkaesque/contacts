@@ -1,20 +1,23 @@
 <template>
   <div>
     <Modal v-if="modal.status"></Modal>
+    <Delete v-if="deletePopUp"></Delete>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import Modal from "./components/Popups/modal.vue"
+import Delete from "./components/Popups/delete.vue"
 import {mapGetters} from "vuex";
 
 export default {
   components: {
     Modal,
+    Delete
   },
   computed: {
-    ...mapGetters(["modal"]),
+    ...mapGetters(["modal", "deletePopUp"]),
   },
 };
 </script>

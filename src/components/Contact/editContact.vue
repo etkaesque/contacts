@@ -258,7 +258,10 @@ export default {
       data.append("division_id", this.formData.division_id);
       data.append("department_id", this.formData.department_id);
       data.append("group_id", this.formData.group_id);
-      data.append("photo", this.formData.photo);
+      if (this.formData.photo != "") {
+        data.append("photo", this.formData.photo);
+      }
+     
 
       const isValid = this.checkIfFormValid();
 

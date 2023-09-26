@@ -11,6 +11,7 @@
 
 <script>
 import deleteIcon from "../../assets/delete.svg";
+import { mapMutations } from "vuex";
 
 export default {
   data() {
@@ -18,10 +19,17 @@ export default {
       deleteIcon,
     };
   },
+  props: {
+    contactId: String,
+  },
   methods: {
+    ...mapMutations(["CONTROL_DELETE", "SET_ACTIVE_CONTACT"]),
     handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
+      
+      this.CONTROL_DELETE();
+      this.SET_ACTIVE_CONTACT(this.contactId);
     },
   },
 };

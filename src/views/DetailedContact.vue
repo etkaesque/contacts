@@ -52,7 +52,7 @@
               Padalinys: {{ checkStructure(contact.expand.division_id.name) }}
             </li>
             <li>
-              Skyrius: {{ checkStructure(contact.expand.department_id.name) }}
+              Skyrius: {{ checkStructure(contact.expand.department_id) }}
             </li>
             <li>Grupė: {{ checkStructure(contact.group_id) }}</li>
           </ul>
@@ -81,7 +81,7 @@ export default {
   methods: {
     ...mapActions(["fetchContactById"]),
     checkStructure(name) {
-      if (name === "") {
+      if (name == "") {
         return `nepriskirta`;
       }
       return name;
@@ -89,6 +89,7 @@ export default {
   },
   async created() {
     await this.fetchContactById(this.$route.params.id);
+    console.log(this.contact)
   },
 };
 </script>
