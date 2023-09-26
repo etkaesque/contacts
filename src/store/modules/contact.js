@@ -1,6 +1,7 @@
 export default {
   state: {
     contacts: [],
+    activeContact: "",
     contact: {},
     contactsTotalItems: 0,
     isCard: true,
@@ -10,6 +11,7 @@ export default {
     contact: (state) => state.contact,
     isCard: (state) => state.isCard,
     contactsTotalItems: (state) => state.contactsTotalItems,
+    activeContact: (state) => state.activeContact,
   },
   mutations: {
     SET_CONTACTS(state, contacts) {
@@ -18,6 +20,9 @@ export default {
     },
     SET_CONTACT(state, contact) {
       state.contact = contact;
+    },
+    SET_ACTIVE_CONTACT(state, id) {
+      state.activeContact = id;
     },
     SET_VIEW_MODE(state) {
       state.isCard = !state.isCard;
@@ -44,7 +49,16 @@ export default {
     async createContact({ commit }, formData) {
       try {
         const contact = await this.createContactInDb(formData);
-        console.log("success")
+        console.log("success");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async editContact({ commit }, {id, formData}) {
+      try {
+        const contact = await this.editContactInDb(id, formData);
+        console.log("success");
       } catch (error) {
         console.log(error);
       }

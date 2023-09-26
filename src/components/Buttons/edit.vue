@@ -19,12 +19,17 @@ export default {
       editIcon,
     };
   },
+  props: {
+    contactId: String,
+  },
   methods: {
-    ...mapMutations(["CONTROL_MODAL"]),
+    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_CONTACT"]),
     handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
+
       this.CONTROL_MODAL({ status: true, form: "editContact" });
+      this.SET_ACTIVE_CONTACT(this.contactId);
     },
   },
 };
@@ -36,5 +41,6 @@ export default {
   width: 56px !important;
   height: 58px !important;
   filter: drop-shadow(1px 1px 2px black) !important;
+  z-index: 1 !important;
 }
 </style>

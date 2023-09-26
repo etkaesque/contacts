@@ -10,7 +10,7 @@
       />
     </router-link>
 
-    <nav class="w-full flex justify-start pl-16">
+    <nav class="w-full flex justify-start pl-16" v-if="isValid">
       <ul class="flex justify-center gap-x-24 text-2xl font-bold">
         <li>
           <router-link :to="`/`">Kontaktai</router-link>
@@ -21,13 +21,13 @@
         <li>
           <router-link :to="`/structure`">Struktūra</router-link>
         </li>
-        <li>
+        <li v-if="readPermissions">
           <router-link :to="`/admin`">Paskyros</router-link>
         </li>
       </ul>
     </nav>
 
-    <div>
+    <div v-if="!isValid">
       <router-link :to="`/login`">
         <svg
           width="50"
@@ -57,15 +57,46 @@
         </svg>
       </router-link>
     </div>
+
+    <div v-if="isValid" class="flex gap-x-5 items-center">
+      <span class="text-lg" style="color: white !important">{{ name }}</span>
+      <img  :src="avatar" style="max-width: 50px;" alt="" />
+    </div>
   </header>
 </template>
 
 <script>
-export default {};
+import PocketBase from "pocketbase";
+const pb = new PocketBase(SERVER_ADDR);
+
+export default {
+  computed: {
+    isValid() {
+      if (pb.authStore) {
+        return pb.authStore.isValid;
+      }
+    },
+    readPermissions() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.read_permissions;
+      }
+    },
+    name() {
+      return pb.authStore.model.name;
+    },
+    avatar() {
+      let source = `http://127.0.0.1:8090/api/files/users/${pb.authStore.model.id}/${pb.authStore.model.avatar}`;
+      return source;
+    },
+  },
+  created() {
+    console.log("hi");
+  },
+};
 </script>
 
 <style>
 nav * {
-  color: white !important; 
+  color: white !important;
 }
 </style>

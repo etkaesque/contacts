@@ -20,12 +20,12 @@
         <md-table-cell>{{ contact.phone_number }}</md-table-cell>
         <md-table-cell>{{ contact.email }}</md-table-cell>
         <md-table-cell>{{ contact.expand.office_id.name }}</md-table-cell>
-        <md-table-cell>
+        <md-table-cell v-if="valid">
           <div class="flex ml-5 mb-7 mb-t">
             <md-card-actions>
               <div class="act">
-                <Edit></Edit>
-                <Delete></Delete>
+                <Edit v-if="editEmployees" :contactId="contact.id"></Edit>
+                <Delete v-if="deleteEmployees" :contactId="contact.id"></Delete>
               </div>
             </md-card-actions>
           </div>
@@ -47,6 +47,11 @@ export default {
   components: {
     Edit,
     Delete,
+  },
+  props: {
+    editEmployees: Boolean,
+    deleteEmployees: Boolean,
+    valid: Boolean,
   },
   methods: {
     handleClick(id) {

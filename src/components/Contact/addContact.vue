@@ -9,67 +9,79 @@
     <div class="col-start-1 col-end-2 row-start-2 row-end-3">
       <h2 class="text-2xl">Pridėti kontaktą:</h2>
       <div>
-        <md-field>
+        <md-field ref="name">
           <label>Vardas</label>
-          <md-input   v-model="formData.name"></md-input>
+          <md-input maxlength="35" v-model="formData.name"></md-input>
+          <span class="md-error">{{ validation.message }}</span>
         </md-field>
 
-        <md-field>
+        <md-field ref="surname">
           <label>Pavardė</label>
-          <md-input v-model="formData.surname"></md-input>
+          <md-input maxlength="35" v-model="formData.surname"></md-input>
+          <span class="md-error">{{ validation.message }}</span>
         </md-field>
 
-        <md-field>
+        <md-field ref="position">
           <label>Pozicija</label>
-          <md-input v-model="formData.position"></md-input>
+          <md-input maxlength="35" v-model="formData.position"></md-input>
+          <span class="md-error">{{ validation.message }}</span>
         </md-field>
       </div>
 
       <div>
         <h3 class="text-lg">Kontaktinė informacija</h3>
 
-        <md-field>
+        <md-field ref="email">
           <label>Elektroninis paštas</label>
-          <md-input v-model="formData.email"></md-input>
+          <md-input maxlength="40" v-model="formData.email"></md-input>
+          <span class="md-error">{{
+            formData.email == "" ? validation.message : validation.email
+          }}</span>
         </md-field>
 
-        <md-field>
+        <md-field ref="phone_number">
           <label>Telefono numeris</label>
-          <md-input v-model="formData.phone_number"></md-input>
+          <md-input v-model="formData.phone_number" maxlength="15"></md-input>
+          <span class="md-error" style="max-width: 180px">{{
+            validation.phone
+          }}</span>
         </md-field>
       </div>
     </div>
 
     <div class="md-layout-item col-start-2 col-end-3 row-start-2 row-end-3">
       <h2 class="text-2xl">Įmonės detalės:</h2>
-      <md-field>
+      <md-field ref="company_id">
         <label for="company">Įmonė</label>
         <md-select v-model="formData.company_id" name="company" id="company">
           <md-option v-for="company in companies" :value="company.id">{{
             company.name
           }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
-      <md-field>
+      <md-field ref="office_id">
         <label for="office">Ofisas</label>
         <md-select v-model="formData.office_id" name="office" id="office">
           <md-option v-for="office in offices" :value="office.id">{{
             office.name
           }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
-      <md-field>
+      <md-field ref="division_id">
         <label for="font">Padalinys</label>
         <md-select v-model="formData.division_id" name="font" id="division">
           <md-option v-for="division in divisions" :value="division.id">{{
             division.name
           }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
-      <md-field>
+      <md-field ref="department_id">
         <label for="font">Skyrius</label>
         <md-select
           v-model="formData.department_id"
@@ -80,15 +92,17 @@
             department.name
           }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
-      <md-field>
+      <md-field ref="group_id">
         <label for="font">Grupė</label>
         <md-select v-model="formData.group_id" name="group" id="group">
           <md-option v-for="group in groups" :value="group.id">{{
             group.name
           }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
       <div class="fileLabelWrapper flex justify-center">
@@ -111,9 +125,6 @@
         Pridėti
       </button>
     </div>
-
-    <div class="col-start-1 col-end-3 row-start-3 row-end-4" v-if="!validation.isSuccess">{{ validation.message }}</div>
-
   </form>
 </template>
 
@@ -125,7 +136,13 @@ export default {
   data() {
     return {
       isRed: [],
-      validation: { isSuccess: false, message: "" },
+      validation: {
+        isSuccess: false,
+        message: "Nepalikite lauko tusčio.",
+        email: "Neteisingas e. paštas.",
+        phone: "Neteisingas formatas. Formato pvz.: +370 XXX XXXXX",
+      },
+
       photoSelected: false,
       formData: {
         name: "",
@@ -164,51 +181,56 @@ export default {
       "createContact",
     ]),
     checkIfFormValid() {
-  
-      let keyList = Object.keys(this.formData)
-
-
-      keyList.forEach(key => {
-
-        console.log(key, this.formData[key])
-
-        if (this.formData[key].trim() === ""){
-          this.validation = { isSuccess: false, message: "Užpldykite visus laukus" };
-          
-          this.isRed = this.formData[key]
-
-          // ir uždėti raudoną ant this.formData[key] (pvz: name)
+      let keyList = Object.keys(this.formData);
+      keyList = keyList.filter(
+        (key) =>
+          key !== `photo` &&
+          key !== `group_id` &&
+          key !== `department_id` &&
+          key !== `phone_number`
+      );
+      const areFieldEmpty = keyList.map((key) => {
+        if (this.formData[key].trim() === "") {
+          this.$refs[key].$el.classList.add("md-invalid");
+          return false;
+        } else {
+          this.$refs[key].$el.classList.remove("md-invalid");
+          return true;
         }
+      });
 
+      const checkEmail = () => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailPattern.test(this.formData.email.trim())) {
+          this.$refs.email.$el.classList.remove("md-invalid");
+          return true;
+        } else {
+          this.$refs.email.$el.classList.add("md-invalid");
+          return false;
+        }
+      };
 
-      })
+      const checkPhone = () => {
+        const phonePattern = /^\+[0-9]+$/;
+        if (this.formData.phone_number.trim() == "") {
+          this.$refs.phone_number.$el.classList.remove("md-invalid");
+          return true;
+        } else if (!phonePattern.test(this.formData.phone_number.trim())) {
+          this.$refs.phone_number.$el.classList.add("md-invalid");
+          return false;
+        } else {
+          this.$refs.phone_number.$el.classList.remove("md-invalid");
+          return true;
+        }
+      };
 
+      const isPhoneValid = checkPhone();
+      const isEmailValid = checkEmail();
 
-      // valueList.forEach((value) => {
-      //   if (value.trim() === "") {
-      //     console.log("false validation")
-      //     this.validation = { isSuccess: false, message: "Užpldykite visus laukus" };
-      //   }
-  
-      // });
-
-      // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      // if (!emailPattern.test(this.formData.email.trim())) {
-      //   this.validationMessage = "Neteisingas elektroninio pašto adresas.";
-      //   return false;
-      // }
-
-      // const phonePattern = /^\d{9}$/; // Assuming a 9-digit format
-      // if (!phonePattern.test(this.formData.phone_number.trim())) {
-      //   this.validationMessage = "Neteisingas telefono numerio formatas.";
-      //   return false;
-      // }
-
-
+      return isEmailValid && isPhoneValid && !areFieldEmpty.includes(false);
     },
 
     handlePhotoUpload(event) {
-      console.log(event.target.files[0]);
       if (event.target.files.length > 0) {
         this.photoSelected = true;
         this.formData.photo = event.target.files[0];
@@ -219,23 +241,23 @@ export default {
     async handleSubmit(event) {
       event.preventDefault();
 
+
       const data = new FormData();
       data.append("name", this.formData.name);
       data.append("surname", this.formData.surname);
       data.append("email", this.formData.email);
-      data.append("phone_number", this.formData.phone_number); // o
+      data.append("phone_number", this.formData.phone_number);
       data.append("position", this.formData.position);
       data.append("company_id", this.formData.company_id);
       data.append("office_id", this.formData.office_id);
       data.append("division_id", this.formData.division_id);
-      data.append("department_id", this.formData.department_id); // o
-      data.append("group_id", this.formData.group_id); // o
-      data.append("photo", this.formData.photo); // o
+      data.append("department_id", this.formData.department_id);
+      data.append("group_id", this.formData.group_id);
+      data.append("photo", this.formData.photo);
 
-      await this.checkIfFormValid() 
+      const isValid = this.checkIfFormValid();
 
-      if (this.validation.isSuccess) {
-        console.log("send");
+      if (isValid) {
         await this.createContact(data);
       }
     },
@@ -251,11 +273,15 @@ export default {
 </script>
 
 <style>
+label {
+  color: rgba(0, 0, 0, 0.589) !important;
+}
+
 .fileLabel,
 .submitBtn {
   padding: 10px 30px;
   background-color: #0054a6;
-  color: white;
+  color: white !important;
   border: none;
   cursor: pointer;
 }
@@ -277,5 +303,9 @@ export default {
   text-transform: initial;
   display: block;
   width: max-content;
+}
+
+.isRed {
+  color: red !important;
 }
 </style>

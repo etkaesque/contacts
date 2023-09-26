@@ -4,7 +4,7 @@
 
     <Main v-if="Object.keys(contact).length != 0">
       <h1 class="text-6xl font-light mb-16">Detalesnė kontakto informacija</h1>
-      <section class="flex mb-28">
+      <section class="flex mb-28 gap-x-8 items-center">
         <img
           style="width: auto; height: 80px"
           v-if="contact.photo == ''"
@@ -12,7 +12,7 @@
           alt="Contact picture"
         />
 
-        <img v-else src="url" alt="Contact picture" />
+        <img v-else style="width: 110px; height: 110px; object-fit: cover !important; border-radius: 50px;" :src="`http://127.0.0.1:8090/api/files/employees/${contact.id}/${contact.photo}`" alt="Contact picture" />
 
         <div>
           <h2 class="text-5xl">{{ contact.name }} {{ contact.surname }}</h2>

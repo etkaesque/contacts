@@ -10,7 +10,6 @@ let contactsAPI = (store) => {
       });
       return contacts;
     } catch (err) {
-      console.log(err);
       throw Error("Failed to fetch data.");
     }
   };
@@ -34,7 +33,6 @@ let contactsAPI = (store) => {
         sort: "-created",
       });
 
-   
       return companies;
     } catch {
       throw Error("Failed to fetch data.");
@@ -46,7 +44,6 @@ let contactsAPI = (store) => {
       const departments = await pb.collection("departments").getFullList({
         sort: "-created",
       });
-  
       return departments;
     } catch {
       throw Error("Failed to fetch data.");
@@ -58,7 +55,6 @@ let contactsAPI = (store) => {
       const divisions = await pb.collection("divisions").getFullList({
         sort: "-created",
       });
-     
       return divisions;
     } catch {
       throw Error("Failed to fetch data.");
@@ -70,7 +66,6 @@ let contactsAPI = (store) => {
       const offices = await pb.collection("offices").getFullList({
         sort: "-created",
       });
-
       return offices;
     } catch {
       throw Error("Failed to fetch data.");
@@ -82,7 +77,6 @@ let contactsAPI = (store) => {
       const groups = await pb.collection("groups").getFullList({
         sort: "-created",
       });
-      console.log(groups);
       return groups;
     } catch {
       throw Error("Failed to fetch data.");
@@ -93,11 +87,22 @@ let contactsAPI = (store) => {
     try {
       const contact = await pb.collection("employees").create(data);
       return contact;
-    } catch(ClientResponseError) {
-      console.log(ClientResponseError)
+    } catch (ClientResponseError) {
       throw Error("Failed to create a new contact. Try again later.");
     }
   };
+
+  store.editContactInDb = async (id, data) => {
+
+    try {
+      const contact = await pb.collection('employees').update(id, data);
+      return contact;
+    } catch (ClientResponseError) {
+      throw Error("Failed to create a new contact. Try again later.");
+    }
+
+  }
+
 };
 
 export default contactsAPI;

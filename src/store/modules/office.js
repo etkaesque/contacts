@@ -21,7 +21,7 @@ export default {
         const offices = await this.fetchOfficesFromDb();
         commit("SET_OFFICES", offices);
       } catch (error) {
-        console.log(error);
+
       }
     },
   },

@@ -9,7 +9,7 @@
           <div>Search component Will Be Here</div>
           <paginationFilter></paginationFilter>
           <viewMode></viewMode>
-          <add :type="'Contact'"></add>
+          <add  v-if="isValid" :type="'Contact'"></add>
         </div>
 
         <div>
@@ -22,8 +22,7 @@
       <Contacts></Contacts>
     </Main>
 
-    <Footer class="flex justify-center"
-      >Pagination component Will Be Here</Footer
+    <Footer class="flex justify-center">Pagination component Will Be Here</Footer
     >
   </div>
 </template>
@@ -35,6 +34,9 @@ import add from "../components/Buttons/add.vue";
 import Contacts from "../components/Contact/contacts.vue";
 import Header from "../components/header.vue";
 import { mapActions, mapGetters } from "vuex";
+
+import PocketBase from "pocketbase";
+const pb = new PocketBase(SERVER_ADDR);
 
 export default {
   components: {
@@ -55,6 +57,11 @@ export default {
         return `Kontaktų nebuvo rasta.`;
       } else if (this.contactsTotalItems <= 9) {
         return `Iš viso rasti: ${this.contactsTotalItems} kontaktai.`;
+      }
+    },
+    isValid() {
+      if (pb.authStore) {
+        return pb.authStore.isValid;
       }
     },
   },

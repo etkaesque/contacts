@@ -10,7 +10,7 @@
               alt="Contact picture"
             />
 
-            <img v-else src="url" alt="Contact picture" />
+            <img v-else style="width: 60px; height: 60px; object-fit: cover !important; border-radius: 50px;" :src="`http://127.0.0.1:8090/api/files/employees/${contact.id}/${contact.photo}`" alt="Contact picture" />
 
             <div class="flex flex-col">
               <div class="text-xl">
@@ -30,11 +30,11 @@
             </ul>
           </md-card-content>
 
-          <div class="flex ml-5 mb-7 mb-t">
+          <div v-if="valid" class="flex ml-5 mb-7 mb-t">
             <md-card-actions>
               <div class="act">
-                <Edit></Edit>
-                <Delete></Delete>
+                <Edit v-if="editEmployees" :contactId="contact.id"></Edit>
+                <Delete v-if="deleteEmployees" :contactId="contact.id"></Delete>
               </div>
             </md-card-actions>
           </div>
@@ -53,6 +53,7 @@ import { mapGetters } from "vuex";
 export default {
   computed: {
     ...mapGetters(["contacts"]),
+    
   },
   components: {
     Edit,
@@ -60,7 +61,11 @@ export default {
   },
   props: {
     profileIcon: String,
+    editEmployees: Boolean,
+    deleteEmployees: Boolean,
+    valid: Boolean,
   },
+
 };
 </script>
 
@@ -70,6 +75,4 @@ export default {
   flex-direction: column;
   justify-content: space-around;
 }
-
-
 </style>

@@ -1,22 +1,10 @@
 export default {
-  state: {
-    admin: "",
-  },
-  getters: {
-    admin: (state) => state.admin,
-  },
-  mutations: {
-    SET_ADMIN(state, admin) {
-      state.admin = admin;
-    },
-  },
   actions: {
-    async login({ commit }, {email, password}) {
+    async login({ commit }, { email, password }) {
       try {
         const authData = await this.adminLogin(email, password);
-        console.log(authData)
-        console.log("token", authData.token)
-      
+        console.log(authData);
+        // commit("SET_ADMIN", authData);
       } catch (error) {
         console.log(error);
       }

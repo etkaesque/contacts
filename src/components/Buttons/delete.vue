@@ -33,5 +33,6 @@ export default {
   width: 56px !important;
   height: 58px !important;
   filter: drop-shadow(1px 1px 2px black) !important;
+  z-index: 1 !important;
 }
 </style>

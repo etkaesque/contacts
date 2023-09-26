@@ -53,7 +53,6 @@ export default {
     ...mapActions(["login"]),
     handleLogin(e) {
       e.preventDefault();
-      console.log("login",this.formData.email, this.formData.password);
       this.login({email:this.formData.email, password: this.formData.password})
     },
   },

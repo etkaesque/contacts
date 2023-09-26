@@ -7,78 +7,104 @@
     </div>
 
     <div class="col-start-1 col-end-2 row-start-2 row-end-3">
-      <h2 class="text-2xl">Redaguoti kontaktą:</h2>
+      <h2 class="text-2xl">Pridėti kontaktą:</h2>
       <div>
-        <md-field>
+        <md-field ref="name">
           <label>Vardas</label>
-          <md-input v-model="formData.name"></md-input>
+          <md-input maxlength="35" v-model="formData.name"></md-input>
+          <span class="md-error">{{ validation.message }}</span>
         </md-field>
 
-        <md-field>
+        <md-field ref="surname">
           <label>Pavardė</label>
-          <md-input v-model="formData.surname"></md-input>
+          <md-input maxlength="35" v-model="formData.surname"></md-input>
+          <span class="md-error">{{ validation.message }}</span>
         </md-field>
 
-        <md-field>
+        <md-field ref="position">
           <label>Pozicija</label>
-          <md-input v-model="formData.position"></md-input>
+          <md-input maxlength="35" v-model="formData.position"></md-input>
+          <span class="md-error">{{ validation.message }}</span>
         </md-field>
       </div>
 
       <div>
         <h3 class="text-lg">Kontaktinė informacija</h3>
 
-        <md-field>
+        <md-field ref="email">
           <label>Elektroninis paštas</label>
-          <md-input v-model="formData.email"></md-input>
+          <md-input maxlength="40" v-model="formData.email"></md-input>
+          <span class="md-error">{{
+            formData.email == "" ? validation.message : validation.email
+          }}</span>
         </md-field>
 
-        <md-field>
+        <md-field ref="phone_number">
           <label>Telefono numeris</label>
-          <md-input v-model="formData.phone_number"></md-input>
+          <md-input v-model="formData.phone_number" maxlength="15"></md-input>
+          <span class="md-error" style="max-width: 180px">{{
+            validation.phone
+          }}</span>
         </md-field>
       </div>
     </div>
 
     <div class="md-layout-item col-start-2 col-end-3 row-start-2 row-end-3">
       <h2 class="text-2xl">Įmonės detalės:</h2>
-      <md-field>
+      <md-field ref="company_id">
         <label for="company">Įmonė</label>
         <md-select v-model="formData.company_id" name="company" id="company">
-          <md-option value="Company">Company</md-option>
+          <md-option v-for="company in companies" :value="company.id">{{
+            company.name
+          }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
-      <md-field>
+      <md-field ref="office_id">
         <label for="office">Ofisas</label>
         <md-select v-model="formData.office_id" name="office" id="office">
-          <md-option value="Ofisas">Ofisas</md-option>
+          <md-option v-for="office in offices" :value="office.id">{{
+            office.name
+          }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
-      <md-field>
+      <md-field ref="division_id">
         <label for="font">Padalinys</label>
         <md-select v-model="formData.division_id" name="font" id="division">
-          <md-option value="Division">Division</md-option>
+          <md-option v-for="division in divisions" :value="division.id">{{
+            division.name
+          }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
-      <md-field>
+      <md-field ref="department_id">
         <label for="font">Skyrius</label>
         <md-select
           v-model="formData.department_id"
           name="department"
           id="department"
         >
-          <md-option value="Company">Company</md-option>
+          <md-option v-for="department in departments" :value="department.id">{{
+            department.name
+          }}</md-option>
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
-      <md-field>
+      <md-field ref="group_id">
         <label for="font">Grupė</label>
         <md-select v-model="formData.group_id" name="group" id="group">
-          <md-option value="group">Grupė</md-option>
+          <md-option value=""></md-option>
+          <md-option v-for="group in groups" :value="group.id">{{
+            group.name
+          }}</md-option>
+   
         </md-select>
+        <span class="md-error">{{ validation.message }}</span>
       </md-field>
 
       <div class="fileLabelWrapper flex justify-center">
@@ -90,22 +116,36 @@
           class="fileInput"
           @change="handlePhotoUpload($event)"
         />
-        <span class="photoValidation">{{ photoSelected ? "Nuotrauka įkelta." : "Pasirinkite nuotrauką." }}</span>
+        <span class="photoValidation">{{
+          photoSelected ? "Nuotrauka įkelta." : "Pasirinkite nuotrauką."
+        }}</span>
       </div>
     </div>
 
     <div class="col-start-3 col-end-4 flex flex-col row-start-3 row-end-4">
-      <button class="submitBtn uppercase">Pridėti</button>
+      <button class="submitBtn uppercase" @click="handleSubmit($event)">
+        Pridėti
+      </button>
     </div>
   </form>
 </template>
 
 <script>
+import contact from "../../store/modules/contact";
 import dissmissButton from "../Buttons/dissmiss.vue";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
     return {
+      isRed: [],
+      validation: {
+        isSuccess: false,
+        message: "Nepalikite lauko tusčio.",
+        email: "Neteisingas e. paštas.",
+        phone: "Neteisingas formatas. Formato pvz.: +370 XXX XXXXX",
+      },
+
       photoSelected: false,
       formData: {
         name: "",
@@ -118,31 +158,149 @@ export default {
         division_id: "",
         department_id: "",
         group_id: "",
+        photo: "",
       },
-    
     };
   },
   components: {
     dissmissButton,
   },
+  computed: {
+    ...mapGetters([
+      "companies",
+      "departments",
+      "divisions",
+      "offices",
+      "groups",
+      "activeContact",
+      "contact",
+    ]),
+  },
   methods: {
+    ...mapActions([
+      "fetchCompanies",
+      "fetchDepartments",
+      "fetchDivisions",
+      "fetchOffices",
+      "fetchGroups",
+      "fetchContactById",
+      "editContact"
+    ]),
+    checkIfFormValid() {
+      let keyList = Object.keys(this.formData);
+      keyList = keyList.filter(
+        (key) =>
+          key !== `photo` &&
+          key !== `group_id` &&
+          key !== `department_id` &&
+          key !== `phone_number`
+      );
+      const areFieldEmpty = keyList.map((key) => {
+        if (this.formData[key].trim() === "") {
+          this.$refs[key].$el.classList.add("md-invalid");
+          return false;
+        } else {
+          this.$refs[key].$el.classList.remove("md-invalid");
+          return true;
+        }
+      });
+
+      const checkEmail = () => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailPattern.test(this.formData.email.trim())) {
+          this.$refs.email.$el.classList.remove("md-invalid");
+          return true;
+        } else {
+          this.$refs.email.$el.classList.add("md-invalid");
+          return false;
+        }
+      };
+
+      const checkPhone = () => {
+        const phonePattern = /^\+[0-9]+$/;
+        if (this.formData.phone_number.trim() == "") {
+          this.$refs.phone_number.$el.classList.remove("md-invalid");
+          return true;
+        } else if (!phonePattern.test(this.formData.phone_number.trim())) {
+          this.$refs.phone_number.$el.classList.add("md-invalid");
+          return false;
+        } else {
+          this.$refs.phone_number.$el.classList.remove("md-invalid");
+          return true;
+        }
+      };
+
+      const isPhoneValid = checkPhone();
+      const isEmailValid = checkEmail();
+
+      return isEmailValid && isPhoneValid && !areFieldEmpty.includes(false);
+    },
+
     handlePhotoUpload(event) {
       if (event.target.files.length > 0) {
         this.photoSelected = true;
+        this.formData.photo = event.target.files[0];
       } else {
         this.photoSelected = false;
       }
     },
+    async handleSubmit(event) {
+      event.preventDefault();
+
+      const data = new FormData();
+      data.append("name", this.formData.name);
+      data.append("surname", this.formData.surname);
+      data.append("email", this.formData.email);
+      data.append("phone_number", this.formData.phone_number);
+      data.append("position", this.formData.position);
+      data.append("company_id", this.formData.company_id);
+      data.append("office_id", this.formData.office_id);
+      data.append("division_id", this.formData.division_id);
+      data.append("department_id", this.formData.department_id);
+      data.append("group_id", this.formData.group_id);
+      data.append("photo", this.formData.photo);
+
+      const isValid = this.checkIfFormValid();
+
+      if (isValid) {
+        await this.editContact({ id: this.activeContact, formData: data });
+      }
+    },
+  },
+  async created() {
+    await this.fetchContactById(this.activeContact);
+    await this.fetchCompanies();
+    await this.fetchDepartments();
+    await this.fetchDivisions();
+    await this.fetchOffices();
+    await this.fetchGroups();
+
+    this.formData.name = this.contact.name;
+    this.formData.surname = this.contact.surname;
+    this.formData.position = this.contact.position;
+    this.formData.phone_number = this.contact.phone_number;
+    this.formData.email = this.contact.email;
+    this.formData.company_id = this.contact.company_id;
+    this.formData.department_id = this.contact.department_id;
+    this.formData.division_id = this.contact.division_id;
+    this.formData.office_id = this.contact.office_id;
+    this.formData.group_id = this.contact.group_id;
+
+    console.log(this.contact);
   },
 };
 </script>
 
 <style>
+label {
+  color: rgba(0, 0, 0, 0.589) !important;
+}
+
 .fileLabel,
 .submitBtn {
   padding: 10px 30px;
   background-color: #0054a6;
-  color: white;
+  color: white !important;
   border: none;
   cursor: pointer;
 }
@@ -164,6 +322,9 @@ export default {
   text-transform: initial;
   display: block;
   width: max-content;
-  
+}
+
+.isRed {
+  color: red !important;
 }
 </style>

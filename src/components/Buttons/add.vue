@@ -1,8 +1,5 @@
 <template>
-  <md-button
-    class="add-btn md-icon-button md-raised"
-    @click="handleAdd"
-  >
+  <md-button class="add-btn md-icon-button md-raised" @click="handleAdd">
     <md-icon style="width: 30px !important; height: 30px !important">
       <img :src="addIcon" alt="" />
     </md-icon>
