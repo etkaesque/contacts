@@ -1,6 +1,6 @@
 <template>
   <md-button class="pipet-btn md-icon-button md-raised">
-    <md-icon style="width: 30px !important; height: 30px !important">
+    <md-icon style="width: 25px !important; height: 25px !important">
       <img :src="pipetIcon" alt="" />
     </md-icon>
   </md-button>
@@ -22,8 +22,8 @@ export default {
 .pipet-btn {
   background-color: #0054a6 !important;
   border-radius: 50px !important;
-  width: 75px !important;
-  height: 60px !important;
+  width: 50px !important;
+  height: 50px !important;
   filter: drop-shadow(1px 1px 2px black) !important;
   z-index: 1 !important;
 }

@@ -11,7 +11,7 @@
     </router-link>
 
     <nav class="w-full flex justify-start pl-16" v-if="isValid">
-      <ul class="flex justify-center gap-x-24 text-2xl font-bold">
+      <ul class="flex justify-center gap-x-24 text-xl font-bold">
         <li>
           <router-link :to="`/`">Kontaktai</router-link>
         </li>
@@ -58,18 +58,36 @@
       </router-link>
     </div>
 
-    <div v-if="isValid" class="flex gap-x-5 items-center">
-      <span class="text-lg" style="color: white !important">{{ name }}</span>
-      <img  :src="avatar" style="max-width: 50px;" alt="" />
+    <div v-if="isValid" class="relative">
+      <button
+      
+        class="flex gap-x-5 items-center"
+        @click="handleClick"
+      >
+        <span class="text-lg" style="color: white !important">{{ name }}</span>
+        <img :src="avatar" style="max-width: 50px" alt="" />
+      </button>
+
+      <Menu v-if="menu"></Menu>
     </div>
   </header>
 </template>
 
 <script>
 import PocketBase from "pocketbase";
+import Menu from "./menu.vue";
+
 const pb = new PocketBase(SERVER_ADDR);
 
 export default {
+  data() {
+    return {
+      menu: false,
+    };
+  },
+  components: {
+    Menu,
+  },
   computed: {
     isValid() {
       if (pb.authStore) {
@@ -89,8 +107,11 @@ export default {
       return source;
     },
   },
-  created() {
-    console.log("hi");
+  methods: {
+    handleClick() {
+      this.menu = !this.menu;
+      console.log(this.menu);
+    },
   },
 };
 </script>

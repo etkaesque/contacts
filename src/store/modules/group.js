@@ -21,7 +21,11 @@ export default {
           const groups = await this.fetchGroupsFromDb();
           commit("SET_GROUPS", groups);
         } catch (error) {
-          console.log(error);
+          commit("CONTROL_NOTIFICATION", {
+            status: true,
+            message: error.message,
+            isSuccess: false,
+          });
         }
       },
     },

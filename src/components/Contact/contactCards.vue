@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap gap-6">
+  <div class="flex justify-center flex-wrap gap-6">
     <article v-for="contact in contacts" :key="contact.id">
       <router-link :to="`contact/${contact.id}`">
         <md-card md-with-hover class="card">
@@ -22,9 +22,9 @@
 
           <md-card-content>
             <ul>
-              <li class="text-base">Telefono nr: {{ contact.phone_number }}</li>
+              <li class="text-base">Telefono nr: {{ contact.phone_number ? contact.phone_number : "nenurodytas" }}</li>
               <li class="text-base">El. paštas: {{ contact.email }}</li>
-              <li class="text-base">
+              <li v-if="contact.expand" class="text-base">
                 Adresas: {{ contact.expand.office_id.name }}
               </li>
             </ul>

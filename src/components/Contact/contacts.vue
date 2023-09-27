@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <section v-if="isCard">
+  <div v-if="contacts.length != 0">
+    <section v-if="isCard ">
       <Cards
         :profileIcon="profileIcon"
         :valid="isValid"
@@ -39,7 +39,7 @@ export default {
     Tables,
   },
   computed: {
-    ...mapGetters(["isCard"]),
+    ...mapGetters(["isCard", "contacts"]),
     isValid() {
       if (pb.authStore) {
         return pb.authStore.isValid;

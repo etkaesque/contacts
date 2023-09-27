@@ -38,8 +38,8 @@ export default {
 <style>
 .edit-btn {
   background-color: #0054a6 !important;
-  width: 56px !important;
-  height: 58px !important;
+  width: 50px !important;
+  height: 50px !important;
   filter: drop-shadow(1px 1px 2px black) !important;
   z-index: 1 !important;
 }

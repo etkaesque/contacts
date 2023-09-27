@@ -2,9 +2,9 @@
   <div>
     <Header></Header>
 
-    <Main v-if="Object.keys(contact).length != 0">
+    <Main v-if="Object.keys(contact).length != 0" >
       <h1 class="text-6xl font-light mb-16">Detalesnė kontakto informacija</h1>
-      <section class="flex mb-28 gap-x-8 items-center">
+      <section class="flex mb-28 gap-x-8 items-center" >
         <img
           style="width: auto; height: 80px"
           v-if="contact.photo == ''"
@@ -12,9 +12,19 @@
           alt="Contact picture"
         />
 
-        <img v-else style="width: 110px; height: 110px; object-fit: cover !important; border-radius: 50px;" :src="`http://127.0.0.1:8090/api/files/employees/${contact.id}/${contact.photo}`" alt="Contact picture" />
+        <img
+          v-else
+          style="
+            width: 110px;
+            height: 110px;
+            object-fit: cover !important;
+            border-radius: 50px;
+          "
+          :src="`http://127.0.0.1:8090/api/files/employees/${contact.id}/${contact.photo}`"
+          alt="Contact picture"
+        />
 
-        <div>
+        <div class="truncate">
           <h2 class="text-5xl">{{ contact.name }} {{ contact.surname }}</h2>
           <p class="text-3xl">Pozicija: {{ contact.position }}</p>
         </div>
@@ -31,9 +41,13 @@
             </li>
             <li>
               Telefono numeris:
-              <a :href="`tel:${contact.phone_number}`">{{
-                contact.phone_number
-              }}</a>
+              <a
+                v-if="contact.phone_number"
+                :href="`tel:${contact.phone_number}`"
+                >{{ contact.phone_number }}</a
+              >
+
+              <span v-else>nenurodytas.</span>
             </li>
           </ul>
         </div>
@@ -42,18 +56,10 @@
           <h3 class="text-3xl">Kompanijos detalės</h3>
           <div class="division"></div>
           <ul class="flex flex-col gap-y-12">
-            <li>
-              Kompanija: {{ checkStructure(contact.expand.company_id.name) }}
-            </li>
-            <li>
-              Būstinė: {{ checkStructure(contact.expand.office_id.name) }}
-            </li>
-            <li>
-              Padalinys: {{ checkStructure(contact.expand.division_id.name) }}
-            </li>
-            <li>
-              Skyrius: {{ checkStructure(contact.expand.department_id) }}
-            </li>
+            <li>Kompanija: {{ checkStructure(contact.expand.company_id) }}</li>
+            <li>Būstinė: {{ checkStructure(contact.expand.office_id) }}</li>
+            <li>Padalinys: {{ checkStructure(contact.expand.division_id) }}</li>
+            <li>Skyrius: {{ checkStructure(contact.expand.department_id) }}</li>
             <li>Grupė: {{ checkStructure(contact.group_id) }}</li>
           </ul>
         </div>
@@ -80,16 +86,15 @@ export default {
   },
   methods: {
     ...mapActions(["fetchContactById"]),
-    checkStructure(name) {
-      if (name == "") {
-        return `nepriskirta`;
+    checkStructure(structure) {
+      if (structure === "" || structure == undefined) {
+        return "nepriskirta";
       }
-      return name;
+      return structure.name;
     },
   },
   async created() {
     await this.fetchContactById(this.$route.params.id);
-    console.log(this.contact)
   },
 };
 </script>
@@ -100,4 +105,9 @@ export default {
   background-color: #212121;
   opacity: 0.08;
 }
+
+.flex > div {
+  word-wrap: break-word;
+}
+
 </style>

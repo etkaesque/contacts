@@ -2,11 +2,13 @@ export default {
   actions: {
     async login({ commit }, { email, password }) {
       try {
-        const authData = await this.adminLogin(email, password);
-        console.log(authData);
-        // commit("SET_ADMIN", authData);
+        await this.adminLogin(email, password);
       } catch (error) {
-        console.log(error);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
       }
     },
   },

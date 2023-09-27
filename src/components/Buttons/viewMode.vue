@@ -1,6 +1,6 @@
 <template>
   <md-button class="view-btn md-icon-button md-raised" @click="setViewMode">
-    <md-icon style="width: 30px !important; height: 30px !important">
+    <md-icon style="width: 25px !important; height: 25px !important">
       <img v-if="isCard" :src="profileIcon" alt="" />
       <img v-else :src="bulletIcon" alt="" />
     </md-icon>
@@ -35,8 +35,8 @@ export default {
 .view-btn {
   background-color: #0054a6 !important;
   border-radius: 50px !important;
-  width: 75px !important;
-  height: 60px !important;
+  width: 50px !important;
+  height: 50px !important;
   filter: drop-shadow(1px 1px 2px black) !important;
   z-index: 1 !important;
 }

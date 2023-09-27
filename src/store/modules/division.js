@@ -21,7 +21,11 @@ export default {
         const divisions = await this.fetchDivisionsFromDb();
         commit("SET_DIVISIONS", divisions);
       } catch (error) {
-        console.log(error);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
       }
     },
   },

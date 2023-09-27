@@ -27,6 +27,15 @@ export default {
     SET_VIEW_MODE(state) {
       state.isCard = !state.isCard;
     },
+
+    POP(state, id) {
+      state.contacts = state.contacts.filter((contact) => contact.id !== id);
+      state.contactsTotalItems = state.contactsTotalItems - 1;
+    },
+    ADD(state, contact) {
+      state.contacts.push(contact);
+      state.contactsTotalItems = state.contactsTotalItems + 1;
+    },
   },
   actions: {
     async fetchContacts({ commit }) {
@@ -34,7 +43,11 @@ export default {
         const contacts = await this.fetchContactsFromDb();
         commit("SET_CONTACTS", contacts);
       } catch (error) {
-        console.log(error);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: `${error.message}`,
+          isSuccess: false,
+        });
       }
     },
     async fetchContactById({ commit }, id) {
@@ -42,25 +55,67 @@ export default {
         const contact = await this.fetchContactByIdFromDb(id);
         commit("SET_CONTACT", contact);
       } catch (error) {
-        console.log(error);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: `${error.message}`,
+          isSuccess: false,
+        });
       }
     },
 
     async createContact({ commit }, formData) {
       try {
         const contact = await this.createContactInDb(formData);
-        console.log("success");
+        commit("ADD", contact);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: "Kontaktas sėkmingai pridėtas.",
+          isSuccess: true,
+        });
       } catch (error) {
-        console.log(error);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: `${error.message}`,
+          isSuccess: false,
+        });
       }
     },
 
-    async editContact({ commit }, {id, formData}) {
+    async editContact({ commit, dispatch }, { id, formData }) {
       try {
         const contact = await this.editContactInDb(id, formData);
-        console.log("success");
+        console.log(contact);
+        dispatch("fetchContacts");
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: "Kontaktas sėkmingai redaguotas.",
+          isSuccess: true,
+        });
       } catch (error) {
-        console.log(error);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: `${error.message}`,
+          isSuccess: false,
+        });
+      }
+    },
+
+    async deleteContact({ commit }, id) {
+      try {
+        await this.deleteContactInDb(id);
+
+        commit("POP", id);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: `Kontaktas sėkmingai ištrintas`,
+          isSuccess: true,
+        });
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: `${error.message}`,
+          isSuccess: false,
+        });
       }
     },
   },

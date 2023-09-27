@@ -21,7 +21,11 @@ export default {
         const companies = await this.fetchCompaniesFromDb();
         commit("SET_COMPANIES", companies);
       } catch (error) {
-        console.log(error);
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
       }
     },
   },

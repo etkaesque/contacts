@@ -27,8 +27,8 @@ export default {
 <style>
 .dissmiss-btn {
   background-color: #0054a6 !important;
-  width: 60px !important;
-  height: 60px !important;
+  width: 50px !important;
+  height: 50px !important;
   filter: drop-shadow(1px 1px 2px black) !important;
   z-index: 1 !important;
 }

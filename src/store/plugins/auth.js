@@ -7,15 +7,13 @@ let authAPI = (store) => {
     try {
       const authData = await pb
         .collection("users")
-        .authWithPassword(email, password,{
-          expand: "permissions_id"
+        .authWithPassword(email, password, {
+          expand: "permissions_id",
         });
 
-        console.log(authData)
-
       return authData;
-    } catch (err) {
-      throw Error("Failed to fetch data.");
+    } catch {
+      throw Error("Prisijungimas nepavyko.");
     }
   };
 };

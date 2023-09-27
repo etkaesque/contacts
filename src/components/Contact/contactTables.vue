@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-full">
     <md-table>
       <md-table-row class="headerRow">
         <md-table-head>Vardas ir pavardė</md-table-head>
@@ -17,9 +17,13 @@
       >
         <md-table-cell>{{ contact.name }} {{ contact.surname }}</md-table-cell>
         <md-table-cell>{{ contact.position }}</md-table-cell>
-        <md-table-cell>{{ contact.phone_number }}</md-table-cell>
+        <md-table-cell>{{
+          contact.phone_number ? contact.phone_number : "nenurodytas"
+        }}</md-table-cell>
         <md-table-cell>{{ contact.email }}</md-table-cell>
-        <md-table-cell>{{ contact.expand.office_id.name }}</md-table-cell>
+        <md-table-cell v-if="contact.expand">{{
+          contact.expand.office_id.name
+        }}</md-table-cell>
         <md-table-cell v-if="valid">
           <div class="flex ml-5 mb-7 mb-t">
             <md-card-actions>
@@ -62,6 +66,9 @@ export default {
 </script>
 
 <style>
+.headerRow {
+  width: 100% !important;
+}
 .headerRow * {
   font-size: 20px;
   color: black;
@@ -70,5 +77,12 @@ export default {
 .tableRow:hover {
   background-color: #f1f2f4 !important;
   cursor: pointer;
+}
+
+.md-table-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

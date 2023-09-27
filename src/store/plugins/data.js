@@ -9,8 +9,8 @@ let contactsAPI = (store) => {
         expand: "office_id",
       });
       return contacts;
-    } catch (err) {
-      throw Error("Failed to fetch data.");
+    } catch {
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
   store.fetchContactByIdFromDb = async (id) => {
@@ -23,7 +23,7 @@ let contactsAPI = (store) => {
 
       return contact;
     } catch {
-      throw Error("Failed to fetch data.");
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
 
@@ -35,7 +35,7 @@ let contactsAPI = (store) => {
 
       return companies;
     } catch {
-      throw Error("Failed to fetch data.");
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
 
@@ -46,7 +46,7 @@ let contactsAPI = (store) => {
       });
       return departments;
     } catch {
-      throw Error("Failed to fetch data.");
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
 
@@ -57,7 +57,7 @@ let contactsAPI = (store) => {
       });
       return divisions;
     } catch {
-      throw Error("Failed to fetch data.");
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
 
@@ -68,7 +68,7 @@ let contactsAPI = (store) => {
       });
       return offices;
     } catch {
-      throw Error("Failed to fetch data.");
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
 
@@ -79,7 +79,7 @@ let contactsAPI = (store) => {
       });
       return groups;
     } catch {
-      throw Error("Failed to fetch data.");
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
 
@@ -87,22 +87,28 @@ let contactsAPI = (store) => {
     try {
       const contact = await pb.collection("employees").create(data);
       return contact;
-    } catch (ClientResponseError) {
-      throw Error("Failed to create a new contact. Try again later.");
+    } catch {
+      throw Error(`Kontaktas nebuvo sukurtas.`);
     }
   };
 
   store.editContactInDb = async (id, data) => {
-
     try {
-      const contact = await pb.collection('employees').update(id, data);
+      const contact = await pb.collection("employees").update(id, data);
       return contact;
-    } catch (ClientResponseError) {
-      throw Error("Failed to create a new contact. Try again later.");
+    } catch {
+      throw Error(`Kontaktas nebuvo redaguotas.`);
     }
+  };
 
-  }
-
+  store.deleteContactInDb = async (id) => {
+    try {
+      const contact = await pb.collection("employees").delete(id);
+      return contact;
+    } catch {
+      throw Error(`Kontaktas nebuvo ištrintas.`);
+    }
+  };
 };
 
 export default contactsAPI;
