@@ -27,20 +27,27 @@ export default {
     SET_VIEW_MODE(state) {
       state.isCard = !state.isCard;
     },
-
     POP(state, id) {
       state.contacts = state.contacts.filter((contact) => contact.id !== id);
       state.contactsTotalItems = state.contactsTotalItems - 1;
-    },
-    ADD(state, contact) {
-      state.contacts.push(contact);
-      state.contactsTotalItems = state.contactsTotalItems + 1;
     },
   },
   actions: {
     async fetchContacts({ commit }) {
       try {
         const contacts = await this.fetchContactsFromDb();
+        commit("SET_CONTACTS", contacts);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: `${error.message}`,
+          isSuccess: false,
+        });
+      }
+    },
+    async searchContacts({ commit }, searchTerm) {
+      try {
+        const contacts = await this.searchContactsFromDb(searchTerm);
         commit("SET_CONTACTS", contacts);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -63,10 +70,12 @@ export default {
       }
     },
 
-    async createContact({ commit }, formData) {
+    async createContact({ commit, dispatch }, formData) {
       try {
-        const contact = await this.createContactInDb(formData);
-        commit("ADD", contact);
+        await this.createContactInDb(formData);
+        
+        dispatch("fetchContacts");
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Kontaktas sėkmingai pridėtas.",
@@ -83,8 +92,7 @@ export default {
 
     async editContact({ commit, dispatch }, { id, formData }) {
       try {
-        const contact = await this.editContactInDb(id, formData);
-        console.log(contact);
+        await this.editContactInDb(id, formData);
         dispatch("fetchContacts");
         commit("CONTROL_NOTIFICATION", {
           status: true,

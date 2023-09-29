@@ -5,8 +5,10 @@
       <section>
         <h1 class="text-5xl">Kontaktų sistema</h1>
 
+
+
         <div class="flex items-center gap-5">
-          <div>Search component Will Be Here</div>
+          <Search></Search>
           <paginationFilter></paginationFilter>
           <viewMode></viewMode>
           <add  v-if="isValid" :type="'Contact'"></add>
@@ -33,6 +35,7 @@ import paginationFilter from "../components/Buttons/paginationFilter.vue";
 import add from "../components/Buttons/add.vue";
 import Contacts from "../components/Contact/contacts.vue";
 import Header from "../components/header.vue";
+import Search from "../components/search.vue"
 import { mapActions, mapGetters } from "vuex";
 
 import PocketBase from "pocketbase";
@@ -45,6 +48,7 @@ export default {
     viewMode,
     add,
     paginationFilter,
+    Search,
   },
   computed: {
     ...mapGetters(["contacts", "contactsTotalItems"]),

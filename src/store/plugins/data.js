@@ -3,7 +3,7 @@ import PocketBase from "pocketbase";
 const pb = new PocketBase(SERVER_ADDR);
 
 let contactsAPI = (store) => {
-  store.fetchContactsFromDb = async () => {
+  (store.fetchContactsFromDb = async () => {
     try {
       const contacts = await pb.collection("employees").getList(1, 10, {
         expand: "office_id",
@@ -12,20 +12,43 @@ let contactsAPI = (store) => {
     } catch {
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
-  };
-  store.fetchContactByIdFromDb = async (id) => {
-    try {
-      const contact = await pb
-        .collection("employees")
-        .getFirstListItem(`id="${id}"`, {
-          expand: `company_id,office_id,division_id,department_id`,
-        });
+  }),
+    (store.searchContactsFromDb = async (searchTerm) => {
+      const words = searchTerm.split(" ");
+      let filter = [];
+      let params = ["name", "surname", "phone_number", "email"];
 
-      return contact;
-    } catch {
-      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
-    }
-  };
+      for (let w = 0; w < words.length; w++) {
+        for (let p = 0; p < params.length; p++) {
+          filter.push(`(${params[p]}~"${words[w]}%") `);
+        }
+      }
+
+      filter = filter.join("||");
+
+      try {
+        const contacts = await pb.collection("employees").getList(1, 10, {
+          expand: "office_id",
+          filter,
+        });
+        return contacts;
+      } catch {
+        throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
+      }
+    }),
+    (store.fetchContactByIdFromDb = async (id) => {
+      try {
+        const contact = await pb
+          .collection("employees")
+          .getFirstListItem(`id="${id}"`, {
+            expand: `company_id,office_id,division_id,department_id,group_id`,
+          });
+
+        return contact;
+      } catch {
+        throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
+      }
+    });
 
   store.fetchCompaniesFromDb = async () => {
     try {
@@ -67,6 +90,16 @@ let contactsAPI = (store) => {
         sort: "-created",
       });
       return offices;
+    } catch {
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
+    }
+  };
+
+  store.getFullList = async (collection, query) => {
+    try {
+      let records = await pb.collection(collection).getFullList(query);
+
+      return records;
     } catch {
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }

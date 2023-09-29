@@ -110,7 +110,7 @@ export default {
   methods: {
     handleClick() {
       this.menu = !this.menu;
-      console.log(this.menu);
+    
     },
   },
 };

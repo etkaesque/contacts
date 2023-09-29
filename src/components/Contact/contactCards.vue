@@ -10,7 +10,17 @@
               alt="Contact picture"
             />
 
-            <img v-else style="width: 60px; height: 60px; object-fit: cover !important; border-radius: 50px;" :src="`http://127.0.0.1:8090/api/files/employees/${contact.id}/${contact.photo}`" alt="Contact picture" />
+            <img
+              v-else
+              style="
+                width: 60px;
+                height: 60px;
+                object-fit: cover !important;
+                border-radius: 50px;
+              "
+              :src="`http://127.0.0.1:8090/api/files/employees/${contact.id}/${contact.photo}`"
+              alt="Contact picture"
+            />
 
             <div class="flex flex-col">
               <div class="text-xl">
@@ -22,7 +32,12 @@
 
           <md-card-content>
             <ul>
-              <li class="text-base">Telefono nr: {{ contact.phone_number ? contact.phone_number : "nenurodytas" }}</li>
+              <li class="text-base">
+                Telefono nr:
+                {{
+                  contact.phone_number ? contact.phone_number : "nenurodytas"
+                }}
+              </li>
               <li class="text-base">El. paštas: {{ contact.email }}</li>
               <li v-if="contact.expand" class="text-base">
                 Adresas: {{ contact.expand.office_id.name }}
@@ -53,7 +68,6 @@ import { mapGetters } from "vuex";
 export default {
   computed: {
     ...mapGetters(["contacts"]),
-    
   },
   components: {
     Edit,
@@ -65,7 +79,6 @@ export default {
     deleteEmployees: Boolean,
     valid: Boolean,
   },
-
 };
 </script>
 

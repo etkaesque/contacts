@@ -2,9 +2,9 @@
   <div>
     <Header></Header>
 
-    <Main v-if="Object.keys(contact).length != 0" >
+    <Main v-if="Object.keys(contact).length != 0">
       <h1 class="text-6xl font-light mb-16">Detalesnė kontakto informacija</h1>
-      <section class="flex mb-28 gap-x-8 items-center" >
+      <section class="flex mb-28 gap-x-8 items-center">
         <img
           style="width: auto; height: 80px"
           v-if="contact.photo == ''"
@@ -60,7 +60,7 @@
             <li>Būstinė: {{ checkStructure(contact.expand.office_id) }}</li>
             <li>Padalinys: {{ checkStructure(contact.expand.division_id) }}</li>
             <li>Skyrius: {{ checkStructure(contact.expand.department_id) }}</li>
-            <li>Grupė: {{ checkStructure(contact.group_id) }}</li>
+            <li>Grupė: {{ checkStructure(contact.expand.group_id) }}</li>
           </ul>
         </div>
       </section>
@@ -87,6 +87,7 @@ export default {
   methods: {
     ...mapActions(["fetchContactById"]),
     checkStructure(structure) {
+      
       if (structure === "" || structure == undefined) {
         return "nepriskirta";
       }
@@ -109,5 +110,4 @@ export default {
 .flex > div {
   word-wrap: break-word;
 }
-
 </style>

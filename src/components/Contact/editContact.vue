@@ -84,7 +84,14 @@
       <div class="flex flex-col gap-y-4">
         <md-field ref="company_id">
           <label for="company">Įmonė</label>
-          <md-select v-model="formData.company_id" name="company" id="company">
+          <md-select
+            ref="company"
+            v-model="formData.company_id"
+            name="company"
+            id="company"
+            @input="handleCompany(formData.company_id)"
+          >
+            <md-option value="''" disabled>Pasirinkite įmonę</md-option>
             <md-option v-for="company in companies" :value="company.id">{{
               company.name
             }}</md-option>
@@ -94,10 +101,18 @@
 
         <md-field ref="office_id">
           <label for="office">Ofisas</label>
-          <md-select v-model="formData.office_id" name="office" id="office">
-            <md-option v-for="office in offices" :value="office.id">{{
-              office.name
-            }}</md-option>
+          <md-select
+            v-model="formData.office_id"
+            name="office"
+            id="office"
+            @input="handleOffice(formData.office_id)"
+          >
+            <md-option value="''" disabled>Pasirinkite ofisą</md-option>
+            <div v-for="office in offices" :key="office.expand.office_id.id">
+              <md-option :value="office.expand.office_id.id">{{
+                office.expand.office_id.name
+              }}</md-option>
+            </div>
           </md-select>
           <span class="md-error">{{ validation.message }}</span>
         </md-field>
@@ -105,38 +120,69 @@
         <div>
           <md-field ref="division_id">
             <label for="font">Padalinys</label>
-            <md-select v-model="formData.division_id" name="font" id="division">
-              <md-option v-for="division in divisions" :value="division.id">{{
-                division.name
-              }}</md-option>
+
+            <md-select
+              v-model="formData.division_id"
+              name="font"
+              id="division"
+              @input="handleDivisions(formData.division_id)"
+            >
+              <md-option value="''" disabled>Pasirinkite padalinį</md-option>
+
+              <div
+                v-for="division in divisions"
+                :key="division.expand.division_id.id"
+              >
+                <md-option :value="division.expand.division_id.id">{{
+                  division.expand.division_id.name
+                }}</md-option>
+              </div>
             </md-select>
+
             <span class="md-error">{{ validation.message }}</span>
           </md-field>
 
           <md-field ref="department_id">
             <label for="font">Skyrius</label>
             <md-select
+              @input="handleDepartment(formData.department_id)"
               v-model="formData.department_id"
               name="department"
               id="department"
             >
-              <md-option value=""></md-option>
-              <md-option
-                v-for="department in departments"
-                :value="department.id"
-                >{{ department.name }}</md-option
-              >
+              <md-option value="''" disabled>Pasirinkite skyrių</md-option>
+
+              <div v-if="departments.length != 0">
+                <div
+                  v-for="department in departments"
+                  :key="department.expand.department_id.id"
+                >
+                  <md-option :value="department.expand.department_id.id">{{
+                    department.expand.department_id.name
+                  }}</md-option>
+                </div>
+              </div>
+
+              <md-option :value="''"></md-option>
             </md-select>
             <span class="md-error">{{ validation.message }}</span>
           </md-field>
 
           <md-field ref="group_id">
             <label for="font">Grupė</label>
+
             <md-select v-model="formData.group_id" name="group" id="group">
-              <md-option value=""></md-option>
-              <md-option v-for="group in groups" :value="group.id">{{
-                group.name
-              }}</md-option>
+              <md-option value="''" disabled>Pasirinkite grupę</md-option>
+
+              <div v-if="groups.length != 0">
+                <div v-for="group in groups" :key="group.expand.group_id.id">
+                  <md-option :value="group.expand.group_id.id"
+                    >{{ group.expand.group_id.name }}
+                  </md-option>
+                </div>
+              </div>
+
+              <md-option :value="''"></md-option>
             </md-select>
             <span class="md-error">{{ validation.message }}</span>
           </md-field>
@@ -152,9 +198,17 @@
           class="fileInput"
           @change="handlePhotoUpload($event)"
         />
-        <span class="photoValidation">{{
-          photoSelected ? "Nuotrauka įkelta." : "Pasirinkite nuotrauką."
-        }}</span>
+        <div class="photoValidation">
+          <span style="color: #a61a11 !important" v-if="!isFilePhoto">
+            {{ validation.fileNotPhoto }}</span
+          >
+          <span style="color: #a61a11 !important" v-else-if="isFileTooLarge">
+            {{ validation.fileTooLarge }}</span
+          >
+          <span v-else>{{
+            photoSelected ? "Failas pasirinktas." : "Pasirinkite failą."
+          }}</span>
+        </div>
       </div>
     </div>
 
@@ -182,6 +236,13 @@ export default {
       positionLow: false,
       positionSpecial: false,
       positionShort: false,
+      isFilePhoto: true,
+      isFileTooLarge: false,
+      photoSelected: false,
+      temporary: "",
+      temporarOffice: "",
+      temporarDivision: "",
+      temporarDepartment: "",
       validation: {
         isSuccess: false,
         message: "Nepalikite lauko tusčio.",
@@ -189,9 +250,10 @@ export default {
         textTooSpecial: "Nenaudokite spec. simbolių, skaičių.",
         email: "Neteisingas e. paštas.",
         phone: "Neteisingas formatas. Formato pvz.: +370 XXX XXXXX",
+        fileTooLarge: "Failo dydys neturi būti didesnis nei 5Mb.",
+        fileNotPhoto:
+          "Neteisingas failo formatas. Pridėkite JPEG arba PNG failą.",
       },
-
-      photoSelected: false,
       formData: {
         name: "",
         surname: "",
@@ -212,11 +274,11 @@ export default {
   },
   computed: {
     ...mapGetters([
+      "groups",
       "companies",
       "departments",
       "divisions",
       "offices",
-      "groups",
       "activeContact",
       "contact",
     ]),
@@ -224,10 +286,11 @@ export default {
   methods: {
     ...mapActions([
       "fetchCompanies",
-      "fetchDepartments",
-      "fetchDivisions",
-      "fetchOffices",
-      "fetchGroups",
+      "createContact",
+      "fetchCompanyOffices",
+      "fetchOfficeDivisions",
+      "fetchDivisionDepartmens",
+      "fetchDepartmentGroups",
       "fetchContactById",
       "editContact",
     ]),
@@ -252,7 +315,7 @@ export default {
       });
 
       const checkText = (input, element, type) => {
-        const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u
+        const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
 
         if (textPattern.test(input.trim())) {
           element.classList.remove("md-invalid");
@@ -383,11 +446,35 @@ export default {
     },
 
     handlePhotoUpload(event) {
+      const allowedTypes = ["image/png", "image/jpeg"];
+      const maxSize = 5 * 1024 * 1024;
+
       if (event.target.files.length > 0) {
+        const selectedFile = event.target.files[0];
+
+        if (!allowedTypes.includes(selectedFile.type)) {
+          this.isFilePhoto = false;
+          this.isFileTooLarge = !this.isFileTooLarge;
+          this.formData.photo = "";
+          return;
+        }
+
+        if (selectedFile.size > maxSize) {
+          this.isFileTooLarge = true;
+          this.isFilePhoto = !this.isFilePhoto;
+          this.formData.photo = "";
+          return;
+        }
+
         this.photoSelected = true;
-        this.formData.photo = event.target.files[0];
+        this.isFileTooLarge = false;
+        this.isFilePhoto = true;
+        this.formData.photo = selectedFile;
       } else {
         this.photoSelected = false;
+        this.isFileTooLarge = false;
+        this.isFilePhoto = true;
+        this.formData.photo = "";
       }
     },
     async handleSubmit(event) {
@@ -415,14 +502,49 @@ export default {
         this.CONTROL_MODAL();
       }
     },
+    async handleCompany(id) {
+      if (this.formData.company_id != this.temporary) {
+        this.formData.office_id = "";
+        this.formData.division_id = "";
+        this.formData.department_id = "";
+        this.formData.group_id = "";
+        this.temporary = "";
+        await this.fetchCompanyOffices(this.formData.company_id);
+      } else {
+        await this.fetchCompanyOffices(this.formData.company_id);
+      }
+    },
+    async handleOffice(id) {
+      if (this.formData.office_id != this.temporarOffice) {
+        this.formData.division_id = "";
+        this.formData.department_id = "";
+        this.formData.group_id = "";
+        await this.fetchOfficeDivisions(id);
+      } else {
+        await this.fetchOfficeDivisions(id);
+      }
+    },
+    async handleDivisions(id) {
+      if (this.formData.division_id != this.temporarDivision) {
+        this.formData.department_id = "";
+        this.formData.group_id = "";
+        await this.fetchDivisionDepartmens(id);
+      } else {
+        await this.fetchDivisionDepartmens(id);
+      }
+    },
+    async handleDepartment(id) {
+      if (this.formData.department_id != this.temporarDepartment) {
+        this.formData.group_id = "";
+        await this.fetchDepartmentGroups(id);
+      } else {
+        await this.fetchDepartmentGroups(id);
+      }
+    },
   },
   async created() {
     await this.fetchContactById(this.activeContact);
     await this.fetchCompanies();
-    await this.fetchDepartments();
-    await this.fetchDivisions();
-    await this.fetchOffices();
-    await this.fetchGroups();
 
     this.formData.name = this.contact.name;
     this.formData.surname = this.contact.surname;
@@ -434,6 +556,11 @@ export default {
     this.formData.division_id = this.contact.division_id;
     this.formData.office_id = this.contact.office_id;
     this.formData.group_id = this.contact.group_id;
+
+    this.temporary = this.contact.company_id;
+    this.temporarOffice = this.contact.office_id;
+    this.temporarDivision = this.contact.division_id;
+    this.temporarDepartment = this.contact.department_id;
   },
 };
 </script>

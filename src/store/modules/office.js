@@ -21,7 +21,27 @@ export default {
         const offices = await this.fetchOfficesFromDb();
         commit("SET_OFFICES", offices);
       } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
+    async fetchCompanyOffices({ commit }, id) {
+      try {
+        const offices = await this.getFullList("companies_offices", {
+          expand: "company_id,office_id",
+          filter: `company_id="${id}"`,
+        });
 
+        commit("SET_OFFICES", offices);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
       }
     },
   },

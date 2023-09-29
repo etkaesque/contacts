@@ -9,7 +9,8 @@ module.exports = {
       "darkBlue": "#1F3F77",
       "darkRed": "#A61A11",
       "teltonikaBlue": "#0054A6",
-      "teltonikaGrey":"#F1F2F4"
+      "teltonikaGrey":"#F1F2F4",
+      "searchBar": "#212121",
     },
   },
 

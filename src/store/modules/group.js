@@ -28,6 +28,22 @@ export default {
           });
         }
       },
+      async fetchDepartmentGroups({commit}, id ) {
+        try {
+          const records = await this.getFullList("departments_groups", {
+            expand: "department_id,group_id",
+            filter: `department_id="${id}"`,
+          });
+         
+          commit("SET_GROUPS", records);
+        } catch (error) {
+          commit("CONTROL_NOTIFICATION", {
+            status: true,
+            message: error.message,
+            isSuccess: false,
+          });
+        }
+      }
     },
   };
   

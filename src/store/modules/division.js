@@ -28,5 +28,23 @@ export default {
         });
       }
     },
+
+    async fetchOfficeDivisions({ commit }, id) {
+   
+      try {
+        const divisions = await this.getFullList("offices_divisions", {
+          expand: "office_id,division_id",
+          filter: `office_id="${id}"`,
+        });
+
+        commit("SET_DIVISIONS", divisions);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
   },
 };
