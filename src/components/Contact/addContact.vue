@@ -227,7 +227,7 @@ export default {
         textTooSpecial: "Nenaudokite spec. simbolių, skaičių.",
         email: "Neteisingas e. paštas.",
         phone: "Neteisingas formatas. Formato pvz.: +370 XXX XXXXX",
-        fileTooLarge: "Failo dydys neturi būti didesnis nei 5Mb.",
+        fileTooLarge: "Failo dydis neturi būti didesnis nei 5Mb.",
         fileNotPhoto:
           "Neteisingas failo formatas. Pridėkite JPEG arba PNG failą.",
       },
@@ -244,6 +244,10 @@ export default {
         group_id: "",
         photo: "",
       },
+      oldOffices: [],
+      oldDivisions:[],
+      oldDepartments:[],
+      oldGroups:[]
     };
   },
   components: {
@@ -271,7 +275,7 @@ export default {
       "fetchDivisionDepartmens",
       "fetchDepartmentGroups",
     ]),
-    ...mapMutations(["CONTROL_MODAL"]),
+    ...mapMutations(["CONTROL_MODAL", "SET_OFFICES", "SET_GROUPS", "SET_DIVISIONS", "SET_DEPARTMENTS"]),
     checkIfFormValid() {
       let keyList = Object.keys(this.formData);
       keyList = keyList.filter(
@@ -516,8 +520,27 @@ export default {
     },
   },
   async created() {
+
+    this.oldOffices = this.offices
+    this.oldDivisions =  this.divisions
+    this.oldDepartments = this.departments
+    this.oldGroups = this.groups
+
+
+    this.SET_OFFICES()
+    this.SET_GROUPS()
+    this.SET_DIVISIONS()
+    this.SET_DEPARTMENTS()
     await this.fetchCompanies();
   },
+  beforeDestroy(){
+
+    this.SET_OFFICES(this.oldOffices)
+    this.SET_GROUPS(this.oldGroups)
+    this.SET_DIVISIONS(this.oldDivisions)
+    this.SET_DEPARTMENTS(this.oldDepartments)
+    
+  }
 };
 </script>
 

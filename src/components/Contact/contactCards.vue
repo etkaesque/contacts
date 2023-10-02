@@ -18,7 +18,7 @@
                 object-fit: cover !important;
                 border-radius: 50px;
               "
-              :src="`http://127.0.0.1:8090/api/files/employees/${contact.id}/${contact.photo}`"
+              :src="`${SERVER_ADDR}/api/files/employees/${contact.id}/${contact.photo}`"
               alt="Contact picture"
             />
 
@@ -66,6 +66,11 @@ import Delete from "../Buttons/delete.vue";
 import { mapGetters } from "vuex";
 
 export default {
+  data(){
+    return {
+      SERVER_ADDR
+    }
+  },
   computed: {
     ...mapGetters(["contacts"]),
   },
@@ -84,6 +89,7 @@ export default {
 
 <style>
 .card {
+
   display: flex !important;
   flex-direction: column;
   justify-content: space-around;

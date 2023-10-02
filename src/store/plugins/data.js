@@ -3,39 +3,79 @@ import PocketBase from "pocketbase";
 const pb = new PocketBase(SERVER_ADDR);
 
 let contactsAPI = (store) => {
-  (store.fetchContactsFromDb = async () => {
+  (store.fetchContactsFromDb = async (page, searchTerm, filterData) => {
+    const perPage = CONTACTS_PER_PAGE;
+    let filter = "";
+    let termFilter = "";
+    let structureFilter = "";
+
+    const words = searchTerm.split(" ");
+    let params = ["name", "surname", "phone_number", "email"];
+
+    
+    for (let w = 0; w < words.length; w++) {
+      for (let p = 0; p < params.length; p++) {
+        termFilter += `${params[p]}~"${words[w]}%"`;
+
+        if (p !== words.length - 1) {
+          termFilter += `||`;
+        }
+
+      }
+
+      if (w !== params.length - 1) {
+        termFilter += `&&`;
+      }
+    }
+
+    if (termFilter !== "") {
+
+      termFilter = `(${termFilter})`;
+    }
+
+
+    console.log("termfilter",termFilter)
+
+    if (filterData.company_id) {
+      structureFilter += `company_id="${filterData.company_id}"`;
+    }
+
+    if (filterData.office_id) {
+      structureFilter += ` && office_id="${filterData.office_id}"`;
+    }
+
+    if (filterData.division_id) {
+      structureFilter += ` && division_id="${filterData.division_id}"`;
+    }
+
+    if (filterData.department_id) {
+      structureFilter += ` && department_id="${filterData.department_id}"`;
+    }
+
+    if (filterData.group_id) {
+      structureFilter += ` && group_id="${filterData.group_id}"`;
+    }
+
+    if (structureFilter.length != 0 && termFilter !== "") {
+      filter = `${termFilter}&&(${structureFilter})`;
+    } else if (structureFilter.length != 0) {
+      filter = structureFilter;
+    } else if (termFilter !== "") {
+      filter = termFilter;
+    }
+
     try {
-      const contacts = await pb.collection("employees").getList(1, 10, {
+      console.log("CALLING IT, with this filter", filter);
+      const contacts = await pb.collection("employees").getList(page, perPage, {
         expand: "office_id",
+        filter,
       });
       return contacts;
-    } catch {
+    } catch (err) {
+      console.log(err);
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   }),
-    (store.searchContactsFromDb = async (searchTerm) => {
-      const words = searchTerm.split(" ");
-      let filter = [];
-      let params = ["name", "surname", "phone_number", "email"];
-
-      for (let w = 0; w < words.length; w++) {
-        for (let p = 0; p < params.length; p++) {
-          filter.push(`(${params[p]}~"${words[w]}%") `);
-        }
-      }
-
-      filter = filter.join("||");
-
-      try {
-        const contacts = await pb.collection("employees").getList(1, 10, {
-          expand: "office_id",
-          filter,
-        });
-        return contacts;
-      } catch {
-        throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
-      }
-    }),
     (store.fetchContactByIdFromDb = async (id) => {
       try {
         const contact = await pb

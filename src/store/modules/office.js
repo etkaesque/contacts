@@ -9,7 +9,11 @@ export default {
   },
   mutations: {
     SET_OFFICES(state, offices) {
-      state.offices = offices;
+      if (offices != undefined) {
+        state.offices = offices;
+      } else {
+        state.offices = [];
+      }
     },
     SET_OFFICE(state, office) {
       state.office = office;

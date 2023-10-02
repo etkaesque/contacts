@@ -9,7 +9,12 @@ export default {
   },
   mutations: {
     SET_COMPANIES(state, companies) {
-      state.companies = companies;
+     
+      if (companies != undefined) {
+        state.companies = companies;
+      } else {
+        state.companies = [];
+      }
     },
     SET_COMPANY(state, company) {
       state.company = company;

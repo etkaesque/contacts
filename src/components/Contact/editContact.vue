@@ -267,6 +267,10 @@ export default {
         group_id: "",
         photo: "",
       },
+      oldOffices: [],
+      oldDivisions: [],
+      oldDepartments: [],
+      oldGroups: [],
     };
   },
   components: {
@@ -294,7 +298,15 @@ export default {
       "fetchContactById",
       "editContact",
     ]),
-    ...mapMutations(["CONTROL_MODAL"]),
+    ...mapMutations([
+      "CONTROL_MODAL",
+      "SET_OFFICES",
+      "SET_GROUPS",
+      "SET_DIVISIONS",
+      "SET_DEPARTMENTS",
+      "SET_COMPANIES",
+    ]),
+
     checkIfFormValid() {
       let keyList = Object.keys(this.formData);
       keyList = keyList.filter(
@@ -543,6 +555,17 @@ export default {
     },
   },
   async created() {
+    this.oldOffices = this.offices;
+    this.oldDivisions = this.divisions;
+    this.oldDepartments = this.departments;
+    this.oldGroups = this.groups;
+
+    this.SET_COMPANIES();
+    this.SET_OFFICES();
+    this.SET_GROUPS();
+    this.SET_DIVISIONS();
+    this.SET_DEPARTMENTS();
+
     await this.fetchContactById(this.activeContact);
     await this.fetchCompanies();
 
@@ -561,6 +584,12 @@ export default {
     this.temporarOffice = this.contact.office_id;
     this.temporarDivision = this.contact.division_id;
     this.temporarDepartment = this.contact.department_id;
+  },
+  beforeDestroy() {
+    this.SET_OFFICES(this.oldOffices);
+    this.SET_GROUPS(this.oldGroups);
+    this.SET_DIVISIONS(this.oldDivisions);
+    this.SET_DEPARTMENTS(this.oldDepartments);
   },
 };
 </script>

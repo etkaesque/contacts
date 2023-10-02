@@ -38,6 +38,14 @@ body {
 }
 
 main {
-  padding: 30px 80px;
+  background-color: white !important;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+footer {
+  background-color: white !important;
 }
 </style>

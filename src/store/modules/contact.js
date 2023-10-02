@@ -5,6 +5,10 @@ export default {
     contact: {},
     contactsTotalItems: 0,
     isCard: true,
+    currentPage: 1,
+    searchTerm: "",
+    perPage: CONTACTS_PER_PAGE,
+    filterData: {}
   },
   getters: {
     contacts: (state) => state.contacts,
@@ -12,11 +16,19 @@ export default {
     isCard: (state) => state.isCard,
     contactsTotalItems: (state) => state.contactsTotalItems,
     activeContact: (state) => state.activeContact,
+    currentPage: (state) => state.currentPage,
+    searchTerm: (state) => state.searchTerm,
+    perPage: (state) => state.perPage,
+    filterData: (state) => state.filterData,
   },
   mutations: {
     SET_CONTACTS(state, contacts) {
       state.contacts = contacts.items;
       state.contactsTotalItems = contacts.totalItems;
+    },
+    SET_FILTERS(state, filters) {
+      state.filterData = filters;
+
     },
     SET_CONTACT(state, contact) {
       state.contact = contact;
@@ -31,23 +43,28 @@ export default {
       state.contacts = state.contacts.filter((contact) => contact.id !== id);
       state.contactsTotalItems = state.contactsTotalItems - 1;
     },
+    SET_CURRENT_PAGE(state, page) {
+      let maxPages = Math.ceil(state.contactsTotalItems / state.perPage);
+
+      if (page < 1) {
+        page = 1;
+      }
+
+      if (page > maxPages) {
+        page = maxPages;
+      }
+
+      state.currentPage = page;
+    },
+    SET_SEARCH_TERM(state, term) {
+      state.searchTerm = term;
+    },
   },
   actions: {
-    async fetchContacts({ commit }) {
+    async fetchContacts({ commit }, { page = 1, searchTerm = "",filterData = {} }) {
       try {
-        const contacts = await this.fetchContactsFromDb();
-        commit("SET_CONTACTS", contacts);
-      } catch (error) {
-        commit("CONTROL_NOTIFICATION", {
-          status: true,
-          message: `${error.message}`,
-          isSuccess: false,
-        });
-      }
-    },
-    async searchContacts({ commit }, searchTerm) {
-      try {
-        const contacts = await this.searchContactsFromDb(searchTerm);
+        const contacts = await this.fetchContactsFromDb(page, searchTerm, filterData);
+   
         commit("SET_CONTACTS", contacts);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -73,8 +90,8 @@ export default {
     async createContact({ commit, dispatch }, formData) {
       try {
         await this.createContactInDb(formData);
-        
-        dispatch("fetchContacts");
+
+        dispatch("fetchContacts", {});
 
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -93,7 +110,7 @@ export default {
     async editContact({ commit, dispatch }, { id, formData }) {
       try {
         await this.editContactInDb(id, formData);
-        dispatch("fetchContacts");
+        dispatch("fetchContacts", {});
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Kontaktas sėkmingai redaguotas.",

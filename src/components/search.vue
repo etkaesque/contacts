@@ -1,6 +1,5 @@
 <template>
-  <div class="flex items-center bg-searchBar bg-opacity-10 w-96 ">
-
+  <div class="flex items-center bg-searchBar bg-opacity-10 w-96">
     <div class="bg-opacity-100 p-2">
       <svg
         width="25"
@@ -36,32 +35,37 @@
       </svg>
     </div>
 
-    <div class="bg-opacity-100 w-full ">
-      <input @input="handleSearch" v-model="searchTerm" type="text" class="h-10 bg-searchBar text-slate-900 bg-opacity-0 p-1 w-full focus:outline-none" placeholder="Ieškoti kontakto..."/>
+    <div class="bg-opacity-100 w-full">
+      <input
+        @input="handleSearch"
+        v-model="searchTerm"
+        type="text"
+        class="h-10 bg-searchBar text-slate-900 bg-opacity-0 p-1 w-full focus:outline-none"
+        placeholder="Ieškoti kontakto..."
+      />
     </div>
-
   </div>
 </template>
 
 <script>
-
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations, mapGetters } from "vuex";
 
 export default {
-    data() {
-        return{
-            searchTerm: "",
-        }
+  data() {
+    return {
+      searchTerm: "",
+    };
+  },
+  computed: {
+    ...mapGetters(["currentPage"]),
+  },
+  methods: {
+    ...mapActions(["searchContacts"]),
+    ...mapMutations(["SET_SEARCH_TERM"]),
+    handleSearch() {
+      const term = this.searchTerm.trim();
+      this.SET_SEARCH_TERM(term);
     },
-    computed: {
-
-    },
-    methods: { 
-        ...mapActions(["searchContacts"]),
-        handleSearch() {
-          console.log(this.searchTerm.trim())
-            this.searchContacts(this.searchTerm.trim())
-        }
-    }
-}
+  },
+};
 </script>

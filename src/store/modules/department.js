@@ -11,7 +11,11 @@ export default {
   },
   mutations: {
     SET_DEPARTMENTS(state, departments) {
-      state.departments = departments;
+      if (departments != undefined) {
+        state.departments  = departments;
+      } else {
+        state.departments = [];
+      }
     },
     SET_DEPARTMENT(state, department) {
       state.department = department;

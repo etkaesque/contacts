@@ -9,7 +9,11 @@ export default {
     },
     mutations: {
       SET_GROUPS(state, groups) {
-        state.groups = groups;
+        if (groups != undefined) {
+          state.groups  = groups;
+        } else {
+          state.groups = [];
+        }
       },
       SET_GROUP(state, group) {
         state.group = group;

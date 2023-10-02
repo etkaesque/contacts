@@ -10,6 +10,7 @@ export default defineConfig({
   },
   define: {
     SERVER_ADDR: JSON.stringify("http://127.0.0.1:8090"),
-    CONTACTS_PER_PAGE: 10
+    CONTACTS_PER_PAGE: 1,
+   
   }
 });

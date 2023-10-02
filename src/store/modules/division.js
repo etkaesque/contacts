@@ -9,7 +9,11 @@ export default {
   },
   mutations: {
     SET_DIVISIONS(state, divisions) {
-      state.divisions = divisions;
+      if (divisions != undefined) {
+        state.divisions  = divisions;
+      } else {
+        state.divisions = [];
+      }
     },
     SET_DIVISION(state, division) {
       state.department = division;
