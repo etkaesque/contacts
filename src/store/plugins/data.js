@@ -12,21 +12,35 @@ let contactsAPI = (store) => {
     const words = searchTerm.split(" ");
     let params = ["name", "surname", "phone_number", "email"];
 
-    
-    for (let w = 0; w < words.length; w++) {
-      for (let p = 0; p < params.length; p++) {
-        termFilter += `${params[p]}~"${words[w]}%"`;
+    if (searchTerm != "") {
+      for (let w = 0; w < words.length; w++) {
+        for (let p = 0; p < params.length; p++) {
 
-        if (p !== words.length - 1) {
-          termFilter += `||`;
+
+          if (p == 0) {
+            termFilter += `(`
+          }
+
+
+          termFilter += `${params[p]}~"${words[w]}%"`;
+
+
+          if (p !== params.length - 1) {
+            termFilter += `||`;
+          } else {
+            termFilter += `)`
+          }
+
         }
 
+        if ((w !== words.length - 1)) {
+          termFilter += `&&`;
+        }
       }
 
-      if (w !== params.length - 1) {
-        termFilter += `&&`;
-      }
     }
+
+
 
     if (termFilter !== "") {
 
@@ -34,7 +48,7 @@ let contactsAPI = (store) => {
     }
 
 
-    console.log("termfilter",termFilter)
+    console.log("termfilter", termFilter)
 
     if (filterData.company_id) {
       structureFilter += `company_id="${filterData.company_id}"`;
