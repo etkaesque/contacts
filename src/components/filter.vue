@@ -76,7 +76,8 @@
         @input="handleGroup(filterData.group_id)"
         v-model="filterData.group_id"
         name="group"
-        id="group">
+        id="group"
+      >
         <md-option value="''" disabled>Pasirinkite grupę</md-option>
         <md-option v-for="group in groups" :value="group.expand.group_id.id">{{
           group.expand.group_id.name
@@ -131,6 +132,23 @@ export default {
       "SET_CURRENT_PAGE",
     ]),
     async handleCompany(id) {
+      if (this.filterData.company_id == "") {
+        this.filterData.office_id = "";
+        this.filterData.division_id = "";
+        this.filterData.department_id = "";
+        this.filterData.group_id = "";
+        this.SET_OFFICES();
+        this.SET_GROUPS();
+        this.SET_DIVISIONS();
+        this.SET_DEPARTMENTS();
+
+        await this.fetchContacts({
+          page: this.currentPage,
+          searchTerm: this.searchTerm,
+          filterData: this.filterData,
+        });
+      }
+
       this.filterData.office_id = "";
       this.filterData.division_id = "";
       this.filterData.department_id = "";
@@ -140,6 +158,7 @@ export default {
       this.SET_GROUPS();
       this.SET_DIVISIONS();
       this.SET_DEPARTMENTS();
+
       this.SET_CURRENT_PAGE(1);
       this.SET_FILTERS(this.filterData);
 
@@ -151,7 +170,24 @@ export default {
       });
     },
     async handleOffice(id) {
+      if (this.filterData.company_id == "") {
+        return;
+      }
+
       if (this.filterData.office_id == "") {
+        this.filterData.division_id = "";
+        this.filterData.department_id = "";
+        this.filterData.group_id = "";
+        this.SET_GROUPS();
+        this.SET_DEPARTMENTS();
+        this.SET_DIVISIONS();
+        await this.fetchCompanies();
+        await this.fetchContacts({
+          page: this.currentPage,
+          searchTerm: this.searchTerm,
+          filterData: this.filterData,
+        });
+
         return;
       }
 
@@ -173,7 +209,23 @@ export default {
       });
     },
     async handleDivisions(id) {
+      if (this.filterData.office_id == "") {
+        return;
+      }
+
       if (this.filterData.division_id == "") {
+        this.filterData.department_id = "";
+        this.filterData.group_id = "";
+        this.SET_GROUPS();
+        this.SET_DEPARTMENTS();
+
+        await this.fetchOfficeDivisions(this.filterData.office_id);
+        await this.fetchContacts({
+          page: this.currentPage,
+          searchTerm: this.searchTerm,
+          filterData: this.filterData,
+        });
+
         return;
       }
 
@@ -192,8 +244,24 @@ export default {
         filterData: this.filterData,
       });
     },
+
     async handleDepartment(id) {
+      console.log("department", this.filterData.department_id);
+
+      if (this.filterData.division_id == "") {
+        return;
+      }
+
       if (this.filterData.department_id == "") {
+        this.filterData.group_id = "";
+        this.SET_GROUPS();
+
+        await this.fetchContacts({
+          page: this.currentPage,
+          searchTerm: this.searchTerm,
+          filterData: this.filterData,
+        });
+
         return;
       }
 
@@ -210,7 +278,20 @@ export default {
       });
     },
     async handleGroup(id) {
+      console.log("group is here");
+
+      if (this.filterData.department_id == "") {
+        return;
+      }
+
       if (this.filterData.group_id == "") {
+        this.filterData.group_id = "";
+
+        await this.fetchContacts({
+          page: this.currentPage,
+          searchTerm: this.searchTerm,
+          filterData: this.filterData,
+        });
         return;
       }
 
