@@ -30,6 +30,7 @@
           :value="office.expand.office_id.id"
           >{{ office.expand.office_id.name }}</md-option
         >
+        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
 
@@ -47,6 +48,7 @@
           :value="division.expand.division_id.id"
           >{{ division.expand.division_id.name }}</md-option
         >
+        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
 
@@ -64,6 +66,7 @@
           :value="department.expand.department_id.id"
           >{{ department.expand.department_id.name }}</md-option
         >
+        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
 
@@ -73,12 +76,12 @@
         @input="handleGroup(filterData.group_id)"
         v-model="filterData.group_id"
         name="group"
-        id="group"
-      >
+        id="group">
         <md-option value="''" disabled>Pasirinkite grupę</md-option>
         <md-option v-for="group in groups" :value="group.expand.group_id.id">{{
           group.expand.group_id.name
         }}</md-option>
+        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
   </div>
@@ -124,7 +127,8 @@ export default {
       "SET_GROUPS",
       "SET_DIVISIONS",
       "SET_DEPARTMENTS",
-      "SET_FILTERS"
+      "SET_FILTERS",
+      "SET_CURRENT_PAGE",
     ]),
     async handleCompany(id) {
       this.filterData.office_id = "";
@@ -136,9 +140,9 @@ export default {
       this.SET_GROUPS();
       this.SET_DIVISIONS();
       this.SET_DEPARTMENTS();
-      this.SET_FILTERS(this.filterData)
+      this.SET_CURRENT_PAGE(1);
+      this.SET_FILTERS(this.filterData);
 
-      console.log("handle company git");
       await this.fetchCompanyOffices(id);
       await this.fetchContacts({
         page: this.currentPage,
@@ -158,9 +162,8 @@ export default {
       this.SET_GROUPS();
       this.SET_DEPARTMENTS();
       this.SET_DIVISIONS();
-      this.SET_FILTERS(this.filterData)
-
-
+      this.SET_CURRENT_PAGE(1);
+      this.SET_FILTERS(this.filterData);
 
       await this.fetchOfficeDivisions(id);
       await this.fetchContacts({
@@ -179,7 +182,8 @@ export default {
 
       this.SET_GROUPS();
       this.SET_DEPARTMENTS();
-      this.SET_FILTERS(this.filterData)
+      this.SET_CURRENT_PAGE(1);
+      this.SET_FILTERS(this.filterData);
 
       await this.fetchDivisionDepartmens(id);
       await this.fetchContacts({
@@ -195,7 +199,8 @@ export default {
 
       this.filterData.group_id = "";
       this.SET_GROUPS();
-      this.SET_FILTERS(this.filterData)
+      this.SET_CURRENT_PAGE(1);
+      this.SET_FILTERS(this.filterData);
 
       await this.fetchDepartmentGroups(id);
       await this.fetchContacts({
@@ -209,7 +214,8 @@ export default {
         return;
       }
 
-      this.SET_FILTERS(this.filterData)
+      this.SET_FILTERS(this.filterData);
+      this.SET_CURRENT_PAGE(1);
 
       await this.fetchContacts({
         page: this.currentPage,

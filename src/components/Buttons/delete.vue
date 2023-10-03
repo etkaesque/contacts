@@ -40,7 +40,7 @@ export default {
   background-color: #a61a11 !important;
   width: 50px !important;
   height: 50px !important;
-  filter: drop-shadow(1px 1px 2px black) !important;
+  filter: drop-shadow(0.5px 0.5px 0.5px black) !important;
   z-index: 1 !important;
 }
 </style>

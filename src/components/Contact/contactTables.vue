@@ -2,11 +2,11 @@
   <div class="w-full">
     <md-table>
       <md-table-row class="headerRow">
-        <md-table-head>Vardas ir pavardė</md-table-head>
-        <md-table-head>Pozicija</md-table-head>
-        <md-table-head>Telefono numeris</md-table-head>
-        <md-table-head>Elektroninis paštas</md-table-head>
-        <md-table-head>Adresas</md-table-head>
+        <md-table-head class="font-medium">Vardas ir pavardė</md-table-head>
+        <md-table-head class="font-medium">Pozicija</md-table-head>
+        <md-table-head class="font-medium">Telefono numeris</md-table-head>
+        <md-table-head class="font-medium">Elektroninis paštas</md-table-head>
+        <md-table-head class="font-medium">Adresas</md-table-head>
       </md-table-row>
 
       <md-table-row
@@ -70,8 +70,9 @@ export default {
   width: 100% !important;
 }
 .headerRow * {
-  font-size: 20px;
+  font-size: 16px;
   color: black;
+  
 }
 
 .tableRow:hover {

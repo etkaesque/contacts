@@ -44,15 +44,20 @@ export default {
       state.contactsTotalItems = state.contactsTotalItems - 1;
     },
     SET_CURRENT_PAGE(state, page) {
+
       let maxPages = Math.ceil(state.contactsTotalItems / state.perPage);
+
+      if (page > maxPages) {
+        page = maxPages;
+      }
+
 
       if (page < 1) {
         page = 1;
       }
 
-      if (page > maxPages) {
-        page = maxPages;
-      }
+
+
 
       state.currentPage = page;
     },

@@ -37,7 +37,7 @@
 
     <div class="bg-opacity-100 w-full">
       <input
-        @input="handleSearch"
+        v-debounce:400ms="handleSearch"
         v-model="searchTerm"
         type="text"
         class="h-10 bg-searchBar text-slate-900 bg-opacity-0 p-1 w-full focus:outline-none"

@@ -1,13 +1,13 @@
 <template>
   <md-button class="dissmiss-btn md-icon-button md-raised" @click="dismiss">
-    <md-icon style="width: 30px !important; height: 30px !important">
-      <img :src="addIcon" alt="" style="transform: rotate(45deg)" />
+    <md-icon>
+      <img :src="addIcon" alt="" style="transform: rotate(0deg)" />
     </md-icon>
   </md-button>
 </template>
 
 <script>
-import addIcon from "../../assets/add.svg";
+import addIcon from "../../assets/dismiss.svg";
 import { mapMutations } from "vuex";
 export default {
   data() {
@@ -27,9 +27,9 @@ export default {
 <style>
 .dissmiss-btn {
   background-color: #0054a6 !important;
-  width: 50px !important;
-  height: 50px !important;
-  filter: drop-shadow(1px 1px 2px black) !important;
+  width: auto !important;
+  height: 40px !important;
+  filter: drop-shadow(0.5px 0.5px 0.5px black) !important;
   z-index: 1 !important;
 }
 </style>

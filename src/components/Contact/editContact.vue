@@ -1,223 +1,229 @@
 <template>
-  <form action="sumbit" class="grid grid-cols-3 gap-x-14">
-    <div
-      class="w-full text-2xl col-start-1 col-end-4 row-start-1 row-end-2 flex justify-end"
-    >
-      <dissmissButton></dissmissButton>
-    </div>
-
-    <div class="col-start-1 col-end-2 row-start-2 row-end-3">
-      <h2 class="text-2xl">Redaguoti kontaktą:</h2>
-      <div class="flex flex-col gap-y-4">
-        <md-field ref="name">
-          <label>Vardas</label>
-          <md-input maxlength="35" v-model="formData.name"></md-input>
-          <span v-if="this.formData.name.trim() === ''" class="md-error">{{
-            validation.message
-          }}</span>
-
-          <span v-else-if="nameSpecial" class="md-error">
-            {{ validation.textTooSpecial }}</span
-          >
-
-          <span v-else-if="nameLow" class="md-error">{{
-            validation.textTooLow
-          }}</span>
-        </md-field>
-
-        <md-field ref="surname">
-          <label>Pavardė</label>
-          <md-input maxlength="35" v-model="formData.surname"></md-input>
-          <span v-if="this.formData.surname.trim() === ''" class="md-error">{{
-            validation.message
-          }}</span>
-
-          <span v-else-if="surnameSpecial" class="md-error">
-            {{ validation.textTooSpecial }}</span
-          >
-
-          <span v-else-if="surnameLow" class="md-error">{{
-            validation.textTooLow
-          }}</span>
-        </md-field>
-
-        <md-field ref="position">
-          <label>Pozicija</label>
-          <md-input maxlength="35" v-model="formData.position"></md-input>
-          <span v-if="this.formData.position.trim() === ''" class="md-error">{{
-            validation.message
-          }}</span>
-
-          <span v-else-if="positionSpecial" class="md-error">
-            {{ validation.textTooSpecial }}</span
-          >
-
-          <span v-else-if="positionLow" class="md-error">{{
-            validation.textTooLow
-          }}</span>
-        </md-field>
+  <div class="contact">
+    <form action="sumbit" class="grid grid-cols-3 gap-x-14">
+      <div
+        class="w-full text-2xl col-start-1 col-end-4 row-start-1 row-end-2 flex justify-end"
+      >
+        <dissmissButton></dissmissButton>
       </div>
 
-      <div>
-        <h3 class="text-lg pt-4">Kontaktinė informacija</h3>
+      <div class="col-start-1 col-end-2 row-start-2 row-end-3">
+        <h2 class="text-2xl">Redaguoti kontaktą:</h2>
+        <div class="flex flex-col gap-y-4">
+          <md-field ref="name">
+            <label>Vardas</label>
+            <md-input maxlength="35" v-model="formData.name"></md-input>
+            <span v-if="this.formData.name.trim() === ''" class="md-error">{{
+              validation.message
+            }}</span>
 
-        <md-field ref="email">
-          <label>Elektroninis paštas</label>
-          <md-input maxlength="40" v-model="formData.email"></md-input>
-          <span class="md-error">{{
-            formData.email == "" ? validation.message : validation.email
-          }}</span>
-        </md-field>
+            <span v-else-if="nameSpecial" class="md-error">
+              {{ validation.textTooSpecial }}</span
+            >
 
-        <md-field ref="phone_number">
-          <label>Telefono numeris</label>
-          <md-input v-model="formData.phone_number" maxlength="15"></md-input>
-          <span class="md-error" style="max-width: 180px">{{
-            validation.phone
-          }}</span>
-        </md-field>
-      </div>
-    </div>
+            <span v-else-if="nameLow" class="md-error">{{
+              validation.textTooLow
+            }}</span>
+          </md-field>
 
-    <div class="md-layout-item col-start-2 col-end-3 row-start-2 row-end-3">
-      <h2 class="text-2xl">Įmonės detalės:</h2>
-      <div class="flex flex-col gap-y-4">
-        <md-field ref="company_id">
-          <label for="company">Įmonė</label>
-          <md-select
-            ref="company"
-            v-model="formData.company_id"
-            name="company"
-            id="company"
-            @input="handleCompany(formData.company_id)"
-          >
-            <md-option value="''" disabled>Pasirinkite įmonę</md-option>
-            <md-option v-for="company in companies" :value="company.id">{{
-              company.name
-            }}</md-option>
-          </md-select>
-          <span class="md-error">{{ validation.message }}</span>
-        </md-field>
+          <md-field ref="surname">
+            <label>Pavardė</label>
+            <md-input maxlength="35" v-model="formData.surname"></md-input>
+            <span v-if="this.formData.surname.trim() === ''" class="md-error">{{
+              validation.message
+            }}</span>
 
-        <md-field ref="office_id">
-          <label for="office">Ofisas</label>
-          <md-select
-            v-model="formData.office_id"
-            name="office"
-            id="office"
-            @input="handleOffice(formData.office_id)"
-          >
-            <md-option value="''" disabled>Pasirinkite ofisą</md-option>
-            <div v-for="office in offices" :key="office.expand.office_id.id">
-              <md-option :value="office.expand.office_id.id">{{
-                office.expand.office_id.name
-              }}</md-option>
-            </div>
-          </md-select>
-          <span class="md-error">{{ validation.message }}</span>
-        </md-field>
+            <span v-else-if="surnameSpecial" class="md-error">
+              {{ validation.textTooSpecial }}</span
+            >
+
+            <span v-else-if="surnameLow" class="md-error">{{
+              validation.textTooLow
+            }}</span>
+          </md-field>
+
+          <md-field ref="position">
+            <label>Pozicija</label>
+            <md-input maxlength="35" v-model="formData.position"></md-input>
+            <span
+              v-if="this.formData.position.trim() === ''"
+              class="md-error"
+              >{{ validation.message }}</span
+            >
+
+            <span v-else-if="positionSpecial" class="md-error">
+              {{ validation.textTooSpecial }}</span
+            >
+
+            <span v-else-if="positionLow" class="md-error">{{
+              validation.textTooLow
+            }}</span>
+          </md-field>
+        </div>
 
         <div>
-          <md-field ref="division_id">
-            <label for="font">Padalinys</label>
+          <h3 class="text-lg pt-4">Kontaktinė informacija</h3>
 
+          <md-field ref="email">
+            <label>Elektroninis paštas</label>
+            <md-input maxlength="40" v-model="formData.email"></md-input>
+            <span class="md-error">{{
+              formData.email == "" ? validation.message : validation.email
+            }}</span>
+          </md-field>
+
+          <md-field ref="phone_number">
+            <label>Telefono numeris</label>
+            <md-input v-model="formData.phone_number" maxlength="15"></md-input>
+            <span class="md-error" style="max-width: 180px">{{
+              validation.phone
+            }}</span>
+          </md-field>
+        </div>
+      </div>
+
+      <div class="md-layout-item col-start-2 col-end-3 row-start-2 row-end-3">
+        <h2 class="text-2xl">Įmonės detalės:</h2>
+        <div class="flex flex-col gap-y-4">
+          <md-field ref="company_id">
+            <label for="company">Įmonė</label>
             <md-select
-              v-model="formData.division_id"
-              name="font"
-              id="division"
-              @input="handleDivisions(formData.division_id)"
+              ref="company"
+              v-model="formData.company_id"
+              name="company"
+              id="company"
+              @input="handleCompany(formData.company_id)"
             >
-              <md-option value="''" disabled>Pasirinkite padalinį</md-option>
+              <md-option value="''" disabled>Pasirinkite įmonę</md-option>
+              <md-option v-for="company in companies" :value="company.id">{{
+                company.name
+              }}</md-option>
+            </md-select>
+            <span class="md-error">{{ validation.message }}</span>
+          </md-field>
 
-              <div
-                v-for="division in divisions"
-                :key="division.expand.division_id.id"
-              >
-                <md-option :value="division.expand.division_id.id">{{
-                  division.expand.division_id.name
+          <md-field ref="office_id">
+            <label for="office">Ofisas</label>
+            <md-select
+              v-model="formData.office_id"
+              name="office"
+              id="office"
+              @input="handleOffice(formData.office_id)"
+            >
+              <md-option value="''" disabled>Pasirinkite ofisą</md-option>
+              <div v-for="office in offices" :key="office.expand.office_id.id">
+                <md-option :value="office.expand.office_id.id">{{
+                  office.expand.office_id.name
                 }}</md-option>
               </div>
             </md-select>
-
             <span class="md-error">{{ validation.message }}</span>
           </md-field>
 
-          <md-field ref="department_id">
-            <label for="font">Skyrius</label>
-            <md-select
-              @input="handleDepartment(formData.department_id)"
-              v-model="formData.department_id"
-              name="department"
-              id="department"
-            >
-              <md-option value="''" disabled>Pasirinkite skyrių</md-option>
+          <div>
+            <md-field ref="division_id">
+              <label for="font">Padalinys</label>
 
-              <div v-if="departments.length != 0">
+              <md-select
+                v-model="formData.division_id"
+                name="font"
+                id="division"
+                @input="handleDivisions(formData.division_id)"
+              >
+                <md-option value="''" disabled>Pasirinkite padalinį</md-option>
+
                 <div
-                  v-for="department in departments"
-                  :key="department.expand.department_id.id"
+                  v-for="division in divisions"
+                  :key="division.expand.division_id.id"
                 >
-                  <md-option :value="department.expand.department_id.id">{{
-                    department.expand.department_id.name
+                  <md-option :value="division.expand.division_id.id">{{
+                    division.expand.division_id.name
                   }}</md-option>
                 </div>
-              </div>
+              </md-select>
 
-              <md-option :value="''"></md-option>
-            </md-select>
-            <span class="md-error">{{ validation.message }}</span>
-          </md-field>
+              <span class="md-error">{{ validation.message }}</span>
+            </md-field>
 
-          <md-field ref="group_id">
-            <label for="font">Grupė</label>
+            <md-field ref="department_id">
+              <label for="font">Skyrius</label>
+              <md-select
+                @input="handleDepartment(formData.department_id)"
+                v-model="formData.department_id"
+                name="department"
+                id="department"
+              >
+                <md-option value="''" disabled>Pasirinkite skyrių</md-option>
 
-            <md-select v-model="formData.group_id" name="group" id="group">
-              <md-option value="''" disabled>Pasirinkite grupę</md-option>
-
-              <div v-if="groups.length != 0">
-                <div v-for="group in groups" :key="group.expand.group_id.id">
-                  <md-option :value="group.expand.group_id.id"
-                    >{{ group.expand.group_id.name }}
-                  </md-option>
+                <div v-if="departments.length != 0">
+                  <div
+                    v-for="department in departments"
+                    :key="department.expand.department_id.id"
+                  >
+                    <md-option :value="department.expand.department_id.id">{{
+                      department.expand.department_id.name
+                    }}</md-option>
+                  </div>
                 </div>
-              </div>
 
-              <md-option :value="''"></md-option>
-            </md-select>
-            <span class="md-error">{{ validation.message }}</span>
-          </md-field>
+                <md-option :value="''"></md-option>
+              </md-select>
+              <span class="md-error">{{ validation.message }}</span>
+            </md-field>
+
+            <md-field ref="group_id">
+              <label for="font">Grupė</label>
+
+              <md-select v-model="formData.group_id" name="group" id="group">
+                <md-option value="''" disabled>Pasirinkite grupę</md-option>
+
+                <div v-if="groups.length != 0">
+                  <div v-for="group in groups" :key="group.expand.group_id.id">
+                    <md-option :value="group.expand.group_id.id"
+                      >{{ group.expand.group_id.name }}
+                    </md-option>
+                  </div>
+                </div>
+
+                <md-option :value="''"></md-option>
+              </md-select>
+              <span class="md-error">{{ validation.message }}</span>
+            </md-field>
+          </div>
+        </div>
+
+        <div class="fileLabelWrapper flex justify-center w-full">
+          <label class="fileLabel uppercase" for="photo"
+            >Įkelti nuotrauką</label
+          >
+          <input
+            type="file"
+            name="photo"
+            id="photo"
+            class="fileInput"
+            @change="handlePhotoUpload($event)"
+          />
+          <div class="photoValidation">
+            <span style="color: #a61a11 !important" v-if="!isFilePhoto">
+              {{ validation.fileNotPhoto }}</span
+            >
+            <span style="color: #a61a11 !important" v-else-if="isFileTooLarge">
+              {{ validation.fileTooLarge }}</span
+            >
+            <span v-else>{{
+              photoSelected ? "Failas pasirinktas." : "Pasirinkite failą."
+            }}</span>
+          </div>
         </div>
       </div>
 
-      <div class="fileLabelWrapper flex justify-center w-full">
-        <label class="fileLabel uppercase" for="photo">Įkelti nuotrauką</label>
-        <input
-          type="file"
-          name="photo"
-          id="photo"
-          class="fileInput"
-          @change="handlePhotoUpload($event)"
-        />
-        <div class="photoValidation">
-          <span style="color: #a61a11 !important" v-if="!isFilePhoto">
-            {{ validation.fileNotPhoto }}</span
-          >
-          <span style="color: #a61a11 !important" v-else-if="isFileTooLarge">
-            {{ validation.fileTooLarge }}</span
-          >
-          <span v-else>{{
-            photoSelected ? "Failas pasirinktas." : "Pasirinkite failą."
-          }}</span>
-        </div>
+      <div class="col-start-3 col-end-4 flex flex-col row-start-3 row-end-4">
+        <button class="submitBtn uppercase" @click="handleSubmit($event)">
+          Redaguoti
+        </button>
       </div>
-    </div>
-
-    <div class="col-start-3 col-end-4 flex flex-col row-start-3 row-end-4">
-      <button class="submitBtn uppercase" @click="handleSubmit($event)">
-        Redaguoti
-      </button>
-    </div>
-  </form>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -595,6 +601,7 @@ export default {
 </script>
 
 <style>
+
 label {
   color: rgba(0, 0, 0, 0.589) !important;
 }

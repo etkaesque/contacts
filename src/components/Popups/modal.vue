@@ -12,11 +12,15 @@
 import { mapGetters, mapMutations } from "vuex";
 import editContact from "../Contact/editContact.vue";
 import createContact from "../Contact/addContact.vue";
+import editCompany from "../Company/editCompany.vue"
+import addCompany from "../Company/addCompany.vue";
 
 export default {
   components: {
     editContact,
     createContact,
+    editCompany,
+    addCompany
   },
   computed: {
     ...mapGetters(["modal"]),
@@ -33,14 +37,21 @@ export default {
 </script>
 
 <style>
+
+.contact {
+  width: 800px !important;
+  padding: 10px 10px;
+  padding-left: 20px;
+}
+
 .modal {
-  min-width: 1000px;
+  width: auto;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #f7f4f4;
-  padding: 30px 20px !important;
+  padding: 20px 20px !important;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   z-index: 100;
   display: flex;

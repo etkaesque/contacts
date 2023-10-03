@@ -15,40 +15,25 @@ let contactsAPI = (store) => {
     if (searchTerm != "") {
       for (let w = 0; w < words.length; w++) {
         for (let p = 0; p < params.length; p++) {
-
-
           if (p == 0) {
-            termFilter += `(`
+            termFilter += `(`;
           }
-
-
           termFilter += `${params[p]}~"${words[w]}%"`;
-
-
           if (p !== params.length - 1) {
             termFilter += `||`;
           } else {
-            termFilter += `)`
+            termFilter += `)`;
           }
-
         }
-
-        if ((w !== words.length - 1)) {
+        if (w !== words.length - 1) {
           termFilter += `&&`;
         }
       }
-
     }
-
-
 
     if (termFilter !== "") {
-
       termFilter = `(${termFilter})`;
     }
-
-
-    console.log("termfilter", termFilter)
 
     if (filterData.company_id) {
       structureFilter += `company_id="${filterData.company_id}"`;
@@ -79,14 +64,13 @@ let contactsAPI = (store) => {
     }
 
     try {
-      console.log("CALLING IT, with this filter", filter);
       const contacts = await pb.collection("employees").getList(page, perPage, {
         expand: "office_id",
         filter,
       });
+
       return contacts;
-    } catch (err) {
-      console.log(err);
+    } catch {
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   }),

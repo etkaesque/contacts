@@ -3,7 +3,7 @@
     <Header></Header>
     <Main>
       <section>
-        <h1 class="text-5xl">Kontaktų sistema</h1>
+        <h1 class="text-5xl font-light">Kontaktų sistema</h1>
 
         <div class="flex items-center gap-5">
           <Search></Search>
