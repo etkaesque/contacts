@@ -10,7 +10,6 @@ let authAPI = (store) => {
         .authWithPassword(email, password, {
           expand: "permissions_id",
         });
-
       return authData;
     } catch {
       throw Error("Prisijungimas nepavyko.");

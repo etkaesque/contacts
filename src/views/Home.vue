@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen flex flex-col">
-    <Header></Header>
+ 
     <Main>
       <section>
         <h1 class="text-5xl font-light">Kontaktų sistema</h1>
@@ -33,7 +33,7 @@ import viewMode from "../components/Buttons/viewMode.vue";
 import paginationFilter from "../components/Buttons/paginationFilter.vue";
 import add from "../components/Buttons/add.vue";
 import Contacts from "../components/Contact/contacts.vue";
-import Header from "../components/header.vue";
+
 import Search from "../components/search.vue";
 import Pagination from "../components/pagination.vue";
 import Filters from "../components/filter.vue";
@@ -44,7 +44,6 @@ const pb = new PocketBase(SERVER_ADDR);
 
 export default {
   components: {
-    Header,
     Contacts,
     viewMode,
     add,

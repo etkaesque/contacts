@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header></Header>
+  
     <Main>
       <h1 class="text-6xl mb-2">Page not found</h1>
 
@@ -13,10 +13,5 @@
 </template>
 
 <script>
-import Header from "../components/header.vue";
-export default {
-  components: {
-    Header,
-  },
-};
+
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header></Header>
+
     <Main>
       <h1 class="text-5xl font-light mb-2">Įmonės</h1>
 
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import Header from "../components/header.vue";
+
 import Add from "../components/Buttons/add.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Edit from "../components/Buttons/editText.vue";
@@ -56,7 +56,6 @@ import Delete from "../components/Buttons/deleteText.vue";
 
 export default {
   components: {
-    Header,
     Add,
     Edit,
     Delete,

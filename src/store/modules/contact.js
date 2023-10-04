@@ -46,16 +46,15 @@ export default {
     SET_CURRENT_PAGE(state, page) {
       let maxPages = Math.ceil(state.contactsTotalItems / state.perPage);
 
-       console.log(maxPages)
       if (page >= maxPages) {
         page = maxPages;
       }
-
       if (page < 1) {
         page = 1;
       }
 
       state.currentPage = page;
+
     },
     SET_SEARCH_TERM(state, term) {
       state.searchTerm = term;
@@ -85,7 +84,8 @@ export default {
     async fetchContactById({ commit }, id) {
       try {
         const query = {
-          expand: `company_id,office_id,division_id,department_id,group_id`}
+          expand: `company_id,office_id,division_id,department_id,group_id`
+        }
         const contact = await this.fetchInstanceByIdFromDb(id, "employees", query);
         commit("SET_CONTACT", contact);
       } catch (error) {
@@ -97,11 +97,11 @@ export default {
       }
     },
 
-    async createContact({ commit, dispatch }, formData) {
+    async createContact({ commit, dispatch, getters }, formData) {
       try {
         await this.createInstanceInDb(formData, "employees");
 
-        dispatch("fetchContacts", {});
+        dispatch("fetchContacts", { page: getters.currentPage, searchTerm: getters.searchTerm, filterData: getters.filterData });
 
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -117,10 +117,10 @@ export default {
       }
     },
 
-    async editContact({ commit, dispatch }, { id, formData }) {
+    async editContact({ commit, dispatch, getters }, { id, formData }) {
       try {
         await this.editInstanceInDb(id, formData, "employees");
-        dispatch("fetchContacts", {});
+        dispatch("fetchContacts", { page: getters.currentPage, searchTerm: getters.searchTerm, filterData: getters.filterData });
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Kontaktas sėkmingai redaguotas.",
@@ -134,11 +134,17 @@ export default {
         });
       }
     },
-
-    async deleteContact({ commit, dispatch }, id) {
+    async deleteContact({ commit, dispatch, getters }, id) {
       try {
         await this.deleteInstanceInDb(id, "employees");
-        dispatch("fetchContacts", {});
+
+
+        if (getters.contacts.length === 1) {
+          commit("SET_CURRENT_PAGE", (getters.currentPage - 1))
+        }
+
+        dispatch("fetchContacts", { page: getters.currentPage, searchTerm: getters.searchTerm, filterData: getters.filterData });
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Kontaktas sėkmingai ištrintas`,

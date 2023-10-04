@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header></Header>
+  
 
     <Main v-if="Object.keys(contact).length != 0">
       <h1 class="text-6xl font-light mb-16">Detalesnė kontakto informacija</h1>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import Header from "../components/header.vue";
+
 import profileIcon from "../assets/user.svg";
 import { mapActions, mapGetters } from "vuex";
 export default {
@@ -77,9 +77,6 @@ export default {
     return {
       profileIcon,
     };
-  },
-  components: {
-    Header,
   },
   computed: {
     ...mapGetters(["contact"]),

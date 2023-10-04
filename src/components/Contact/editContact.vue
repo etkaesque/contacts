@@ -255,7 +255,7 @@ export default {
         textTooLow: "Bent trys raidės.",
         textTooSpecial: "Nenaudokite spec. simbolių, skaičių.",
         email: "Neteisingas e. paštas.",
-        phone: "Neteisingas formatas. Formato pvz.: +370 XXX XXXXX",
+        phone: "Numeris turi prasidėti + simboliu.",
         fileTooLarge: "Failo dydys neturi būti didesnis nei 5Mb.",
         fileNotPhoto:
           "Neteisingas failo formatas. Pridėkite JPEG arba PNG failą.",
@@ -561,6 +561,9 @@ export default {
     },
   },
   async created() {
+    console.log("activecontact is",this.activeContact)
+    console.log("contact is",this.contact)
+
     this.oldOffices = this.offices;
     this.oldDivisions = this.divisions;
     this.oldDepartments = this.departments;

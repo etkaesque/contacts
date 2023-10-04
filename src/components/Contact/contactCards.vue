@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center flex-wrap gap-6">
+  <div class="flex justify-start flex-wrap gap-6">
     <article v-for="contact in contacts" :key="contact.id">
       <router-link :to="`contact/${contact.id}`">
         <md-card md-with-hover class="card">

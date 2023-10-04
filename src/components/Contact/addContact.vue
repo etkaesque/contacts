@@ -230,7 +230,7 @@ export default {
         textTooLow: "Bent trys raidės.",
         textTooSpecial: "Nenaudokite spec. simbolių, skaičių.",
         email: "Neteisingas e. paštas.",
-        phone: "Neteisingas formatas. Formato pvz.: +370 XXX XXXXX",
+        phone: "Numeris turi prasidėti + simboliu.",
         fileTooLarge: "Failo dydis neturi būti didesnis nei 5Mb.",
         fileNotPhoto:
           "Neteisingas failo formatas. Pridėkite JPEG arba PNG failą.",

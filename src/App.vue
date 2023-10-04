@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Header  v-if="$route.path !== '/login'"> ></Header>
     <Modal v-if="modal.status"></Modal>
     <Delete
       :type="type"
@@ -17,6 +18,7 @@
 import Modal from "./components/Popups/modal.vue";
 import Delete from "./components/Popups/delete.vue";
 import Notification from "./components/Popups/notification.vue";
+import Header from "./components/header.vue"
 import { mapGetters, mapActions } from "vuex";
 
 export default {
@@ -33,6 +35,7 @@ export default {
     Modal,
     Delete,
     Notification,
+    Header
   },
   computed: {
     ...mapGetters([

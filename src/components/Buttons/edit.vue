@@ -27,9 +27,9 @@ export default {
     handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
-
-      this.CONTROL_MODAL({ status: true, form: "editContact" });
       this.SET_ACTIVE_CONTACT(this.contactId);
+      this.CONTROL_MODAL({ status: true, form: "editContact" });
+   
     },
   },
 };
