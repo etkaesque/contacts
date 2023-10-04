@@ -16,9 +16,15 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL"]),
+    ...mapMutations([
+      "CONTROL_MODAL",
+      "SET_ACTIVE_CONTACT",
+      "SET_ACTIVE_COMPANY",
+    ]),
     dismiss() {
       this.CONTROL_MODAL();
+      this.SET_ACTIVE_CONTACT();
+      this.SET_ACTIVE_COMPANY();
     },
   },
 };

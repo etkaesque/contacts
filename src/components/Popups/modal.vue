@@ -26,10 +26,12 @@ export default {
     ...mapGetters(["modal"]),
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL"]),
+    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_CONTACT","SET_ACTIVE_COMPANY"]),
     dismissModal(event) {
       if (event.target.className === "overlay") {
         this.CONTROL_MODAL();
+        this.SET_ACTIVE_CONTACT()
+        this.SET_ACTIVE_COMPANY()
       }
     },
   },

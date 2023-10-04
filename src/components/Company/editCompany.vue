@@ -9,7 +9,7 @@
 
       <md-field class="w-full">
         <label>Įmonės pavadinimas</label>
-        <md-input maxlength="35" v-model="companyName"></md-input>
+        <md-input maxlength="35" v-model="companyData.name"></md-input>
       </md-field>
 
       <button class="submitBtn uppercase" @click="handleSubmit()">
@@ -21,28 +21,39 @@
 
 <script>
 import dissmiss from "../Buttons/dissmiss.vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   data() {
     return {
-      companyName: "",
+      companyData: {
+        name: "",
+      },
     };
   },
   components: {
     dissmiss,
   },
+  computed: {
+    ...mapGetters(["active_company", "company"]),
+  },
   methods: {
+    ...mapActions(["editCompany", "fetchCompanyById"]),
     handleSubmit() {
-      console.log(this.companyName);
+      this.editCompany({ id: this.active_company, data: this.companyData });
     },
   },
+  watch: {
+    company(){
+      this.companyData.name = this.company.name;
+    }
+  }
+  
 };
 </script>
 
 <style>
-
 .editCompany {
   width: 350px !important;
 }
-
 </style>

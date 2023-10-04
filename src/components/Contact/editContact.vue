@@ -572,7 +572,6 @@ export default {
     this.SET_DIVISIONS();
     this.SET_DEPARTMENTS();
 
-    await this.fetchContactById(this.activeContact);
     await this.fetchCompanies();
 
     this.formData.name = this.contact.name;
@@ -601,7 +600,6 @@ export default {
 </script>
 
 <style>
-
 label {
   color: rgba(0, 0, 0, 0.589) !important;
 }

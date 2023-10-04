@@ -9,6 +9,7 @@ import { mapMutations } from "vuex";
 
 export default {
   props: {
+    type: String,
     id: String,
   },
   methods: {
@@ -17,8 +18,10 @@ export default {
       event.preventDefault();
       event.stopPropagation();
 
-      this.CONTROL_MODAL({ status: true, form: "editCompany" });
-      this.SET_ACTIVE_COMPANY(this.id);
+      if (this.type == `company`) {
+        this.SET_ACTIVE_COMPANY(this.id);
+        this.CONTROL_MODAL({ status: true, form: "editCompany" });
+      }
     },
   },
 };

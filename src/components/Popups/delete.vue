@@ -2,11 +2,8 @@
   <div class="overlay" @click="dismissModal">
     <div class="deletePopUp">
       <div class="h-5/6 truncate">
-        <h2 class="text-2xl">Ar tikrai norite ištrinti kontaktą?</h2>
-        <p class="opacity-80">
-          Vardas ir pavardė: {{ name }} {{ surname }} <br />
-          Pozicija: {{ position }}
-        </p>
+        <h2 class="text-2xl">Ar tikrai norite ištrinti {{ header }}?</h2>
+        <p v-html="text" class="opacity-80"></p>
       </div>
       <div class="w-full flex justify-end gap-5">
         <button class="text-teltonikaBlue uppercase" @click="handleDelete">
@@ -24,37 +21,51 @@
 import { mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {
-  data() {
-    return {
-      name: "",
-      surname: "",
-      position: "",
-    };
+  props: {
+    type: String,
+    text: String,
+    id: String,
+    header: String,
   },
-  computed: {
-    ...mapGetters(["activeContact", "contact"]),
-  },
+
   methods: {
-    ...mapActions(["fetchContactById", "deleteContact"]),
-    ...mapMutations(["CONTROL_DELETE"]),
+    ...mapActions(["deleteContact", "deleteCompany"]),
+    ...mapMutations([
+      "CONTROL_DELETE",
+      "SET_ACTIVE_CONTACT",
+      "SET_ACTIVE_COMPANY",
+    ]),
     dismiss() {
+      if (this.type == `company`) {
+        this.SET_ACTIVE_COMPANY();
+      } else if (this.type == `contact`) {
+        this.SET_ACTIVE_CONTACT();
+      }
+
       this.CONTROL_DELETE();
     },
     handleDelete() {
-      this.deleteContact(this.activeContact);
+      if (this.type == `company`) {
+        this.deleteCompany(this.id);
+        this.SET_ACTIVE_COMPANY();
+      } else if (this.type == `contact`) {
+        this.deleteContact(this.id);
+        this.SET_ACTIVE_CONTACT();
+      }
+
       this.CONTROL_DELETE();
     },
     dismissModal(event) {
       if (event.target.className === "overlay") {
+        if (this.type == `company`) {
+          this.SET_ACTIVE_COMPANY();
+        } else if (this.type == `contact`) {
+          this.SET_ACTIVE_CONTACT();
+        }
+
         this.CONTROL_DELETE();
       }
     },
-  },
-  async created() {
-    await this.fetchContactById(this.activeContact);
-    this.name = this.contact.name;
-    this.surname = this.contact.surname;
-    this.position = this.contact.position;
   },
 };
 </script>

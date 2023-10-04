@@ -22,7 +22,7 @@ export default {
     actions: {
       async fetchGroups({ commit }) {
         try {
-          const groups = await this.fetchGroupsFromDb();
+          const groups = await this.getFullList("groups", {sort: "-created"});
           commit("SET_GROUPS", groups);
         } catch (error) {
           commit("CONTROL_NOTIFICATION", {

@@ -27,7 +27,7 @@ export default {
   actions: {
     async fetchDepartments({ commit }) {
       try {
-        const departments = await this.fetchDepartmentsFromDb();
+        const departments = await this.getFullList("departments", {sort: "-created"});
         commit("SET_DEPARTMENTS", departments);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {

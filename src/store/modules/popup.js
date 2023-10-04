@@ -2,7 +2,7 @@ export default {
   state: {
     modal: { status: false, form: "" },
     deletePopUp: false,
-    notification: { status: false, isSuccess: false, message: "Kontaktas sėkmingai ištrintas." }
+    notification: { status: false, isSuccess: false, message: "" }
   },
   getters: {
     modal: (state) => state.modal,

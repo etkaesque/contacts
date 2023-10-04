@@ -57,14 +57,20 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentPage"]),
+    ...mapGetters(["currentPage", "filterData"]),
   },
   methods: {
-    ...mapActions(["searchContacts"]),
-    ...mapMutations(["SET_SEARCH_TERM"]),
+    ...mapActions(["fetchContacts"]),
+    ...mapMutations(["SET_SEARCH_TERM", "SET_CURRENT_PAGE"]),
     handleSearch() {
       const term = this.searchTerm.trim();
       this.SET_SEARCH_TERM(term);
+      this.SET_CURRENT_PAGE(1)
+      this.fetchContacts({
+        page: this.currentPage,
+        searchTerm: term,
+        filterData: this.filterData,
+      });
     },
   },
 };

@@ -9,7 +9,7 @@
 
       <md-field class="w-full">
         <label>Įmonės pavadinimas</label>
-        <md-input maxlength="35" v-model="companyName"></md-input>
+        <md-input maxlength="35" v-model="companyData.name"></md-input>
       </md-field>
 
       <button class="submitBtn uppercase" @click="handleSubmit()">
@@ -22,20 +22,22 @@
 <script>
 import dissmiss from "../Buttons/dissmiss.vue";
 import { mapActions } from "vuex";
-
 export default {
   data() {
     return {
-      companyName: "",
+      companyData: {
+        name: "",
+      },
     };
   },
   components: {
     dissmiss,
   },
   methods: {
-    ...mapActions(["addCompany"]),
+    ...mapActions(["createCompany"]),
+
     handleSubmit() {
-        // this.addCompany(this.companyName)
+      this.createCompany(this.companyData);
     },
   },
 };

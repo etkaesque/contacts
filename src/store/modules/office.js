@@ -22,7 +22,7 @@ export default {
   actions: {
     async fetchOffices({ commit }) {
       try {
-        const offices = await this.fetchOfficesFromDb();
+        const offices = await this.getFullList("offices",{sort: "-created"});
         commit("SET_OFFICES", offices);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {

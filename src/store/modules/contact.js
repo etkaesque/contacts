@@ -8,7 +8,7 @@ export default {
     currentPage: 1,
     searchTerm: "",
     perPage: CONTACTS_PER_PAGE,
-    filterData: {}
+    filterData: {},
   },
   getters: {
     contacts: (state) => state.contacts,
@@ -28,36 +28,32 @@ export default {
     },
     SET_FILTERS(state, filters) {
       state.filterData = filters;
-
     },
     SET_CONTACT(state, contact) {
       state.contact = contact;
     },
     SET_ACTIVE_CONTACT(state, id) {
-      state.activeContact = id;
+      if (id === undefined) {
+        state.activeContact = "";
+        state.contact = {}
+      } else {
+        state.activeContact = id;
+      }
     },
     SET_VIEW_MODE(state) {
       state.isCard = !state.isCard;
     },
-    POP(state, id) {
-      state.contacts = state.contacts.filter((contact) => contact.id !== id);
-      state.contactsTotalItems = state.contactsTotalItems - 1;
-    },
     SET_CURRENT_PAGE(state, page) {
-
       let maxPages = Math.ceil(state.contactsTotalItems / state.perPage);
 
-      if (page > maxPages) {
+       console.log(maxPages)
+      if (page >= maxPages) {
         page = maxPages;
       }
-
 
       if (page < 1) {
         page = 1;
       }
-
-
-
 
       state.currentPage = page;
     },
@@ -66,10 +62,17 @@ export default {
     },
   },
   actions: {
-    async fetchContacts({ commit }, { page = 1, searchTerm = "",filterData = {} }) {
+    async fetchContacts(
+      { commit },
+      { page = 1, searchTerm = "", filterData = {} }
+    ) {
       try {
-        const contacts = await this.fetchContactsFromDb(page, searchTerm, filterData);
-   
+        const contacts = await this.fetchContactsFromDb(
+          page,
+          searchTerm,
+          filterData
+        );
+
         commit("SET_CONTACTS", contacts);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -81,7 +84,9 @@ export default {
     },
     async fetchContactById({ commit }, id) {
       try {
-        const contact = await this.fetchContactByIdFromDb(id);
+        const query = {
+          expand: `company_id,office_id,division_id,department_id,group_id`}
+        const contact = await this.fetchInstanceByIdFromDb(id, "employees", query);
         commit("SET_CONTACT", contact);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -94,7 +99,7 @@ export default {
 
     async createContact({ commit, dispatch }, formData) {
       try {
-        await this.createContactInDb(formData);
+        await this.createInstanceInDb(formData, "employees");
 
         dispatch("fetchContacts", {});
 
@@ -106,7 +111,7 @@ export default {
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: `${error.message}`,
+          message: `Kontaktas nebuvo sukurtas.`,
           isSuccess: false,
         });
       }
@@ -114,7 +119,7 @@ export default {
 
     async editContact({ commit, dispatch }, { id, formData }) {
       try {
-        await this.editContactInDb(id, formData);
+        await this.editInstanceInDb(id, formData, "employees");
         dispatch("fetchContacts", {});
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -124,17 +129,16 @@ export default {
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: `${error.message}`,
+          message: `Kontaktas nebuvo redaguotas.`,
           isSuccess: false,
         });
       }
     },
 
-    async deleteContact({ commit }, id) {
+    async deleteContact({ commit, dispatch }, id) {
       try {
-        await this.deleteContactInDb(id);
-
-        commit("POP", id);
+        await this.deleteInstanceInDb(id, "employees");
+        dispatch("fetchContacts", {});
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Kontaktas sėkmingai ištrintas`,

@@ -86,23 +86,9 @@ export default {
       "SET_GROUPS",
       "SET_DIVISIONS",
       "SET_DEPARTMENTS",
+      "SET_CURRENT_PAGE",
+      "SET_SEARCH_TERM"
     ]),
-  },
-  watch: {
-    searchTerm() {
-      this.fetchContacts({
-        page: this.currentPage,
-        searchTerm: this.searchTerm,
-        filterData: this.filterData,
-      });
-    },
-    currentPage() {
-      this.fetchContacts({
-        page: this.currentPage,
-        searchTerm: this.searchTerm,
-        filterData: this.filterData,
-      });
-    },
   },
   async created() {
     this.SET_COMPANIES();
@@ -112,6 +98,14 @@ export default {
     this.SET_DEPARTMENTS();
     await this.fetchContacts({ page: this.currentPage });
   },
+  beforeRouteLeave(to, from, next) {
+    this.SET_CURRENT_PAGE(1)
+    this.SET_SEARCH_TERM("")
+    console.log("leaving root")
+  next();
+}
+
+  
 };
 </script>
 

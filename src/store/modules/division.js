@@ -10,7 +10,7 @@ export default {
   mutations: {
     SET_DIVISIONS(state, divisions) {
       if (divisions != undefined) {
-        state.divisions  = divisions;
+        state.divisions = divisions;
       } else {
         state.divisions = [];
       }
@@ -22,7 +22,9 @@ export default {
   actions: {
     async fetchDivisions({ commit }) {
       try {
-        const divisions = await this.fetchDivisionsFromDb();
+        const divisions = await this.getFullList("divisions", {
+          sort: "-created",
+        });
         commit("SET_DIVISIONS", divisions);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -34,7 +36,6 @@ export default {
     },
 
     async fetchOfficeDivisions({ commit }, id) {
-   
       try {
         const divisions = await this.getFullList("offices_divisions", {
           expand: "office_id,division_id",

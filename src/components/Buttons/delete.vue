@@ -27,7 +27,7 @@ export default {
     handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
-      
+
       this.CONTROL_DELETE();
       this.SET_ACTIVE_CONTACT(this.contactId);
     },

@@ -27,7 +27,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentPage", "perPage", "contactsTotalItems"]),
+    ...mapGetters([
+      "currentPage",
+      "perPage",
+      "contactsTotalItems",
+      "filterData",
+      "searchTerm",
+    ]),
     maxPages() {
       return Math.ceil(this.contactsTotalItems / this.perPage);
     },
@@ -38,6 +44,12 @@ export default {
     handlePagination(value) {
       const page = this.currentPage + value;
       this.SET_CURRENT_PAGE(page);
+
+      this.fetchContacts({
+        page: this.currentPage,
+        searchTerm: this.searchTerm,
+        filterData: this.filterData,
+      });
     },
   },
 };

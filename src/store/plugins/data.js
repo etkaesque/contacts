@@ -3,7 +3,7 @@ import PocketBase from "pocketbase";
 const pb = new PocketBase(SERVER_ADDR);
 
 let contactsAPI = (store) => {
-  (store.fetchContactsFromDb = async (page, searchTerm, filterData) => {
+  store.fetchContactsFromDb = async (page, searchTerm, filterData) => {
     const perPage = CONTACTS_PER_PAGE;
     let filter = "";
     let termFilter = "";
@@ -18,7 +18,7 @@ let contactsAPI = (store) => {
           if (p == 0) {
             termFilter += `(`;
           }
-          termFilter += `${params[p]}~"${words[w]}%"`;
+          termFilter += `${params[p]}~"%${words[w]}%"`;
           if (p !== params.length - 1) {
             termFilter += `||`;
           } else {
@@ -71,113 +71,50 @@ let contactsAPI = (store) => {
 
       return contacts;
     } catch {
+
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
-  }),
-    (store.fetchContactByIdFromDb = async (id) => {
-      try {
-        const contact = await pb
-          .collection("employees")
-          .getFirstListItem(`id="${id}"`, {
-            expand: `company_id,office_id,division_id,department_id,group_id`,
-          });
-
-        return contact;
-      } catch {
-        throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
-      }
-    });
-
-  store.fetchCompaniesFromDb = async () => {
+  };
+  store.fetchInstanceByIdFromDb = async (id, collection, query) => {
     try {
-      const companies = await pb.collection("companies").getFullList({
-        sort: "-created",
-      });
-
-      return companies;
+      const instance = await pb
+        .collection(collection)
+        .getFirstListItem(`id="${id}"`, query);
+      return instance;
     } catch {
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
-
-  store.fetchDepartmentsFromDb = async () => {
-    try {
-      const departments = await pb.collection("departments").getFullList({
-        sort: "-created",
-      });
-      return departments;
-    } catch {
-      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
-    }
-  };
-
-  store.fetchDivisionsFromDb = async () => {
-    try {
-      const divisions = await pb.collection("divisions").getFullList({
-        sort: "-created",
-      });
-      return divisions;
-    } catch {
-      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
-    }
-  };
-
-  store.fetchOfficesFromDb = async () => {
-    try {
-      const offices = await pb.collection("offices").getFullList({
-        sort: "-created",
-      });
-      return offices;
-    } catch {
-      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
-    }
-  };
-
   store.getFullList = async (collection, query) => {
     try {
       let records = await pb.collection(collection).getFullList(query);
-
       return records;
     } catch {
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
-
-  store.fetchGroupsFromDb = async () => {
+  store.createInstanceInDb = async (data, collection) => {
     try {
-      const groups = await pb.collection("groups").getFullList({
-        sort: "-created",
-      });
-      return groups;
+      const instance = await pb.collection(collection).create(data);
+      return instance;
     } catch {
-      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
+      throw Error;
     }
   };
-
-  store.createContactInDb = async (data) => {
+  store.editInstanceInDb = async (id, data, collection) => {
     try {
-      const contact = await pb.collection("employees").create(data);
-      return contact;
+      const instance = await pb.collection(collection).update(id, data);
+      return instance;
     } catch {
-      throw Error(`Kontaktas nebuvo sukurtas.`);
+      throw Error;
     }
   };
-
-  store.editContactInDb = async (id, data) => {
+  store.deleteInstanceInDb = async (id, collection) => {
     try {
-      const contact = await pb.collection("employees").update(id, data);
-      return contact;
+      const instance = await pb.collection(collection).delete(id);
+      return instance;
     } catch {
-      throw Error(`Kontaktas nebuvo redaguotas.`);
-    }
-  };
-
-  store.deleteContactInDb = async (id) => {
-    try {
-      const contact = await pb.collection("employees").delete(id);
-      return contact;
-    } catch {
-      throw Error(`Kontaktas nebuvo ištrintas.`);
+      throw Error;
     }
   };
 };

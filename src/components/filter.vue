@@ -1,88 +1,87 @@
 <template>
   <div class="flex gap-x-5">
     <md-field class="field" ref="company_id">
-      <label for="company">Filtruoti įmones...</label>
+      <label v-if="filterData.company_id != ''" for="company">Įmonė</label>
       <md-select
         v-model="filterData.company_id"
         name="company"
         id="company"
         @input="handleCompany(filterData.company_id)"
       >
-        <md-option value="''" disabled>Pasirinkite įmonę</md-option>
+        <md-option :value="''">Filtruoti įmones...</md-option>
         <md-option v-for="company in companies" :value="company.id">{{
           company.name
         }}</md-option>
-        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
 
     <md-field class="field" ref="office_id">
-      <label for="office">Filtruoti ofisus...</label>
+      <label v-if="filterData.office_id != ''" for="office">Ofisas</label>
       <md-select
         v-model="filterData.office_id"
         name="office"
         id="office"
         @input="handleOffice(filterData.office_id)"
       >
-        <md-option value="''" disabled>Pasirinkite ofisą</md-option>
+        <md-option class="optionLabels" :value="''">
+          Filtruoti ofisus...
+        </md-option>
+
         <md-option
           v-for="office in offices"
           :value="office.expand.office_id.id"
           >{{ office.expand.office_id.name }}</md-option
         >
-        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
 
     <md-field class="field" ref="division_id">
-      <label for="font">Filtruoti padalinius...</label>
+      <label v-if="filterData.division_id != ''" for="font">Padalinys</label>
       <md-select
         v-model="filterData.division_id"
         name="font"
         id="division"
         @input="handleDivisions(filterData.division_id)"
       >
-        <md-option value="''" disabled>Pasirinkite padalinį</md-option>
+        <md-option :value="''">Filtruoti padalinius...</md-option>
         <md-option
           v-for="division in divisions"
           :value="division.expand.division_id.id"
           >{{ division.expand.division_id.name }}</md-option
         >
-        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
 
     <md-field class="field" ref="department_id">
-      <label for="font">Filtruoti skyrius...</label>
+      <label v-if="filterData.department_id != ''" for="font">Skyrius</label>
       <md-select
         @input="handleDepartment(filterData.department_id)"
         v-model="filterData.department_id"
         name="department"
         id="department"
       >
-        <md-option value="''" disabled>Pasirinkite skyrių</md-option>
+        <md-option :value="''">Filtruoti skyrius...</md-option>
         <md-option
           v-for="department in departments"
           :value="department.expand.department_id.id"
           >{{ department.expand.department_id.name }}</md-option
         >
-        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
 
     <md-field class="field" ref="group_id">
-      <label for="font">Filtruoti grupes...</label>
+      <label v-if="filterData.group_id != ''" for="font">Grupė</label>
       <md-select
         @input="handleGroup(filterData.group_id)"
         v-model="filterData.group_id"
         name="group"
         id="group"
       >
-        <md-option value="''" disabled>Pasirinkite grupę</md-option>
+        <md-option :value="''">Filtruoti grupes...</md-option>
+
         <md-option v-for="group in groups" :value="group.expand.group_id.id">{{
           group.expand.group_id.name
         }}</md-option>
-        <md-option :value="''"></md-option>
       </md-select>
     </md-field>
   </div>
@@ -132,23 +131,6 @@ export default {
       "SET_CURRENT_PAGE",
     ]),
     async handleCompany(id) {
-      if (this.filterData.company_id == "") {
-        this.filterData.office_id = "";
-        this.filterData.division_id = "";
-        this.filterData.department_id = "";
-        this.filterData.group_id = "";
-        this.SET_OFFICES();
-        this.SET_GROUPS();
-        this.SET_DIVISIONS();
-        this.SET_DEPARTMENTS();
-
-        await this.fetchContacts({
-          page: this.currentPage,
-          searchTerm: this.searchTerm,
-          filterData: this.filterData,
-        });
-      }
-
       this.filterData.office_id = "";
       this.filterData.division_id = "";
       this.filterData.department_id = "";
@@ -158,11 +140,10 @@ export default {
       this.SET_GROUPS();
       this.SET_DIVISIONS();
       this.SET_DEPARTMENTS();
-
       this.SET_CURRENT_PAGE(1);
       this.SET_FILTERS(this.filterData);
 
-      await this.fetchCompanyOffices(id);
+      await this.fetchCompanyOffices(this.filterData.company_id);
       await this.fetchContacts({
         page: this.currentPage,
         searchTerm: this.searchTerm,
@@ -170,26 +151,21 @@ export default {
       });
     },
     async handleOffice(id) {
-      if (this.filterData.company_id == "") {
-        return;
-      }
+      console.log("hello from handle Office");
 
       if (this.filterData.office_id == "") {
-        this.filterData.division_id = "";
-        this.filterData.department_id = "";
-        this.filterData.group_id = "";
-        this.SET_GROUPS();
-        this.SET_DEPARTMENTS();
-        this.SET_DIVISIONS();
-        await this.fetchCompanies();
-        await this.fetchContacts({
-          page: this.currentPage,
-          searchTerm: this.searchTerm,
-          filterData: this.filterData,
-        });
-
+        console.log("office id is empty");
         return;
       }
+
+      // if (this.filterData.company_id == "") {
+      //   return;
+      // } else if (
+      //   this.filterData.company_id != "" &&
+      //   this.filterData.office_id == ""
+      // ) {
+      //   return;
+      // }
 
       this.filterData.division_id = "";
       this.filterData.department_id = "";
@@ -209,25 +185,34 @@ export default {
       });
     },
     async handleDivisions(id) {
-      if (this.filterData.office_id == "") {
-        return;
-      }
+      // console.log("hello from handle division")
+      // if (this.filterData.office_id == "") {
+      //   return;
+      // } else if (
+      //   this.filterData.division_id == "" &&
+      //   this.filterData.office_id != ""
+      // ) {
+      //   return;
+      // // }
 
-      if (this.filterData.division_id == "") {
-        this.filterData.department_id = "";
-        this.filterData.group_id = "";
-        this.SET_GROUPS();
-        this.SET_DEPARTMENTS();
+      // if (this.filterData.division_id == "clear") {
+      //   this.filterData.division_id = "";
+      //   this.filterData.department_id = "";
+      //   this.filterData.group_id = "";
 
-        await this.fetchOfficeDivisions(this.filterData.office_id);
-        await this.fetchContacts({
-          page: this.currentPage,
-          searchTerm: this.searchTerm,
-          filterData: this.filterData,
-        });
+      //   this.SET_GROUPS();
+      //   this.SET_DEPARTMENTS();
+      //   this.SET_FILTERS(this.filterData);
+      //   this.SET_CURRENT_PAGE(1);
 
-        return;
-      }
+      //   await this.fetchOfficeDivisions(this.filterData.office_id);
+      //   await this.fetchContacts({
+      //     page: this.currentPage,
+      //     searchTerm: this.searchTerm,
+      //     filterData: this.filterData,
+      //   });
+      //   return;
+      // }
 
       this.filterData.department_id = "";
       this.filterData.group_id = "";
@@ -246,7 +231,7 @@ export default {
     },
 
     async handleDepartment(id) {
-      console.log("department", this.filterData.department_id);
+      console.log("hello from handle department");
 
       if (this.filterData.division_id == "") {
         return;
@@ -255,6 +240,8 @@ export default {
       if (this.filterData.department_id == "") {
         this.filterData.group_id = "";
         this.SET_GROUPS();
+        this.SET_CURRENT_PAGE(1);
+        this.SET_FILTERS(this.filterData);
 
         await this.fetchContacts({
           page: this.currentPage,
@@ -278,7 +265,7 @@ export default {
       });
     },
     async handleGroup(id) {
-      console.log("group is here");
+      console.log("hello from handle group");
 
       if (this.filterData.department_id == "") {
         return;
@@ -286,6 +273,9 @@ export default {
 
       if (this.filterData.group_id == "") {
         this.filterData.group_id = "";
+
+        this.SET_CURRENT_PAGE(1);
+        this.SET_FILTERS(this.filterData);
 
         await this.fetchContacts({
           page: this.currentPage,

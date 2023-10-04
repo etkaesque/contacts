@@ -35,7 +35,8 @@
               <md-table-cell>{{ company.name }}</md-table-cell>
               <md-table-cell>
                 <div class="flex gap-3 justify-end">
-                  <Edit></Edit><Delete></Delete>
+                  <Edit :id="company.id" :type="`company`"></Edit>
+                  <Delete :id="company.id" :type="`company`"></Delete>
                 </div>
               </md-table-cell>
             </md-table-row>
@@ -80,8 +81,6 @@ export default {
   },
   async created() {
     await this.fetchCompanies();
-
-    console.log(this.companies);
   },
 };
 </script>
