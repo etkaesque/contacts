@@ -105,7 +105,8 @@ let contactsAPI = (store) => {
     try {
       const instance = await pb.collection(collection).update(id, data);
       return instance;
-    } catch {
+    } catch(err) {
+      console.log(err)
       throw Error;
     }
   };

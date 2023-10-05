@@ -86,7 +86,8 @@ export default {
       "SET_DIVISIONS",
       "SET_DEPARTMENTS",
       "SET_CURRENT_PAGE",
-      "SET_SEARCH_TERM"
+      "SET_SEARCH_TERM",
+      "SET_FILTERS"
     ]),
   },
   async created() {
@@ -100,6 +101,7 @@ export default {
   beforeRouteLeave(to, from, next) {
     this.SET_CURRENT_PAGE(1)
     this.SET_SEARCH_TERM("")
+    this.SET_FILTERS()
     console.log("leaving root")
   next();
 }

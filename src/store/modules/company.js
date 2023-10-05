@@ -4,11 +4,13 @@ export default {
     company: {},
     active_company: "",
     totalCompanies: 0,
+    active_structure: { id: "", type: "", structure: {} },
   },
   getters: {
     companies: (state) => state.companies,
     company: (state) => state.company,
     active_company: (state) => state.active_company,
+    active_structure: (state) => state.active_structure,
     totalCompanies: (state) => state.totalCompanies,
   },
   mutations: {
@@ -26,6 +28,13 @@ export default {
         state.company = {};
       } else {
         state.active_company = id;
+      }
+    },
+    SET_ACTIVE_STRUCTURE(state, { id, type, structure }) {
+      if (id == undefined && type == undefined && structure == undefined) {
+        state.active_structure = { id: "", type: "", structure: {} };
+      } else {
+        state.active_structure = { id: id, type: type, structure: structure };
       }
     },
     SET_COMPANY(state, company) {
@@ -112,5 +121,6 @@ export default {
         });
       }
     },
+
   },
 };

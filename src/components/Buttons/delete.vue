@@ -3,7 +3,7 @@
     class="delete-btn md-icon-button md-raised"
     @click="handleClick($event)"
   >
-    <md-icon style="width: 30px !important; height: 30px !important">
+    <md-icon style="width: 25px !important; height: 25px !important">
       <img :src="deleteIcon" alt="" />
     </md-icon>
   </md-button>
@@ -38,8 +38,8 @@ export default {
 <style>
 .delete-btn {
   background-color: #a61a11 !important;
-  width: 50px !important;
-  height: 50px !important;
+  width: 45px !important;
+  height: 45px !important;
   filter: drop-shadow(0.5px 0.5px 0.5px black) !important;
   z-index: 1 !important;
 }

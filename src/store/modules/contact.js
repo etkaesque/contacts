@@ -27,7 +27,11 @@ export default {
       state.contactsTotalItems = contacts.totalItems;
     },
     SET_FILTERS(state, filters) {
-      state.filterData = filters;
+      if (filters === undefined) {
+        state.filterData = {};
+      } else {
+        state.filterData = filters;
+      }
     },
     SET_CONTACT(state, contact) {
       state.contact = contact;
@@ -35,7 +39,7 @@ export default {
     SET_ACTIVE_CONTACT(state, id) {
       if (id === undefined) {
         state.activeContact = "";
-        state.contact = {}
+        state.contact = {};
       } else {
         state.activeContact = id;
       }
@@ -54,7 +58,6 @@ export default {
       }
 
       state.currentPage = page;
-
     },
     SET_SEARCH_TERM(state, term) {
       state.searchTerm = term;
@@ -84,9 +87,13 @@ export default {
     async fetchContactById({ commit }, id) {
       try {
         const query = {
-          expand: `company_id,office_id,division_id,department_id,group_id`
-        }
-        const contact = await this.fetchInstanceByIdFromDb(id, "employees", query);
+          expand: `company_id,office_id,division_id,department_id,group_id`,
+        };
+        const contact = await this.fetchInstanceByIdFromDb(
+          id,
+          "employees",
+          query
+        );
         commit("SET_CONTACT", contact);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -96,12 +103,15 @@ export default {
         });
       }
     },
-
     async createContact({ commit, dispatch, getters }, formData) {
       try {
         await this.createInstanceInDb(formData, "employees");
 
-        dispatch("fetchContacts", { page: getters.currentPage, searchTerm: getters.searchTerm, filterData: getters.filterData });
+        dispatch("fetchContacts", {
+          page: getters.currentPage,
+          searchTerm: getters.searchTerm,
+          filterData: getters.filterData,
+        });
 
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -116,11 +126,14 @@ export default {
         });
       }
     },
-
     async editContact({ commit, dispatch, getters }, { id, formData }) {
       try {
         await this.editInstanceInDb(id, formData, "employees");
-        dispatch("fetchContacts", { page: getters.currentPage, searchTerm: getters.searchTerm, filterData: getters.filterData });
+        dispatch("fetchContacts", {
+          page: getters.currentPage,
+          searchTerm: getters.searchTerm,
+          filterData: getters.filterData,
+        });
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Kontaktas sėkmingai redaguotas.",
@@ -138,12 +151,15 @@ export default {
       try {
         await this.deleteInstanceInDb(id, "employees");
 
-
         if (getters.contacts.length === 1) {
-          commit("SET_CURRENT_PAGE", (getters.currentPage - 1))
+          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
         }
 
-        dispatch("fetchContacts", { page: getters.currentPage, searchTerm: getters.searchTerm, filterData: getters.filterData });
+        dispatch("fetchContacts", {
+          page: getters.currentPage,
+          searchTerm: getters.searchTerm,
+          filterData: getters.filterData,
+        });
 
         commit("CONTROL_NOTIFICATION", {
           status: true,

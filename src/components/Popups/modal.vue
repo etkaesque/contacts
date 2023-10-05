@@ -14,24 +14,30 @@ import editContact from "../Contact/editContact.vue";
 import createContact from "../Contact/addContact.vue";
 import editCompany from "../Company/editCompany.vue"
 import addCompany from "../Company/addCompany.vue";
+import addStructure from "../StructureForms/addStructure.vue";
+import editStructure from "../StructureForms/editStructure.vue";
 
 export default {
   components: {
     editContact,
     createContact,
     editCompany,
-    addCompany
+    addCompany,
+    editStructure,
+    addStructure
+
   },
   computed: {
     ...mapGetters(["modal"]),
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_CONTACT","SET_ACTIVE_COMPANY"]),
+    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_CONTACT","SET_ACTIVE_COMPANY","SET_ACTIVE_STRUCTURE"]),
     dismissModal(event) {
       if (event.target.className === "overlay") {
         this.CONTROL_MODAL();
         this.SET_ACTIVE_CONTACT()
         this.SET_ACTIVE_COMPANY()
+        this.SET_ACTIVE_STRUCTURE()
       }
     },
   },

@@ -254,36 +254,6 @@ export default {
       });
     },
   },
-  // watch: {
-  //   "filterData.office_id": async function (newId, oldId) {
-
-
-
-  //       this.filterData.division_id = "";
-  //       this.filterData.department_id = "";
-  //       this.filterData.group_id = "";
-
-  //       this.SET_GROUPS();
-  //       this.SET_DEPARTMENTS();
-  //       this.SET_DIVISIONS();
-  //       this.SET_CURRENT_PAGE(1);
-  //       this.SET_FILTERS(this.filterData);
-
-  //       await this.fetchOfficeDivisions(this.filterData.office_id);
-  //       await this.fetchContacts({
-  //         page: this.currentPage,
-  //         searchTerm: this.searchTerm,
-  //         filterData: this.filterData,
-  //       });
-
-
-
-
-
-
-
-  //   }
-  // },
   created() {
     this.fetchCompanies();
   },

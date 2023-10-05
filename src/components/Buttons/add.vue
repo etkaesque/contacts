@@ -19,14 +19,19 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL"]),
+    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_STRUCTURE"]),
     handleAdd() {
-      if (this.type === "Contact") {
-        this.CONTROL_MODAL({ status: true, form: "createContact" });
-      } else if (this.type === "Company") {
-        this.CONTROL_MODAL({ status: true, form: "addCompany" });
+      let options;
 
+      if (this.type == "Contact") {
+        options = { status: true, form: "createContact" };
+      } else if (this.type == "company") {
+        options = { status: true, form: "addCompany" };
+      } else {
+        options = { status: true, form: "addStructure" };
       }
+
+      this.CONTROL_MODAL(options);
     },
   },
 };
@@ -39,5 +44,6 @@ export default {
   height: 50px !important;
   filter: drop-shadow(0.5px 0.5px 0.5px black) !important;
   z-index: 1 !important;
+  margin: 0px !important;
 }
 </style>

@@ -6,7 +6,7 @@
 
       <section class="flex flex-col gap-y-2">
         <div class="flex items-center gap-x-3">
-          <Add :type="`Company`"></Add>
+          <Add :type="`company`"></Add>
           <span class="text-xl">Pridėti naują įmonę</span>
         </div>
 
@@ -28,7 +28,7 @@
             </md-table-row>
 
             <md-table-row
-              class="tableRow"
+              class="t"
               v-for="company in companies"
               :key="company.id"
             >
@@ -93,5 +93,9 @@ export default {
 .action .md-table-head-label {
   display: flex !important;
   justify-content: center !important;
+}
+
+.t:nth-child(even){
+  background-color:  rgb(253, 247, 247) !important;
 }
 </style>

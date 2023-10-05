@@ -21,8 +21,8 @@
 
 <script>
 import profileIcon from "../../assets/user.svg";
-import Cards from "./contactCards.vue";
-import Tables from "./contactTables.vue";
+import Cards from "./contactsGridView.vue";
+import Tables from "./contactsTableView.vue";
 import { mapActions, mapGetters } from "vuex";
 
 import PocketBase from "pocketbase";
@@ -65,9 +65,8 @@ export default {
 
 <style>
 .md-card {
-  width: 415px;
-  height: 335px;
-  margin: 4px;
+  width: 380px;
+  height: 300px;
   display: inline-block;
   vertical-align: top;
   text-overflow: ellipsis;
@@ -77,6 +76,6 @@ export default {
 
 .act {
   display: flex;
-  column-gap: 20px;
+  column-gap: 5px;
 }
 </style>

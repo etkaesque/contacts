@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --md-theme-default-background-on-background: rgb(253, 247, 247);
+    --md-theme-default-primary-on-background: #0054A6;
+}

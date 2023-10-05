@@ -85,31 +85,37 @@
       <div class="md-layout-item col-start-2 col-end-3 row-start-2 row-end-3">
         <h2 class="text-2xl">Įmonės detalės:</h2>
         <div class="flex flex-col gap-y-4">
-          <md-field ref="company_id">
-            <label for="company">Įmonė</label>
-            <md-select
+          <md-field  ref="company_id" class="fieldElement">
+            <label v-if="formData.company_id != ''" for="company">Įmonė</label>
+            <md-select  ref="overwrite"
+              placeholder="Pasirinkite įmonę"
               v-model="formData.company_id"
               name="company"
               id="company"
               @input="handleCompany(formData.company_id)"
             >
-              <md-option value="''" disabled>Pasirinkite įmonę</md-option>
+              <md-option
+                :value="''"
+                >Pasirinkite įmonę</md-option
+              >
               <md-option v-for="company in companies" :value="company.id">{{
                 company.name
               }}</md-option>
+
             </md-select>
             <span class="md-error">{{ validation.message }}</span>
           </md-field>
 
           <md-field ref="office_id">
-            <label for="office">Ofisas</label>
+            <label v-if="formData.office_id != ''" for="office">Ofisas</label>
             <md-select
+              placeholder="Pasirinkite ofisą"
               v-model="formData.office_id"
               name="office"
               id="office"
               @input="fetchOfficeDivisions(formData.office_id)"
             >
-              <md-option value="''" disabled>Pasirinkite ofisą</md-option>
+              <md-option :value="''">Pasirinkite ofisą</md-option>
               <md-option
                 v-for="office in offices"
                 :value="office.expand.office_id.id"
@@ -121,14 +127,16 @@
 
           <div>
             <md-field ref="division_id">
-              <label for="font">Padalinys</label>
+              <label v-if="formData.division_id != ''" for="font"
+                >Padalinys</label
+              >
               <md-select
                 v-model="formData.division_id"
                 name="font"
                 id="division"
                 @input="handleDivisions(formData.division_id)"
               >
-                <md-option value="''" disabled>Pasirinkite padalinį</md-option>
+                <md-option :value="''">Pasirinkite padalinį</md-option>
                 <md-option
                   v-for="division in divisions"
                   :value="division.expand.division_id.id"
@@ -139,14 +147,16 @@
             </md-field>
 
             <md-field ref="department_id">
-              <label for="font">Skyrius</label>
+              <label v-if="formData.department_id != ''" for="font"
+                >Skyrius</label
+              >
               <md-select
                 @input="handleDepartment(formData.department_id)"
                 v-model="formData.department_id"
                 name="department"
                 id="department"
               >
-                <md-option value="''" disabled>Pasirinkite skyrių</md-option>
+                <md-option :value="''">Pasirinkite skyrių</md-option>
                 <md-option
                   v-for="department in departments"
                   :value="department.expand.department_id.id"
@@ -157,9 +167,9 @@
             </md-field>
 
             <md-field ref="group_id">
-              <label for="font">Grupė</label>
+              <label v-if="formData.group_id != ''" for="font">Grupė</label>
               <md-select v-model="formData.group_id" name="group" id="group">
-                <md-option value="''" disabled>Pasirinkite grupę</md-option>
+                <md-option :value="''">Pasirinkite grupę</md-option>
                 <md-option
                   v-for="group in groups"
                   :value="group.expand.group_id.id"
@@ -527,6 +537,7 @@ export default {
     this.SET_DIVISIONS();
     this.SET_DEPARTMENTS();
     await this.fetchCompanies();
+
   },
   beforeDestroy() {
     this.SET_OFFICES(this.oldOffices);
@@ -538,10 +549,10 @@ export default {
 </script>
 
 <style>
-
 label {
   color: rgba(0, 0, 0, 0.589) !important;
 }
+
 
 .fileLabel,
 .submitBtn {
@@ -578,4 +589,10 @@ label {
 .md-error {
   max-width: 170px !important;
 }
+
+.fieldElement {
+  position: relative;
+}
+
+
 </style>

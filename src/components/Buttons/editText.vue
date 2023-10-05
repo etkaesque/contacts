@@ -13,15 +13,22 @@ export default {
     id: String,
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_COMPANY"]),
+    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_COMPANY","SET_ACTIVE_STRUCTURE"]),
     handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
 
+      let options;
+
       if (this.type == `company`) {
+        options = { status: true, form: "editCompany" };
         this.SET_ACTIVE_COMPANY(this.id);
-        this.CONTROL_MODAL({ status: true, form: "editCompany" });
+      } else {
+        options = { status: true, form: "editStructure" };
+        this.SET_ACTIVE_STRUCTURE({ id: this.id, type: this.type });
       }
+
+      this.CONTROL_MODAL(options);
     },
   },
 };

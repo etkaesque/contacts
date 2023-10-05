@@ -3,7 +3,7 @@
     class="edit-btn md-icon-button md-raised"
     @click="handleClick($event)"
   >
-    <md-icon style="width: 30px !important; height: 30px !important">
+    <md-icon style="width: 25px !important; height: 25px !important">
       <img :src="editIcon" alt="" />
     </md-icon>
   </md-button>
@@ -29,7 +29,6 @@ export default {
       event.stopPropagation();
       this.SET_ACTIVE_CONTACT(this.contactId);
       this.CONTROL_MODAL({ status: true, form: "editContact" });
-   
     },
   },
 };
@@ -38,8 +37,8 @@ export default {
 <style>
 .edit-btn {
   background-color: #0054a6 !important;
-  width: 50px !important;
-  height: 50px !important;
+  width: 45px !important;
+  height: 45px !important;
   filter: drop-shadow(0.5px 0.5px 0.5px black) !important;
   z-index: 1 !important;
 }
