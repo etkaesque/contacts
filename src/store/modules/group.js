@@ -88,7 +88,7 @@ export default {
     async fetchGroupById({ commit }, id) {
       try {
         const group = await this.fetchInstanceByIdFromDb(id, "groups", "");
-    
+
         commit("SET_ACTIVE_STRUCTURE", { structure: group });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {

@@ -96,8 +96,8 @@ let contactsAPI = (store) => {
     try {
       const instance = await pb.collection(collection).create(data);
       return instance;
-    } catch(err) {
-      console.log(err.message)
+    } catch (err) {
+      console.log(err.message);
       throw Error;
     }
   };
@@ -120,10 +120,10 @@ let contactsAPI = (store) => {
   };
   store.createRelation = async (collection, data) => {
     try {
-      const relation = await pb.collection(collection).create(data);
+      const relation = await pb.collection(collection).create(data, { requestKey: null });
       return relation;
-    } catch(error) {
-      console.log("Eeeeeeeeeeeeeeeeeeeeeeeeer", error)
+    } catch (error) {
+      console.log("Eeeeeeeeeeeeeeeeeeeeeeeeer", error);
       throw Error;
     }
   };

@@ -35,7 +35,6 @@ export default {
         let relationData = {};
 
         console.log("after cancel", division.id);
-        pb.autoCancellation(false);
 
         relation.forEach((office) => {
           console.log("loop", office);
@@ -46,9 +45,6 @@ export default {
 
           dispatch("createOfficeDivisions", relationData);
         });
-
-       
-
         commit("CONTROL_MODAL");
         dispatch("fetchDivisions");
         commit("CONTROL_NOTIFICATION", {
@@ -56,10 +52,8 @@ export default {
           message: `Padalinys sėkmingai sukurtas.`,
           isSuccess: true,
         });
-        pb.autoCancellation(true);
-      } catch(error) {
-
-        console.log("EEEEROR", error)
+      } catch (error) {
+        console.log("EEEEROR", error);
 
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -159,7 +153,7 @@ export default {
         );
         console.log("relation was created", officeDivisions);
       } catch (error) {
-        console.log("EEEEROR", error)
+        console.log("EEEEROR", error);
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Ofisams padalinys nebuvo priskirtas.",
