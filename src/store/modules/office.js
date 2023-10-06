@@ -22,7 +22,8 @@ export default {
   actions: {
     async createOffice({ commit, dispatch }, data) {
       try {
-        await this.createInstanceInDb(data, "offices");
+        const office = await this.createInstanceInDb(data, "offices");
+        console.log("office created",office)
         commit("CONTROL_MODAL");
         dispatch("fetchOffices");
         commit("CONTROL_NOTIFICATION", {
@@ -113,5 +114,17 @@ export default {
         });
       }
     },
+    async createCompanyOffices({ commit}, data){
+      try {
+        const offices = await this.createRelation("companies_offices",data);
+        console.log("relation was created", offices)
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: "Įmonėms ofisas nebuvo priskirtas.",
+          isSuccess: false,
+        });
+      }
+    }
   },
 };

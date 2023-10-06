@@ -1,3 +1,6 @@
+import PocketBase from "pocketbase";
+const pb = new PocketBase(SERVER_ADDR);
+
 export default {
   state: {
     divisions: [],
@@ -20,9 +23,32 @@ export default {
     },
   },
   actions: {
-    async createDivision({ commit, dispatch }, data) {
+    async createDivision({ commit, dispatch }, { data, relation }) {
+      console.log("data", data);
+      console.log("relation", relation);
+
       try {
-        await this.createInstanceInDb(data, "divisions");
+        let division = await this.createInstanceInDb(data, "divisions");
+
+        console.log("got back this divisio", division.id);
+
+        let relationData = {};
+
+        console.log("after cancel", division.id);
+        pb.autoCancellation(false);
+
+        relation.forEach((office) => {
+          console.log("loop", office);
+          relationData = {
+            division_id: division.id,
+            office_id: office,
+          };
+
+          dispatch("createOfficeDivisions", relationData);
+        });
+
+       
+
         commit("CONTROL_MODAL");
         dispatch("fetchDivisions");
         commit("CONTROL_NOTIFICATION", {
@@ -30,7 +56,11 @@ export default {
           message: `Padalinys sėkmingai sukurtas.`,
           isSuccess: true,
         });
-      } catch (error) {
+        pb.autoCancellation(true);
+      } catch(error) {
+
+        console.log("EEEEROR", error)
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Padalinys nebuvo sukurtas.`,
@@ -95,7 +125,6 @@ export default {
           ""
         );
         commit("SET_ACTIVE_STRUCTURE", { structure: division });
-    
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -104,7 +133,6 @@ export default {
         });
       }
     },
-
     async fetchOfficeDivisions({ commit }, id) {
       try {
         const divisions = await this.getFullList("offices_divisions", {
@@ -117,6 +145,24 @@ export default {
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
+
+    async createOfficeDivisions({ commit }, data) {
+      console.log("createOfficeDivisions is hit");
+      try {
+        const officeDivisions = await this.createRelation(
+          "offices_divisions",
+          data
+        );
+        console.log("relation was created", officeDivisions);
+      } catch (error) {
+        console.log("EEEEROR", error)
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: "Ofisams padalinys nebuvo priskirtas.",
           isSuccess: false,
         });
       }

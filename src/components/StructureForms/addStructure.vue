@@ -8,13 +8,14 @@
       <h2 class="text-2xl w-full">{{ header }}</h2>
 
       <md-field>
-        <label for="structure">Pasirinkite struktūrą</label>
+        <label for="structure">Struktūra</label>
         <md-select
-          @input="handleChange()"
+          placeholder="Pasirinkite struktūrą"
           v-model="type"
           name="structure"
           id="structure"
         >
+          <md-option value="``">Pasirinkite struktūrą</md-option>
           <md-option value="office">Ofisas</md-option>
           <md-option value="division">Padalinys</md-option>
           <md-option value="department">Skyrius</md-option>
@@ -22,17 +23,19 @@
         </md-select>
       </md-field>
 
-      <md-field v-if="type == `office`">
-        <label for="relation">Pasirinkite įmonę</label>
+      <md-field v-if="structure.items.length != 0">
+        <label for="relation">{{
+          this.structure.label ? this.structure.label : "Pasirinkite struktūrą"
+        }}</label>
         <md-select
           aria-placeholder="pasirinkite"
-          v-model="relation"
+          v-model="structure.relation"
           name="relation"
           id="relation"
           md-dense
           multiple
         >
-          <md-option v-for="item in structure" :value="item.id">{{
+          <md-option v-for="item in structure.items" :value="item.id">{{
             item.name
           }}</md-option>
         </md-select>
@@ -44,7 +47,7 @@
           name="name"
           id="name"
           maxlength="35"
-          v-model="structureData.name"
+          v-model="structure.data.name"
         ></md-input>
       </md-field>
 
@@ -61,11 +64,14 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      relation: [],
-      structure: [],
       type: "",
-      structureData: {
-        name: "",
+      structure: {
+        items: [],
+        relation: [],
+        label: "",
+        data: {
+          name: ""
+        }
       },
       validation: {
         tooLow: "",
@@ -102,44 +108,48 @@ export default {
     ]),
 
     async handleSubmit() {
-      const params = { id: this.id, data: this.structureData };
 
+      const params = {data: this.structure.data, relation: this.structure.relation};
+      console.log("submit",params)
       if (this.type == "company") {
         await this.createCompany(params);
-      } else if (this.type == "offices") {
+      } else if (this.type == "office") {
         await this.createOffice(params);
-      } else if (this.type == "divisions") {
+      } else if (this.type == "division") {
         await this.createDivision(params);
-      } else if (this.type == "departments") {
+      } else if (this.type == "department") {
         await this.createDepartment(params);
-      } else if (this.type == "groups") {
+      } else if (this.type == "group") {
         await this.createGroup(params);
+      } else {
+        return;
       }
-    },
-    handleChange() {
-      console.log(this.type);
-      console.log(this.relation);
-      this.fetchCompanies();
     },
   },
   watch: {
     async type() {
-      if (this.type == "company") {
-        await this.createCompany();
-      } else if (this.type == "offices") {
+      if (this.type == "office") {
         await this.fetchCompanies();
-      } else if (this.type == "divisions") {
+        this.structure.items = this.companies;
+        this.structure.label = `Pasirinkite įmones`;
+      } else if (this.type == "division") {
         await this.fetchOffices();
-      } else if (this.type == "departments") {
+        this.structure.items = this.offices;
+        this.structure.label = `Pasirinkite ofisus`;
+      } else if (this.type == "department") {
         await this.fetchDivisions();
-      } else if (this.type == "groups") {
-        await this.createDepartments();
+        this.structure.items = this.divisions;
+        this.structure.label = `Pasirinkite padalinius`;
+      } else if (this.type == "group") {
+        await this.fetchDepartments();
+        this.structure.items = this.departments;
+        this.structure.label = `Pasirinkite skyrius`;
+      } else {
+        this.structure.items = [];
+        this.structure.label = ``;
       }
     },
-  },
-  async created() {
-    console.log("created add structure");
-  },
+  }
 };
 </script>
 

@@ -56,6 +56,7 @@ export default {
       "editDivision",
       "editDepartment",
       "editGroup",
+      
     ]),
 
     async handleSubmit() {

@@ -155,16 +155,24 @@ export default {
   },
   watch: {
     offices() {
-      this.structure = this.offices;
+      if (this.type == `offices`) {
+        this.structure = this.offices;
+      }
     },
     divisions() {
-      this.structure = this.divisions;
+      if (this.type == `divisions`) {
+        this.structure = this.divisions;
+      }
     },
     departments() {
-      this.structure = this.departments;
+      if (this.type == `departments`) {
+        this.structure = this.departments;
+      }
     },
     groups() {
-      this.structure = this.groups;
+      if (this.type == `groups`) {
+        this.structure = this.groups;
+      }
     },
   },
   async created() {

@@ -71,7 +71,6 @@ let contactsAPI = (store) => {
 
       return contacts;
     } catch {
-
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
@@ -97,7 +96,8 @@ let contactsAPI = (store) => {
     try {
       const instance = await pb.collection(collection).create(data);
       return instance;
-    } catch {
+    } catch(err) {
+      console.log(err.message)
       throw Error;
     }
   };
@@ -105,8 +105,8 @@ let contactsAPI = (store) => {
     try {
       const instance = await pb.collection(collection).update(id, data);
       return instance;
-    } catch(err) {
-      console.log(err)
+    } catch (err) {
+      console.log(err);
       throw Error;
     }
   };
@@ -115,6 +115,15 @@ let contactsAPI = (store) => {
       const instance = await pb.collection(collection).delete(id);
       return instance;
     } catch {
+      throw Error;
+    }
+  };
+  store.createRelation = async (collection, data) => {
+    try {
+      const relation = await pb.collection(collection).create(data);
+      return relation;
+    } catch(error) {
+      console.log("Eeeeeeeeeeeeeeeeeeeeeeeeer", error)
       throw Error;
     }
   };
