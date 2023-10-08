@@ -6,6 +6,7 @@
     <md-field class="w-full">
       <label for="street">Gatvė</label>
       <md-input
+      @input="handleChange"
         name="street"
         id="street"
         maxlength="35"
@@ -16,6 +17,7 @@
     <md-field class="w-full">
       <label for="street_number">Gatvės numeris</label>
       <md-input
+      @input="handleChange"
         name="street_number"
         id="street_number"
         type="number"
@@ -26,6 +28,7 @@
     <md-field class="w-full">
       <label for="city">Miestas</label>
       <md-input
+      @input="handleChange"
         name="city"
         id="city"
         maxlength="35"
@@ -36,6 +39,7 @@
     <md-field class="w-full">
       <label for="country">Šalis</label>
       <md-input
+      @input="handleChange"
         name="country"
         id="country"
         maxlength="35"
@@ -58,8 +62,12 @@ export default {
       },
     };
   },
-};
+
+  methods: {
+    handleOffice() {
+      emit('office')
+    }}
+}
 </script>
 
-<style scoped>
 </style>

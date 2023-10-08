@@ -189,6 +189,10 @@ export default {
   width: 400px;
 }
 
+.tabsWrapper *{
+  z-index: 1 !important;
+}
+
 .action .md-table-head-label {
   display: flex !important;
   justify-content: center !important;
