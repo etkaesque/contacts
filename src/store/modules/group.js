@@ -1,3 +1,5 @@
+import department from "./department";
+
 export default {
   state: {
     groups: [],
@@ -67,9 +69,33 @@ export default {
         });
       }
     },
-    async editGroup({ commit, dispatch }, { id, data }) {
+    async editGroup({ commit, dispatch }, { id, data, relation }) {
       try {
         await this.editInstanceInDb(id, data, "groups");
+
+        if (relation.create.length != 0) {
+          let relationData = {}
+
+          relation.create.forEach((department) => {
+
+            relationData = {
+              group_id: id,
+              department_id: department,
+            };
+
+            dispatch("createDepartmentsGroups", relationData);
+          });
+        }
+
+        if (relation.delete.length != 0) {
+
+          relation.delete.forEach(item => {
+
+            dispatch("deleteRelation", {id: item.id, collection: item.collectionName});
+          })
+
+        }
+
         dispatch("fetchGroups");
         commit("CONTROL_MODAL");
         commit("CONTROL_NOTIFICATION", {

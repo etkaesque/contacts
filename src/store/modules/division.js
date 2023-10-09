@@ -29,9 +29,9 @@ export default {
 
         let relationData = {};
 
-     
+
         relation.forEach((office) => {
-         
+
           relationData = {
             division_id: division.id,
             office_id: office,
@@ -48,7 +48,7 @@ export default {
           isSuccess: true,
         });
       } catch (error) {
-     
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Padalinys nebuvo sukurtas.`,
@@ -73,9 +73,27 @@ export default {
         });
       }
     },
-    async editDivision({ commit, dispatch }, { id, data }) {
+    async editDivision({ commit, dispatch }, { id, data, relation }) {
       try {
         await this.editInstanceInDb(id, data, "divisions");
+
+        if (relation.create.length != 0) {
+          let relationData = {}
+          relation.create.forEach((office) => {
+            relationData = {
+              division_id: id,
+              office_id: office,
+            };
+            dispatch("createOfficeDivisions", relationData);
+          });
+        }
+        
+        if (relation.delete.length != 0) {
+          relation.delete.forEach(item => {
+            dispatch("deleteRelation", { id: item.id, collection: item.collectionName });
+          })
+        }
+
         dispatch("fetchDivisions");
         commit("CONTROL_MODAL");
         commit("CONTROL_NOTIFICATION", {
@@ -112,10 +130,11 @@ export default {
           "divisions",
           ""
         );
-        commit("SET_ACTIVE_STRUCTURE", { 
+        commit("SET_ACTIVE_STRUCTURE", {
           id: id,
-          type: "divisions", 
-          structure: division });
+          type: "divisions",
+          structure: division
+        });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -142,15 +161,15 @@ export default {
     },
 
     async createOfficeDivisions({ commit }, data) {
-    
+
       try {
         const officeDivisions = await this.createRelation(
           "offices_divisions",
           data
         );
-      
+
       } catch (error) {
-      
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Ofisams padalinys nebuvo priskirtas.",

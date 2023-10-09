@@ -16,17 +16,11 @@
         <md-field>
           <label for="relation">{{
             this.structure.label
-              ? this.structure.label
-              : "Pasirinkite struktūrą"
+            ? this.structure.label
+            : "Pasirinkite struktūrą"
           }}</label>
-          <md-select
-            aria-placeholder="pasirinkite"
-            v-model="structure.relation"
-            name="relation"
-            id="relation"
-            md-dense
-            multiple
-          >
+          <md-select aria-placeholder="pasirinkite" v-model="structure.relation" name="relation" id="relation" md-dense
+            multiple>
             <md-option v-for="item in structure.items" :value="item.id">{{
               item.name
             }}</md-option>
@@ -52,6 +46,7 @@ export default {
       structure: {
         items: [],
         relation: [],
+        relationOld: [],
         label: "",
         header: "",
         data: {
@@ -91,29 +86,74 @@ export default {
       "fetchDepartments",
       "fetchOffices",
       "fetchGroups",
-      "editCompany",
-      "editOffice",
-      "editDivision",
-      "editDepartment",
-      "editGroup",
       "fetchRelation",
+      "deleteRelation",
+      "editDivision",
+      "editGroup",
+      "editOffice",
+      "editDepartment",
     ]),
 
     async handleSubmit() {
-      const params = { id: this.id, data: this.structure.data, relation };
+
+
+      
+
+      let target
+      if (this.type == "offices") {
+        target = 'company_id'
+      } else if (this.type == "divisions") {
+        target = 'office_id'
+      } else if (this.type == "departments") {
+        target = 'division_id'
+      } else if (this.type == "groups") {
+        target = 'department_id'
+      }
+
+      let deleteThese = this.relations.rels.filter(item => {
+        if (!this.structure.relation.includes(item[target])) {
+          return { id: item.id, collection: item.collectionName }
+        }
+      })
+
+      let addThese = this.structure.relation.filter(item => {
+
+        if (!this.structure.relationOld.includes(item)) {
+          return item
+        }
+      })
+
+      let params = {
+        id: this.id,
+        data: this.structure.data,
+        relation: {create: addThese, delete: deleteThese},
+      };
+
+
+      // console.log("hit")
 
       if (this.type == "offices") {
+        let params = {
+          data: this.officeData,
+          relation: this.structure.relation,
+        };
+
         await this.editOffice(params);
       } else if (this.type == "divisions") {
-
-
-
+        console.log("create division hit")
         await this.editDivision(params);
       } else if (this.type == "departments") {
         await this.editDepartment(params);
       } else if (this.type == "groups") {
         await this.editGroup(params);
       }
+
+
+
+
+
+
+
     },
   },
   async created() {
@@ -128,10 +168,19 @@ export default {
         type: "office_id",
       });
 
+
+
       this.structure.items = this.companies;
-      this.structure.relation = this.relations;
+      this.structure.relation = this.relations.ids
+      this.structure.relationOld = this.relations.ids
       this.structure.header = `Redaguoti ofisą`;
       this.structure.label = `Ofiso pavadinimas`;
+
+
+      console.log(" this.structure.items", this.structure.items);
+      console.log("this.structure.relation", this.structure.relation);
+
+
     } else if (this.type == "divisions") {
       await this.fetchOffices();
       await this.fetchRelation({
@@ -141,7 +190,8 @@ export default {
       });
 
       this.structure.items = this.offices;
-      this.structure.relation = this.relations;
+      this.structure.relation = this.relations.ids
+      this.structure.relationOld = this.relations.ids
       this.structure.header = `Redaguoti padalinį`;
       this.structure.label = `Padalinio pavadinimas`;
       console.log(" this.structure.items", this.structure.items);
@@ -155,7 +205,8 @@ export default {
       });
 
       this.structure.items = this.divisions;
-      this.structure.relation = this.relations;
+      this.structure.relation = this.relations.ids
+      this.structure.relationOld = this.relations.ids
 
       this.structure.header = `Redaguoti skyrių`;
       this.structure.label = `Skyriaus pavadinimas`;
@@ -168,7 +219,8 @@ export default {
       });
 
       this.structure.items = this.departments;
-      this.structure.relation = this.relations;
+      this.structure.relation = this.relations.ids
+      this.structure.relationOld = this.relations.ids
 
       this.structure.header = `Redaguoti grupę`;
       this.structure.label = `Grupės pavadinimas`;

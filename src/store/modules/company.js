@@ -33,7 +33,7 @@ export default {
       }
     },
     SET_ACTIVE_STRUCTURE(state, { id, type, structure }) {
-    
+
       if (id == undefined && type == undefined && structure == undefined) {
         state.active_structure = { id: "", type: "", structure: {} };
       } else {
@@ -43,11 +43,11 @@ export default {
     SET_COMPANY(state, company) {
       state.company = company;
     },
-    SET_RELATIONS(state, relations) {
+    SET_RELATIONS(state, { relations, ids }) {
       if (relations == undefined) {
         state.relations = [];
       } else {
-        state.relations = relations;
+        state.relations = { rels: relations, ids: ids };
       }
     },
   },
@@ -160,10 +160,10 @@ export default {
     },
 
     async fetchRelation({ commit }, { id, collection, type }) {
-     
+
       try {
         const relations = await this.fetchRelationFromDb(id, collection, type);
-        
+
         console.log(relations)
 
         let ids = [];
@@ -184,7 +184,7 @@ export default {
 
         console.log(ids)
 
-        commit("SET_RELATIONS", ids);
+        commit("SET_RELATIONS", { relations: relations.items, ids: ids });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -194,14 +194,11 @@ export default {
       }
     },
 
-    async editRelation({commit}, {id, collection, type}) {
-
+    async deleteRelation({ commit }, { id, collection }) {
 
       try {
-        const relations = await this.editRelationInDb(id, collection);
-        console.log(relations)
-
-
+        const relations = await this.deleteRelationInDb(id, collection);
+        console.log("deleted", relations)
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -209,11 +206,8 @@ export default {
           isSuccess: false,
         });
       }
-      
-
 
     }
 
-  
   },
 };

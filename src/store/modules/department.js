@@ -32,7 +32,7 @@ export default {
         let relationData = {};
 
         relation.forEach((division) => {
-       
+
           relationData = {
             department_id: department.id,
             division_id: division,
@@ -73,9 +73,25 @@ export default {
         });
       }
     },
-    async editDepartment({ commit, dispatch }, { id, data }) {
+    async editDepartment({ commit, dispatch }, { id, data, relation }) {
       try {
         await this.editInstanceInDb(id, data, "departments");
+
+        if (relation.create.length != 0) {
+          let relationData = {}
+          relation.create.forEach((division) => {
+            relationData = {
+              department_id: id,
+              division_id: division,
+            };
+            dispatch("createDivisionsDepartments", relationData);
+          });
+        }
+        if (relation.delete.length != 0) {
+          relation.delete.forEach(item => {
+            dispatch("deleteRelation", { id: item.id, collection: item.collectionName });
+          })
+        }
         dispatch("fetchDepartments");
         commit("CONTROL_MODAL");
         commit("CONTROL_NOTIFICATION", {
@@ -112,10 +128,11 @@ export default {
           "departments",
           ""
         );
-        commit("SET_ACTIVE_STRUCTURE", { 
+        commit("SET_ACTIVE_STRUCTURE", {
           id: id,
-          type: "departments", 
-          structure: department });
+          type: "departments",
+          structure: department
+        });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -141,15 +158,15 @@ export default {
     },
 
     async createDivisionsDepartments({ commit }, data) {
-     
+
       try {
         const divisionsDepartments = await this.createRelation(
           "divisions_departments",
           data
         );
-     
+
       } catch (error) {
-       
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Ofisams padalinys nebuvo priskirtas.",
