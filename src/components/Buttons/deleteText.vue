@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 
 export default {
   props: {
@@ -13,16 +13,23 @@ export default {
     type: String,
   },
   methods: {
-    ...mapMutations(["CONTROL_DELETE", "SET_ACTIVE_COMPANY"]),
+    ...mapActions(["setActiveStructure"]),
+    ...mapMutations([
+      "CONTROL_DELETE",
+      "SET_ACTIVE_COMPANY",
+      "SET_ACTIVE_STRUCTURE",
+    ]),
     handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
 
-      this.CONTROL_DELETE();
-
-      if (this.type === `company`) {
+      if (this.type == `company`) {
         this.SET_ACTIVE_COMPANY(this.id);
+      } else {
+        this.setActiveStructure({ id: this.id, type: this.type });
       }
+
+      this.CONTROL_DELETE();
     },
   },
 };

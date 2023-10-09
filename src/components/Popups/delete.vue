@@ -29,17 +29,20 @@ export default {
   },
 
   methods: {
-    ...mapActions(["deleteContact", "deleteCompany"]),
+    ...mapActions(["deleteContact", "deleteCompany", "deleteStructure"]),
     ...mapMutations([
       "CONTROL_DELETE",
       "SET_ACTIVE_CONTACT",
       "SET_ACTIVE_COMPANY",
+      "SET_ACTIVE_STRUCTURE",
     ]),
     dismiss() {
       if (this.type == `company`) {
         this.SET_ACTIVE_COMPANY();
       } else if (this.type == `contact`) {
         this.SET_ACTIVE_CONTACT();
+      } else {
+        this.SET_ACTIVE_STRUCTURE({});
       }
 
       this.CONTROL_DELETE();
@@ -51,6 +54,8 @@ export default {
       } else if (this.type == `contact`) {
         this.deleteContact(this.id);
         this.SET_ACTIVE_CONTACT();
+      } else {
+        this.deleteStructure({ id: this.id, type: this.type });
       }
 
       this.CONTROL_DELETE();
@@ -61,6 +66,8 @@ export default {
           this.SET_ACTIVE_COMPANY();
         } else if (this.type == `contact`) {
           this.SET_ACTIVE_CONTACT();
+        } else {
+          this.SET_ACTIVE_STRUCTURE({});
         }
 
         this.CONTROL_DELETE();

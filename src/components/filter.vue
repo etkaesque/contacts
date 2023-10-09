@@ -140,7 +140,6 @@ export default {
       });
     },
     async handleOffice(id) {
-      console.log("hello from handle Office");
 
       if (this.changedByCompany) {
         this.changedByCompany = false;
@@ -207,7 +206,7 @@ export default {
     },
 
     async handleDepartment(id) {
-      console.log("hello from handle department");
+
 
       if (this.changedByCompany || this.changedByOffice || this.changedByDivision) {
         this.changedByCompany = false

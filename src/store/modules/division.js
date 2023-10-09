@@ -24,20 +24,14 @@ export default {
   },
   actions: {
     async createDivision({ commit, dispatch }, { data, relation }) {
-      console.log("data", data);
-      console.log("relation", relation);
-
       try {
         let division = await this.createInstanceInDb(data, "divisions");
 
-        console.log("got back this divisio", division.id);
-
         let relationData = {};
 
-        console.log("after cancel", division.id);
-
+     
         relation.forEach((office) => {
-          console.log("loop", office);
+         
           relationData = {
             division_id: division.id,
             office_id: office,
@@ -45,6 +39,7 @@ export default {
 
           dispatch("createOfficeDivisions", relationData);
         });
+
         commit("CONTROL_MODAL");
         dispatch("fetchDivisions");
         commit("CONTROL_NOTIFICATION", {
@@ -53,8 +48,7 @@ export default {
           isSuccess: true,
         });
       } catch (error) {
-        console.log("EEEEROR", error);
-
+     
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Padalinys nebuvo sukurtas.`,
@@ -118,7 +112,10 @@ export default {
           "divisions",
           ""
         );
-        commit("SET_ACTIVE_STRUCTURE", { structure: division });
+        commit("SET_ACTIVE_STRUCTURE", { 
+          id: id,
+          type: "divisions", 
+          structure: division });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -145,15 +142,15 @@ export default {
     },
 
     async createOfficeDivisions({ commit }, data) {
-      console.log("createOfficeDivisions is hit");
+    
       try {
         const officeDivisions = await this.createRelation(
           "offices_divisions",
           data
         );
-        console.log("relation was created", officeDivisions);
+      
       } catch (error) {
-        console.log("EEEEROR", error);
+      
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Ofisams padalinys nebuvo priskirtas.",

@@ -189,7 +189,7 @@ export default {
   width: 400px;
 }
 
-.tabsWrapper *{
+.tabsWrapper * {
   z-index: 1 !important;
 }
 

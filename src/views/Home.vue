@@ -102,7 +102,7 @@ export default {
     this.SET_CURRENT_PAGE(1)
     this.SET_SEARCH_TERM("")
     this.SET_FILTERS()
-    console.log("leaving root")
+  
   next();
 }
 

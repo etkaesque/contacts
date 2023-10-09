@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header  v-if="$route.path !== '/login'"> ></Header>
+    <Header v-if="$route.path !== '/login'"> ></Header>
     <Modal v-if="modal.status"></Modal>
     <Delete
       :type="type"
@@ -18,7 +18,7 @@
 import Modal from "./components/Popups/modal.vue";
 import Delete from "./components/Popups/delete.vue";
 import Notification from "./components/Popups/notification.vue";
-import Header from "./components/header.vue"
+import Header from "./components/header.vue";
 import { mapGetters, mapActions } from "vuex";
 
 export default {
@@ -35,7 +35,7 @@ export default {
     Modal,
     Delete,
     Notification,
-    Header
+    Header,
   },
   computed: {
     ...mapGetters([
@@ -46,6 +46,7 @@ export default {
       "contact",
       "activeContact",
       "active_company",
+      "active_structure",
     ]),
   },
   methods: {
@@ -69,6 +70,23 @@ export default {
         this.header = `kontaktą`;
         this.text = `Vardas ir pavardė: ${this.contact.name} ${this.contact.surname}. <br> Pozicija: ${this.contact.position}.`;
         this.id = this.activeContact;
+      }
+    },
+
+    async active_structure() {
+      this.type = this.active_structure.type;
+      this.text = `Pavadinimas: ${this.active_structure.structure.name}.`;
+      this.id = this.active_structure.structure.id
+
+
+      if (this.type == "offices") {
+        this.header = "ofisą";
+      } else if (this.type == "divisions") {
+        this.header = "padalinį";
+      } else if (this.type == "departments") {
+        this.header = "skyrių";
+      } else if (this.type == "groups") {
+        this.header = "grupę";
       }
     },
   },

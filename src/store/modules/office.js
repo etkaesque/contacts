@@ -20,10 +20,22 @@ export default {
     },
   },
   actions: {
-    async createOffice({ commit, dispatch }, data) {
+    async createOffice({ commit, dispatch }, { data, relation }) {
       try {
         const office = await this.createInstanceInDb(data, "offices");
-        console.log("office created",office)
+       
+
+        let relationData = {};
+        relation.forEach((company) => {
+        
+          relationData = {
+            office_id: office.id,
+            company_id: company,
+          };
+
+          dispatch("createCompanyOffices", relationData);
+        });
+
         commit("CONTROL_MODAL");
         dispatch("fetchOffices");
         commit("CONTROL_NOTIFICATION", {
@@ -89,7 +101,11 @@ export default {
     async fetchOfficeById({ commit }, id) {
       try {
         const office = await this.fetchInstanceByIdFromDb(id, "offices", "");
-        commit("SET_ACTIVE_STRUCTURE", { structure: office });
+        commit("SET_ACTIVE_STRUCTURE", {
+          id: id,
+          type: "offices",
+          structure: office,
+        });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -114,10 +130,10 @@ export default {
         });
       }
     },
-    async createCompanyOffices({ commit}, data){
+    async createCompanyOffices({ commit }, data) {
       try {
-        const offices = await this.createRelation("companies_offices",data);
-        console.log("relation was created", offices)
+        const offices = await this.createRelation("companies_offices", data);
+        
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -125,6 +141,6 @@ export default {
           isSuccess: false,
         });
       }
-    }
+    },
   },
 };

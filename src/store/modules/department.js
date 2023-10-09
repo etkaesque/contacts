@@ -25,9 +25,22 @@ export default {
     },
   },
   actions: {
-    async createDepartment({ commit, dispatch }, data) {
+    async createDepartment({ commit, dispatch }, { data, relation }) {
       try {
-        await this.createInstanceInDb(data, "departments");
+        const department = await this.createInstanceInDb(data, "departments");
+
+        let relationData = {};
+
+        relation.forEach((division) => {
+       
+          relationData = {
+            department_id: department.id,
+            division_id: division,
+          };
+
+          dispatch("createDivisionsDepartments", relationData);
+        });
+
         commit("CONTROL_MODAL");
         dispatch("fetchDepartments");
         commit("CONTROL_NOTIFICATION", {
@@ -99,7 +112,10 @@ export default {
           "departments",
           ""
         );
-        commit("SET_ACTIVE_STRUCTURE", { structure: department });
+        commit("SET_ACTIVE_STRUCTURE", { 
+          id: id,
+          type: "departments", 
+          structure: department });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -119,6 +135,24 @@ export default {
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
+
+    async createDivisionsDepartments({ commit }, data) {
+     
+      try {
+        const divisionsDepartments = await this.createRelation(
+          "divisions_departments",
+          data
+        );
+     
+      } catch (error) {
+       
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: "Ofisams padalinys nebuvo priskirtas.",
           isSuccess: false,
         });
       }

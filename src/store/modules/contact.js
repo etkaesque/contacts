@@ -34,6 +34,9 @@ export default {
       }
     },
     SET_CONTACT(state, contact) {
+      if(contact === undefined) {
+        state.contact = {}
+      }
       state.contact = contact;
     },
     SET_ACTIVE_CONTACT(state, id) {
@@ -134,6 +137,10 @@ export default {
           searchTerm: getters.searchTerm,
           filterData: getters.filterData,
         });
+
+
+        commit("SET_ACTIVE_CONTACT")
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Kontaktas sėkmingai redaguotas.",

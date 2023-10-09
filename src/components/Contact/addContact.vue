@@ -85,23 +85,20 @@
       <div class="md-layout-item col-start-2 col-end-3 row-start-2 row-end-3">
         <h2 class="text-2xl">Įmonės detalės:</h2>
         <div class="flex flex-col gap-y-4">
-          <md-field  ref="company_id" class="fieldElement">
+          <md-field ref="company_id" class="fieldElement">
             <label v-if="formData.company_id != ''" for="company">Įmonė</label>
-            <md-select  ref="overwrite"
+            <md-select
+              ref="overwrite"
               placeholder="Pasirinkite įmonę"
               v-model="formData.company_id"
               name="company"
               id="company"
               @input="handleCompany(formData.company_id)"
             >
-              <md-option
-                :value="''"
-                >Pasirinkite įmonę</md-option
-              >
+              <md-option  v-if="formData.company_id != ``" value="">Pasirinkite įmonę</md-option>
               <md-option v-for="company in companies" :value="company.id">{{
                 company.name
               }}</md-option>
-
             </md-select>
             <span class="md-error">{{ validation.message }}</span>
           </md-field>
@@ -109,13 +106,14 @@
           <md-field ref="office_id">
             <label v-if="formData.office_id != ''" for="office">Ofisas</label>
             <md-select
+              :disabled="isCompaniesEmpty"
               placeholder="Pasirinkite ofisą"
               v-model="formData.office_id"
               name="office"
               id="office"
-              @input="fetchOfficeDivisions(formData.office_id)"
+              @input="handleOffice(formData.office_id)"
             >
-              <md-option :value="''">Pasirinkite ofisą</md-option>
+              <md-option v-if="formData.office_id != ``" value="">Pasirinkite ofisą</md-option>
               <md-option
                 v-for="office in offices"
                 :value="office.expand.office_id.id"
@@ -131,12 +129,14 @@
                 >Padalinys</label
               >
               <md-select
+                :disabled="isOfficesEmpty"
+                placeholder="Pasirinkite padalinį"
                 v-model="formData.division_id"
                 name="font"
                 id="division"
                 @input="handleDivisions(formData.division_id)"
               >
-                <md-option :value="''">Pasirinkite padalinį</md-option>
+                <md-option v-if="formData.division_id != ``" value="">Pasirinkite padalinį</md-option>
                 <md-option
                   v-for="division in divisions"
                   :value="division.expand.division_id.id"
@@ -151,12 +151,14 @@
                 >Skyrius</label
               >
               <md-select
+                placeholder="Pasirinkite skyrių"
+                :disabled="isDivisionsEmpty"
                 @input="handleDepartment(formData.department_id)"
                 v-model="formData.department_id"
                 name="department"
                 id="department"
               >
-                <md-option :value="''">Pasirinkite skyrių</md-option>
+                <md-option v-if="formData.department_id != ``" value="">Pasirinkite skyrių</md-option>
                 <md-option
                   v-for="department in departments"
                   :value="department.expand.department_id.id"
@@ -168,8 +170,11 @@
 
             <md-field ref="group_id">
               <label v-if="formData.group_id != ''" for="font">Grupė</label>
-              <md-select v-model="formData.group_id" name="group" id="group">
-                <md-option :value="''">Pasirinkite grupę</md-option>
+              <md-select 
+              :disabled="isDepartmentsEmpty"
+              placeholder="Pasirinkite grupę"
+              v-model="formData.group_id" name="group" id="group">
+                <md-option v-if="formData.group_id != ``" value="">Pasirinkite grupę</md-option>
                 <md-option
                   v-for="group in groups"
                   :value="group.expand.group_id.id"
@@ -275,6 +280,19 @@ export default {
       "offices",
       "groups",
     ]),
+    isCompaniesEmpty() {
+      return this.formData.company_id == "" || this.companies.length == 0;
+    },
+    isOfficesEmpty() {
+      return this.formData.office_id == "" || this.divisions.length == 0;
+    },
+    isDivisionsEmpty() {
+      return this.formData.division_id == "" || this.departments.length == 0;
+    },
+    isDepartmentsEmpty() {
+
+      return this.formData.department_id == "" || this.groups.length == 0;
+    },
   },
   methods: {
     ...mapActions([
@@ -305,7 +323,9 @@ export default {
           key !== `department_id` &&
           key !== `phone_number`
       );
+
       const areFieldEmpty = keyList.map((key) => {
+
         if (this.formData[key].trim() === "") {
           this.$refs[key].$el.classList.add("md-invalid");
           return false;
@@ -500,12 +520,19 @@ export default {
       }
     },
     async handleCompany(id) {
+
+
       this.formData.office_id = "";
       this.formData.division_id = "";
       this.formData.department_id = "";
       this.formData.group_id = "";
 
-      await this.fetchCompanyOffices(id);
+      if(id != "") {
+        await this.fetchCompanyOffices(id);
+      }
+
+
+  
     },
     async handleOffice(id) {
       this.formData.division_id = "";
@@ -537,7 +564,6 @@ export default {
     this.SET_DIVISIONS();
     this.SET_DEPARTMENTS();
     await this.fetchCompanies();
-
   },
   beforeDestroy() {
     this.SET_OFFICES(this.oldOffices);
@@ -552,7 +578,6 @@ export default {
 label {
   color: rgba(0, 0, 0, 0.589) !important;
 }
-
 
 .fileLabel,
 .submitBtn {
@@ -593,6 +618,4 @@ label {
 .fieldElement {
   position: relative;
 }
-
-
 </style>

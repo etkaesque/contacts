@@ -5,6 +5,7 @@ export default {
     active_company: "",
     totalCompanies: 0,
     active_structure: { id: "", type: "", structure: {} },
+    relations: [],
   },
   getters: {
     companies: (state) => state.companies,
@@ -12,6 +13,7 @@ export default {
     active_company: (state) => state.active_company,
     active_structure: (state) => state.active_structure,
     totalCompanies: (state) => state.totalCompanies,
+    relations: (state) => state.relations,
   },
   mutations: {
     SET_COMPANIES(state, companies) {
@@ -31,6 +33,7 @@ export default {
       }
     },
     SET_ACTIVE_STRUCTURE(state, { id, type, structure }) {
+    
       if (id == undefined && type == undefined && structure == undefined) {
         state.active_structure = { id: "", type: "", structure: {} };
       } else {
@@ -39,6 +42,13 @@ export default {
     },
     SET_COMPANY(state, company) {
       state.company = company;
+    },
+    SET_RELATIONS(state, relations) {
+      if (relations == undefined) {
+        state.relations = [];
+      } else {
+        state.relations = relations;
+      }
     },
   },
   actions: {
@@ -121,6 +131,89 @@ export default {
         });
       }
     },
+    async setActiveStructure({ commit, dispatch }, { id, type }) {
+      if (id == undefined) {
+        commit.SET_ACTIVE_STRUCTURE({}); // clear
+      }
 
+      if (type == "offices") {
+        await dispatch("fetchOfficeById", id);
+      } else if (type == "divisions") {
+        await dispatch("fetchDivisionById", id);
+      } else if (type == "departments") {
+        await dispatch("fetchDepartmentById", id);
+      } else if (type == "groups") {
+        await dispatch("fetchGroupById", id);
+      }
+    },
+
+    async deleteStructure({ commit, dispatch }, { id, type }) {
+      if (type == "offices") {
+        dispatch("deleteOffice", id);
+      } else if (type == "divisions") {
+        dispatch("deleteDivision", id);
+      } else if (type == "departments") {
+        dispatch("deleteDepartment", id);
+      } else if (type == "groups") {
+        dispatch("deleteGroup", id);
+      }
+    },
+
+    async fetchRelation({ commit }, { id, collection, type }) {
+     
+      try {
+        const relations = await this.fetchRelationFromDb(id, collection, type);
+        
+        console.log(relations)
+
+        let ids = [];
+
+        relations.items.forEach((item) => {
+
+          if (type == "office_id") {
+            ids.push(item.company_id);
+          } else if (type == "division_id") {
+            console.log(item.office_id)
+            ids.push(item.office_id);
+          } else if (type == "department_id") {
+            ids.push(item.division_id);
+          } else if (type == "group_id") {
+            ids.push(item.department_id);
+          }
+        });
+
+        console.log(ids)
+
+        commit("SET_RELATIONS", ids);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
+
+    async editRelation({commit}, {id, collection, type}) {
+
+
+      try {
+        const relations = await this.editRelationInDb(id, collection);
+        console.log(relations)
+
+
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: "Nebuvo redaguota.",
+          isSuccess: false,
+        });
+      }
+      
+
+
+    }
+
+  
   },
 };

@@ -20,11 +20,13 @@ export default {
       "CONTROL_MODAL",
       "SET_ACTIVE_CONTACT",
       "SET_ACTIVE_COMPANY",
+      "SET_ACTIVE_STRUCTURE"
     ]),
     dismiss() {
       this.CONTROL_MODAL();
       this.SET_ACTIVE_CONTACT();
       this.SET_ACTIVE_COMPANY();
+      this.SET_ACTIVE_STRUCTURE({})
     },
   },
 };

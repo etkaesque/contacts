@@ -20,9 +20,21 @@ export default {
     },
   },
   actions: {
-    async createGroup({ commit, dispatch }, data) {
+    async createGroup({ commit, dispatch }, { data, relation }) {
       try {
-        await this.createInstanceInDb(data, "groups");
+        const group = await this.createInstanceInDb(data, "groups");
+        let relationData = {};
+
+        relation.forEach((department) => {
+    
+          relationData = {
+            group_id: group.id,
+            department_id: department,
+          };
+
+          dispatch("createDepartmentsGroups", relationData);
+        });
+
         commit("CONTROL_MODAL");
         dispatch("fetchGroups");
         commit("CONTROL_NOTIFICATION", {
@@ -89,7 +101,11 @@ export default {
       try {
         const group = await this.fetchInstanceByIdFromDb(id, "groups", "");
 
-        commit("SET_ACTIVE_STRUCTURE", { structure: group });
+        commit("SET_ACTIVE_STRUCTURE", { 
+          id: id,
+          type: "groups",
+          structure: group }
+          );
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -110,6 +126,23 @@ export default {
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
+
+    async createDepartmentsGroups({ commit }, data) {
+      try {
+        const departmentsGroups = await this.createRelation(
+          "departments_groups",
+          data
+        );
+      
+      } catch{
+
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: "Padaliniui ofisas nebuvo priskirtas.",
           isSuccess: false,
         });
       }

@@ -37,7 +37,8 @@ export default {
         this.CONTROL_MODAL();
         this.SET_ACTIVE_CONTACT()
         this.SET_ACTIVE_COMPANY()
-        this.SET_ACTIVE_STRUCTURE()
+        this.SET_ACTIVE_STRUCTURE({})
+        
       }
     },
   },

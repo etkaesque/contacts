@@ -54,7 +54,6 @@ export default {
   data() {
     return {
       office: {
-        name: "",
         street: "",
         street_number: "",
         city: "",
@@ -62,10 +61,10 @@ export default {
       },
     };
   },
-
+  emits: ["handleChange"],
   methods: {
-    handleOffice() {
-      emit('office')
+    handleChange() {
+      this.$emit("handleChange", this.office);
     }}
 }
 </script>

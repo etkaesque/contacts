@@ -88,13 +88,16 @@
           <md-field ref="company_id">
             <label for="company">Įmonė</label>
             <md-select
+              placeholder="Pasirinkite įmonę"
               ref="company"
               v-model="formData.company_id"
               name="company"
               id="company"
               @input="handleCompany(formData.company_id)"
             >
-              <md-option value="''" disabled>Pasirinkite įmonę</md-option>
+              <md-option v-if="formData.company_id != ``" value=""
+                >Pasirinkite įmonę</md-option
+              >
               <md-option v-for="company in companies" :value="company.id">{{
                 company.name
               }}</md-option>
@@ -105,12 +108,16 @@
           <md-field ref="office_id">
             <label for="office">Ofisas</label>
             <md-select
+              :disabled="isCompaniesEmpty"
+              placeholder="Pasirinkite ofisą"
               v-model="formData.office_id"
               name="office"
               id="office"
               @input="handleOffice(formData.office_id)"
             >
-              <md-option value="''" disabled>Pasirinkite ofisą</md-option>
+              <md-option v-if="formData.office_id != ``" value=""
+                >Pasirinkite ofisą</md-option
+              >
               <div v-for="office in offices" :key="office.expand.office_id.id">
                 <md-option :value="office.expand.office_id.id">{{
                   office.expand.office_id.name
@@ -125,12 +132,16 @@
               <label for="font">Padalinys</label>
 
               <md-select
+                :disabled="isOfficesEmpty"
+                placeholder="Pasirinkite padalinį"
                 v-model="formData.division_id"
                 name="font"
                 id="division"
                 @input="handleDivisions(formData.division_id)"
               >
-                <md-option value="''" disabled>Pasirinkite padalinį</md-option>
+                <md-option v-if="formData.division_id != ``" value=""
+                  >Pasirinkite padalinį</md-option
+                >
 
                 <div
                   v-for="division in divisions"
@@ -148,12 +159,16 @@
             <md-field ref="department_id">
               <label for="font">Skyrius</label>
               <md-select
+                :disabled="isDivisionsEmpty"
+                placeholder="Pasirinkite skyrių"
                 @input="handleDepartment(formData.department_id)"
                 v-model="formData.department_id"
                 name="department"
                 id="department"
               >
-                <md-option value="''" disabled>Pasirinkite skyrių</md-option>
+                <md-option v-if="formData.department_id != ``" value=""
+                  >Pasirinkite Skyrių</md-option
+                >
 
                 <div v-if="departments.length != 0">
                   <div
@@ -165,8 +180,6 @@
                     }}</md-option>
                   </div>
                 </div>
-
-                <md-option :value="''"></md-option>
               </md-select>
               <span class="md-error">{{ validation.message }}</span>
             </md-field>
@@ -174,8 +187,16 @@
             <md-field ref="group_id">
               <label for="font">Grupė</label>
 
-              <md-select v-model="formData.group_id" name="group" id="group">
-                <md-option value="''" disabled>Pasirinkite grupę</md-option>
+              <md-select
+                :disabled="isDepartmentsEmpty"
+                placeholder="Pasirinkite grupę"
+                v-model="formData.group_id"
+                name="group"
+                id="group"
+              >
+                <md-option v-if="formData.group_id != ``" value=""
+                  >Pasirinkite grupę</md-option
+                >
 
                 <div v-if="groups.length != 0">
                   <div v-for="group in groups" :key="group.expand.group_id.id">
@@ -184,8 +205,6 @@
                     </md-option>
                   </div>
                 </div>
-
-                <md-option :value="''"></md-option>
               </md-select>
               <span class="md-error">{{ validation.message }}</span>
             </md-field>
@@ -292,6 +311,19 @@ export default {
       "activeContact",
       "contact",
     ]),
+
+    isCompaniesEmpty() {
+      return this.formData.company_id == "" || this.companies.length == 0;
+    },
+    isOfficesEmpty() {
+      return this.formData.office_id == "" || this.divisions.length == 0;
+    },
+    isDivisionsEmpty() {
+      return this.formData.division_id == "" || this.departments.length == 0;
+    },
+    isDepartmentsEmpty() {
+      return this.formData.department_id == "" || this.groups.length == 0;
+    },
   },
   methods: {
     ...mapActions([
@@ -561,9 +593,6 @@ export default {
     },
   },
   async created() {
-    console.log("activecontact is",this.activeContact)
-    console.log("contact is",this.contact)
-
     this.oldOffices = this.offices;
     this.oldDivisions = this.divisions;
     this.oldDepartments = this.departments;

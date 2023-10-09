@@ -94,10 +94,10 @@ let contactsAPI = (store) => {
   };
   store.createInstanceInDb = async (data, collection) => {
     try {
+     
       const instance = await pb.collection(collection).create(data);
       return instance;
-    } catch (err) {
-      console.log(err.message);
+    } catch  {
       throw Error;
     }
   };
@@ -105,8 +105,8 @@ let contactsAPI = (store) => {
     try {
       const instance = await pb.collection(collection).update(id, data);
       return instance;
-    } catch (err) {
-      console.log(err);
+    } catch  {
+     
       throw Error;
     }
   };
@@ -120,13 +120,45 @@ let contactsAPI = (store) => {
   };
   store.createRelation = async (collection, data) => {
     try {
-      const relation = await pb.collection(collection).create(data, { requestKey: null });
+      const relation = await pb
+        .collection(collection)
+        .create(data, { requestKey: null });
       return relation;
     } catch (error) {
-      console.log("Eeeeeeeeeeeeeeeeeeeeeeeeer", error);
       throw Error;
     }
   };
+  store.fetchRelationFromDb = async (id, collection, type) => {
+    try {
+
+      console.log(id, collection,type)
+
+      let filter = `${type}="${id}"`
+      const relations = await pb.collection(collection).getList(1, 50, {filter});
+   
+      return relations;
+
+    } catch {
+    
+      throw Error;
+    }
+  };
+  store.createRelation = async (id, collection, data) => {
+
+    try {
+      const relation = await pb
+        .collection(collection)
+        .update(id, data, { requestKey: null });
+      return relation;
+    } catch (error) {
+      throw Error;
+    }
+
+
+
+  }
+
+
 };
 
 export default contactsAPI;

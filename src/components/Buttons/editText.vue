@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 
 export default {
   props: {
@@ -13,8 +13,13 @@ export default {
     id: String,
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_COMPANY","SET_ACTIVE_STRUCTURE"]),
-    handleClick(event) {
+    ...mapActions(["setActiveStructure"]),
+    ...mapMutations([
+      "CONTROL_MODAL",
+      "SET_ACTIVE_COMPANY",
+      "SET_ACTIVE_STRUCTURE",
+    ]),
+   async handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
 
@@ -25,7 +30,7 @@ export default {
         this.SET_ACTIVE_COMPANY(this.id);
       } else {
         options = { status: true, form: "editStructure" };
-        this.SET_ACTIVE_STRUCTURE({ id: this.id, type: this.type });
+        await this.setActiveStructure({ id: this.id, type: this.type });
       }
 
       this.CONTROL_MODAL(options);
