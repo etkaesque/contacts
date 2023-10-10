@@ -15,7 +15,7 @@ const routes = [
 
   { path: "*", component: Page404 },
 
-  { path: "/contact/:id", component: DetailedContact },
+  { path: "/contact/:id", component: DetailedContact, name: "Contact" },
 
   { path: "/structure", component: StructureManagment },
 

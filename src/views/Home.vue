@@ -1,6 +1,5 @@
 <template>
   <div class="h-screen flex flex-col">
- 
     <Main>
       <section>
         <h1 class="text-5xl font-light">Kontaktų sistema</h1>
@@ -13,7 +12,7 @@
         </div>
 
         <div>
-          <span>{{ foundItemsMessage }}</span>
+          <span v-html="foundItemsMessage"></span>
         </div>
 
         <Filters></Filters>
@@ -32,7 +31,7 @@
 import viewMode from "../components/Buttons/viewMode.vue";
 import paginationFilter from "../components/Buttons/paginationFilter.vue";
 import add from "../components/Buttons/add.vue";
-import Contacts from "../components/Contact/contacts.vue";
+import Contacts from "../components/Contact/contactsDisplay.vue";
 
 import Search from "../components/search.vue";
 import Pagination from "../components/pagination.vue";
@@ -60,16 +59,11 @@ export default {
       "currentPage",
       "filterData",
     ]),
+
     foundItemsMessage() {
-      if (this.contactsTotalItems === 1) {
-        return `Iš viso rastas: ${this.contactsTotalItems} kontaktas.`;
-      } else if (this.contactsTotalItems > 9) {
-        return `Iš viso rasta ${this.contactsTotalItems} kontaktų.`;
-      } else if (this.contactsTotalItems === 0) {
-        return `Kontaktų nebuvo rasta.`;
-      } else if (this.contactsTotalItems <= 9) {
-        return `Iš viso rasti: ${this.contactsTotalItems} kontaktai.`;
-      }
+      let total = this.contactsTotalItems
+
+      return `Iš viso rasta: <span class="font-semibold">${total}</span>.`;
     },
     isValid() {
       if (pb.authStore) {
@@ -87,7 +81,7 @@ export default {
       "SET_DEPARTMENTS",
       "SET_CURRENT_PAGE",
       "SET_SEARCH_TERM",
-      "SET_FILTERS"
+      "SET_FILTERS",
     ]),
   },
   async created() {
@@ -96,17 +90,21 @@ export default {
     this.SET_GROUPS();
     this.SET_DIVISIONS();
     this.SET_DEPARTMENTS();
-    await this.fetchContacts({ page: this.currentPage });
+    await this.fetchContacts({
+      page: this.currentPage,
+      searchTerm: this.searchTerm,
+      filterData: this.filterData,
+    });
+
+    console.log(this.filterData, this.currentPage, this.currentPage);
   },
   beforeRouteLeave(to, from, next) {
-    this.SET_CURRENT_PAGE(1)
-    this.SET_SEARCH_TERM("")
-    this.SET_FILTERS()
-  
-  next();
-}
+    this.SET_CURRENT_PAGE(1);
+    this.SET_SEARCH_TERM("");
+    this.SET_FILTERS();
 
-  
+    next();
+  },
 };
 </script>
 

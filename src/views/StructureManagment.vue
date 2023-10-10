@@ -9,7 +9,7 @@
         </div>
 
         <div>
-          <span>{{ structureMessage }}</span>
+          <span v-html="structureMessage"></span>
         </div>
       </section>
 
@@ -38,7 +38,7 @@
             ></md-tab>
           </md-tabs>
         </div>
-        <div class="w-full">
+        <div v-if="structure.length != 0" class="w-full">
           <md-table>
             <md-table-row class="headerRow">
               <md-table-head class="font-medium">Pavadinimas</md-table-head>
@@ -57,6 +57,12 @@
               </md-table-cell>
             </md-table-row>
           </md-table>
+        </div>
+        <div
+          v-if="structure.length == 0"
+          class="w-full flex justify-center text-xl mt-6"
+        >
+          Duomenų nėra
         </div>
       </section>
     </Main>
@@ -86,45 +92,8 @@ export default {
     ...mapGetters(["offices", "divisions", "departments", "groups"]),
     structureMessage() {
       let total = this.structure.length;
-      let text1 = ``;
-      let text2 = ``;
-      let text3 = ``;
-      let isWordGenderMale = false;
 
-      if (this.type == `offices`) {
-        isWordGenderMale = true;
-        text1 = `ofisas`;
-        text2 = `ofisų`;
-        text3 = `ofisai`;
-      } else if (this.type == `divisions`) {
-        isWordGenderMale = true;
-        text1 = `padalinys`;
-        text2 = `padalinių`;
-        text3 = `padaliniai`;
-      } else if (this.type == `departments`) {
-        isWordGenderMale = true;
-        text1 = `skyrius`;
-        text2 = `skyrių`;
-        text3 = `skyriai`;
-      } else if (this.type == `groups`) {
-        isWordGenderMale = false;
-        text1 = `grupė`;
-        text2 = `grupių`;
-        text3 = `grupės`;
-      }
-
-      if (total === 1) {
-        return `Iš viso rasta: ${total} ${text1}.`;
-      } else if (total > 9) {
-        return `Iš viso rasta: ${total} ${text2}.`;
-      } else if (total === 0) {
-        return `${text2} nebuvo rasta.`;
-      } else if (total <= 9) {
-        if (isWordGenderMale) {
-          return `Iš viso rasti: ${total} ${text3}.`;
-        }
-        return `Iš viso rastos: ${total} ${text3}.`;
-      }
+      return `Iš viso rasta: <span class="font-semibold">${total}</span>.`;
     },
   },
   methods: {

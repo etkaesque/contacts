@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <Main>
       <h1 class="text-5xl font-light mb-2">Įmonės</h1>
 
@@ -11,12 +10,12 @@
         </div>
 
         <div>
-          <span> {{ foundItemsMessage }}</span>
+          <span v-html="foundItemsMessage"></span>
         </div>
       </section>
 
       <section>
-        <div class="w-full">
+        <div v-if="companies.length != 0" class="w-full">
           <md-table>
             <md-table-row class="headerRow">
               <md-table-head class="font-medium"
@@ -42,15 +41,18 @@
             </md-table-row>
           </md-table>
         </div>
+
+        <div v-else class="w-full flex justify-center text-xl mt-6">
+          Duomenų nėra
+        </div>
       </section>
     </Main>
   </div>
 </template>
 
 <script>
-
 import Add from "../components/Buttons/add.vue";
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import Edit from "../components/Buttons/editText.vue";
 import Delete from "../components/Buttons/deleteText.vue";
 
@@ -64,15 +66,8 @@ export default {
   computed: {
     ...mapGetters(["companies", "totalCompanies"]),
     foundItemsMessage() {
-      if (this.totalCompanies === 1) {
-        return `Iš viso rasta: ${this.totalCompanies} įmonė.`;
-      } else if (this.totalCompanies > 9) {
-        return `Iš viso rasta ${this.totalCompanies} įmonių.`;
-      } else if (this.totalCompanies === 0) {
-        return `Įmonių nebuvo rasta.`;
-      } else if (this.totalCompanies <= 9) {
-        return `Iš viso rastos: ${this.totalCompanies} įmonės.`;
-      }
+      let total = this.totalCompanies;
+      return `Iš viso rasta: <span class="font-semibold">${total}</span>.`;
     },
   },
   methods: {
@@ -95,7 +90,7 @@ export default {
   justify-content: center !important;
 }
 
-.t:nth-child(even){
-  background-color:  rgb(253, 247, 247) !important;
+.t:nth-child(even) {
+  background-color: rgb(253, 247, 247) !important;
 }
 </style>

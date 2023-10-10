@@ -23,11 +23,9 @@ export default {
     async createOffice({ commit, dispatch }, { data, relation }) {
       try {
         const office = await this.createInstanceInDb(data, "offices");
-       
 
         let relationData = {};
         relation.forEach((company) => {
-        
           relationData = {
             office_id: office.id,
             company_id: company,
@@ -60,17 +58,46 @@ export default {
           message: `Ofisas buvo ištrintas`,
           isSuccess: true,
         });
-      } catch (error) {
+      } catch ({ message }) {
+        let errMessage;
+        if (message == "400") {
+          errMessage =
+            "Ištrinti ofiso negalima. Ši struktūra yra priskirta darbuotojui.";
+        } else {
+          errMessage = "Ofisas nebuvo ištrintas. Pabandykite vėliau.";
+        }
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: `Ofisas nebuvo ištrintas`,
+          message: errMessage,
           isSuccess: false,
         });
       }
     },
-    async editOffice({ commit, dispatch }, { id, data }) {
+    async editOffice({ commit, dispatch }, { id, data, relation }) {
       try {
         await this.editInstanceInDb(id, data, "offices");
+
+    
+        if (relation.create.length != 0) {
+          let relationData = {};
+          relation.create.forEach((company) => {
+            relationData = {
+              office_id: id,
+              company_id: company,
+            };
+            dispatch("createCompanyOffices", relationData);
+          });
+        }
+
+        if (relation.delete.length != 0) {
+          relation.delete.forEach((item) => {
+            dispatch("deleteRelation", {
+              id: item.id,
+              collection: item.collectionName,
+            });
+          });
+        }
+
         dispatch("fetchOffices");
         commit("CONTROL_MODAL");
         commit("CONTROL_NOTIFICATION", {
@@ -133,7 +160,6 @@ export default {
     async createCompanyOffices({ commit }, data) {
       try {
         const offices = await this.createRelation("companies_offices", data);
-        
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,

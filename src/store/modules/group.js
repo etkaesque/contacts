@@ -64,7 +64,7 @@ export default {
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: `Grupė nebuvo ištrinta`,
+          message: `Grupė nebuvo ištrinta. Pabandykite vėliau.`,
           isSuccess: false,
         });
       }

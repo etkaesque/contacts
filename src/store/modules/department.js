@@ -68,7 +68,7 @@ export default {
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: `Skyrius nebuvo ištrintas`,
+          message: `Skyrius nebuvo ištrintas. Pabandykite vėliau.`,
           isSuccess: false,
         });
       }

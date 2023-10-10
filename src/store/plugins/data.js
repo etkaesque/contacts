@@ -94,7 +94,6 @@ let contactsAPI = (store) => {
   };
   store.createInstanceInDb = async (data, collection) => {
     try {
-
       const instance = await pb.collection(collection).create(data);
       return instance;
     } catch {
@@ -103,11 +102,9 @@ let contactsAPI = (store) => {
   };
   store.editInstanceInDb = async (id, data, collection) => {
     try {
-      console.log(id, data, collection)
       const instance = await pb.collection(collection).update(id, data);
       return instance;
     } catch {
-
       throw Error;
     }
   };
@@ -115,8 +112,8 @@ let contactsAPI = (store) => {
     try {
       const instance = await pb.collection(collection).delete(id);
       return instance;
-    } catch {
-      throw Error;
+    } catch (ClientResponseErr) {
+      throw Error(ClientResponseErr.status);
     }
   };
   store.createRelation = async (collection, data) => {
@@ -131,15 +128,16 @@ let contactsAPI = (store) => {
   };
   store.fetchRelationFromDb = async (id, collection, type) => {
     try {
-      let filter = `${type}="${id}"`
-      const relations = await pb.collection(collection).getList(1, 50, { filter });
+      let filter = `${type}="${id}"`;
+      const relations = await pb
+        .collection(collection)
+        .getList(1, 50, { filter });
       return relations;
     } catch {
       throw Error;
     }
   };
   store.deleteRelationInDb = async (id, collection) => {
-
     try {
       const relation = await pb
         .collection(collection)
@@ -148,10 +146,7 @@ let contactsAPI = (store) => {
     } catch (error) {
       throw Error;
     }
-
-  }
-
-
+  };
 };
 
 export default contactsAPI;

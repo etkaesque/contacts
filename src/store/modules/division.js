@@ -29,9 +29,7 @@ export default {
 
         let relationData = {};
 
-
         relation.forEach((office) => {
-
           relationData = {
             division_id: division.id,
             office_id: office,
@@ -48,7 +46,6 @@ export default {
           isSuccess: true,
         });
       } catch (error) {
-
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Padalinys nebuvo sukurtas.`,
@@ -65,10 +62,17 @@ export default {
           message: `Padalinys buvo ištrintas`,
           isSuccess: true,
         });
-      } catch (error) {
+      } catch ({ message }) {
+        let errMessage;
+        if (message == "400") {
+          errMessage =
+            "Ištrinti padalinio negalima. Ši struktūra yra priskirta darbuotojui.";
+        } else {
+          errMessage = "Padalinys nebuvo ištrintas. Pabandykite vėliau.";
+        }
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: `Padalinys nebuvo ištrintas`,
+          message: errMessage,
           isSuccess: false,
         });
       }
@@ -78,7 +82,7 @@ export default {
         await this.editInstanceInDb(id, data, "divisions");
 
         if (relation.create.length != 0) {
-          let relationData = {}
+          let relationData = {};
           relation.create.forEach((office) => {
             relationData = {
               division_id: id,
@@ -87,11 +91,14 @@ export default {
             dispatch("createOfficeDivisions", relationData);
           });
         }
-        
+
         if (relation.delete.length != 0) {
-          relation.delete.forEach(item => {
-            dispatch("deleteRelation", { id: item.id, collection: item.collectionName });
-          })
+          relation.delete.forEach((item) => {
+            dispatch("deleteRelation", {
+              id: item.id,
+              collection: item.collectionName,
+            });
+          });
         }
 
         dispatch("fetchDivisions");
@@ -133,7 +140,7 @@ export default {
         commit("SET_ACTIVE_STRUCTURE", {
           id: id,
           type: "divisions",
-          structure: division
+          structure: division,
         });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -161,15 +168,12 @@ export default {
     },
 
     async createOfficeDivisions({ commit }, data) {
-
       try {
         const officeDivisions = await this.createRelation(
           "offices_divisions",
           data
         );
-
       } catch (error) {
-
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Ofisams padalinys nebuvo priskirtas.",

@@ -1,7 +1,5 @@
 <template>
   <div>
-  
-
     <Main v-if="Object.keys(contact).length != 0">
       <h1 class="text-6xl font-light mb-16">Detalesnė kontakto informacija</h1>
       <section class="flex mb-28 gap-x-8 items-center">
@@ -69,7 +67,6 @@
 </template>
 
 <script>
-
 import profileIcon from "../assets/user.svg";
 import { mapActions, mapGetters } from "vuex";
 export default {
@@ -84,7 +81,6 @@ export default {
   methods: {
     ...mapActions(["fetchContactById"]),
     checkStructure(structure) {
-      
       if (structure === "" || structure == undefined) {
         return "nepriskirta";
       }

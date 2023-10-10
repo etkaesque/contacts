@@ -61,11 +61,27 @@ export default {
       },
     };
   },
+  props:{
+    officeData: Object,
+
+  },
   emits: ["handleChange"],
   methods: {
     handleChange() {
       this.$emit("handleChange", this.office);
-    }}
+    }},
+  created(){
+ 
+    if(this.officeData) {
+   
+      this.office.name = this.propName
+      this.office.street = this.officeData.street
+      this.office.street_number = this.officeData.street_number
+      this.office.city = this.officeData.city
+      this.office.country = this.officeData.country
+    }
+
+  }
 }
 </script>
 

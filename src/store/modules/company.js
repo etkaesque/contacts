@@ -33,7 +33,6 @@ export default {
       }
     },
     SET_ACTIVE_STRUCTURE(state, { id, type, structure }) {
-
       if (id == undefined && type == undefined && structure == undefined) {
         state.active_structure = { id: "", type: "", structure: {} };
       } else {
@@ -160,20 +159,15 @@ export default {
     },
 
     async fetchRelation({ commit }, { id, collection, type }) {
-
       try {
         const relations = await this.fetchRelationFromDb(id, collection, type);
-
-        console.log(relations)
 
         let ids = [];
 
         relations.items.forEach((item) => {
-
           if (type == "office_id") {
             ids.push(item.company_id);
           } else if (type == "division_id") {
-            console.log(item.office_id)
             ids.push(item.office_id);
           } else if (type == "department_id") {
             ids.push(item.division_id);
@@ -181,9 +175,6 @@ export default {
             ids.push(item.department_id);
           }
         });
-
-        console.log(ids)
-
         commit("SET_RELATIONS", { relations: relations.items, ids: ids });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -195,10 +186,8 @@ export default {
     },
 
     async deleteRelation({ commit }, { id, collection }) {
-
       try {
         const relations = await this.deleteRelationInDb(id, collection);
-        console.log("deleted", relations)
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -206,8 +195,6 @@ export default {
           isSuccess: false,
         });
       }
-
-    }
-
+    },
   },
 };
