@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-5/6 flex flex-col">
     <Main>
       <h1 class="text-5xl font-light mb-2">Įmonės</h1>
 
@@ -14,53 +14,28 @@
         </div>
       </section>
 
-      <section>
-        <div v-if="companies.length != 0" class="w-full">
-          <md-table>
-            <md-table-row class="headerRow">
-              <md-table-head class="font-medium"
-                >Įmonės pavadinimas</md-table-head
-              >
-              <md-table-head class="action">
-                <span class="action-text font-medium">Veiksmas</span>
-              </md-table-head>
-            </md-table-row>
-
-            <md-table-row
-              class="t"
-              v-for="company in companies"
-              :key="company.id"
-            >
-              <md-table-cell>{{ company.name }}</md-table-cell>
-              <md-table-cell>
-                <div class="flex gap-3 justify-end">
-                  <Edit :id="company.id" :type="`company`"></Edit>
-                  <Delete :id="company.id" :type="`company`"></Delete>
-                </div>
-              </md-table-cell>
-            </md-table-row>
-          </md-table>
-        </div>
-
-        <div v-else class="w-full flex justify-center text-xl mt-6">
-          Duomenų nėra
-        </div>
-      </section>
+      <Company :companies="companies"></Company>
     </Main>
+
+    <Footer class="flex justify-center grow items-end">
+      <Pagination :type="`company`"></Pagination>
+    </Footer>
   </div>
 </template>
 
 <script>
 import Add from "../components/Buttons/add.vue";
-import { mapGetters, mapActions } from "vuex";
-import Edit from "../components/Buttons/editText.vue";
-import Delete from "../components/Buttons/deleteText.vue";
+import Company from "../components/Company/company.vue";
+import Pagination from "../components/pagination.vue";
+import { mapGetters, mapActions, mapMutations } from "vuex";
+import PocketBase from "pocketbase";
+const pb = new PocketBase(SERVER_ADDR);
 
 export default {
   components: {
     Add,
-    Edit,
-    Delete,
+    Company,
+    Pagination,
   },
 
   computed: {
@@ -69,12 +44,30 @@ export default {
       let total = this.totalCompanies;
       return `Iš viso rasta: <span class="font-semibold">${total}</span>.`;
     },
+    isValid() {
+      if (pb.authStore) {
+        return pb.authStore.isValid;
+      } else {
+        return false;
+      }
+    },
   },
   methods: {
-    ...mapActions(["fetchCompanies"]),
+    ...mapActions(["fetchPaginatedCompanies"]),
+    ...mapMutations(["SET_CURRENT_PAGE"]),
+  },
+  beforeRouteLeave(to, from, next) {
+    this.SET_CURRENT_PAGE(1);
+    next();
   },
   async created() {
-    await this.fetchCompanies();
+    if (pb.authStore && !pb.authStore.isValid) {
+      this.$router.push("/login");
+    } else {
+      await this.fetchPaginatedCompanies();
+    }
+
+
   },
 };
 </script>

@@ -35,7 +35,7 @@ export default {
         });
 
         commit("CONTROL_MODAL");
-        dispatch("fetchOffices");
+        dispatch("fetchPaginatedOffices");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Ofisas sėkmingai sukurtas.`,
@@ -49,10 +49,15 @@ export default {
         });
       }
     },
-    async deleteOffice({ commit, dispatch }, id) {
+    async deleteOffice({ commit, dispatch, getters }, id) {
       try {
         await this.deleteInstanceInDb(id, "offices");
-        dispatch("fetchOffices");
+
+        if (getters.offices.length === 1) {
+          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+        }
+
+        dispatch("fetchPaginatedOffices");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Ofisas buvo ištrintas`,
@@ -77,7 +82,6 @@ export default {
       try {
         await this.editInstanceInDb(id, data, "offices");
 
-    
         if (relation.create.length != 0) {
           let relationData = {};
           relation.create.forEach((company) => {
@@ -98,7 +102,7 @@ export default {
           });
         }
 
-        dispatch("fetchOffices");
+        dispatch("fetchPaginatedOffices");
         commit("CONTROL_MODAL");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -125,6 +129,24 @@ export default {
         });
       }
     },
+    async fetchPaginatedOffices({ commit, getters }) {
+      try {
+        const offices = await this.getPaginatedList(
+          "offices",
+          getters.currentPage,
+          getters.perPage
+        );
+        commit("SET_PAGINATION", offices.totalItems);
+        commit("SET_OFFICES", offices.items);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
+
     async fetchOfficeById({ commit }, id) {
       try {
         const office = await this.fetchInstanceByIdFromDb(id, "offices", "");

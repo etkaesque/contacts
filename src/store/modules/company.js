@@ -55,7 +55,7 @@ export default {
       try {
         await this.createInstanceInDb(data, "companies");
         commit("CONTROL_MODAL");
-        dispatch("fetchCompanies");
+        dispatch("fetchPaginatedCompanies");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Įmonė sėkmingai sukurta.`,
@@ -69,19 +69,32 @@ export default {
         });
       }
     },
-    async deleteCompany({ commit, dispatch }, id) {
+    async deleteCompany({ commit, dispatch, getters }, id) {
       try {
         await this.deleteInstanceInDb(id, "companies");
-        dispatch("fetchCompanies");
+
+        if (getters.companies.length === 1) {
+          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+        }
+
+        dispatch("fetchPaginatedCompanies");
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Įmonė buvo ištrinta`,
           isSuccess: true,
         });
-      } catch (error) {
+      } catch ({ message }) {
+        let errMessage;
+        if (message == "400") {
+          errMessage =
+            "Ištrinti įmonės negalima. Ši struktūra yra priskirta darbuotojui.";
+        } else {
+          errMessage = "Įmonė nebuvo ištrinta. Pabandykite vėliau.";
+        }
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: error.message,
+          message: errMessage,
           isSuccess: false,
         });
       }
@@ -130,6 +143,24 @@ export default {
         });
       }
     },
+    async fetchPaginatedCompanies({ commit, getters }) {
+      try {
+        const companies = await this.getPaginatedList(
+          "companies",
+          getters.currentPage,
+          getters.perPage
+        );
+        commit("SET_PAGINATION", companies.totalItems);
+        commit("SET_COMPANIES", companies.items);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
+
     async setActiveStructure({ commit, dispatch }, { id, type }) {
       if (id == undefined) {
         commit.SET_ACTIVE_STRUCTURE({}); // clear

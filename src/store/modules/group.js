@@ -28,7 +28,6 @@ export default {
         let relationData = {};
 
         relation.forEach((department) => {
-    
           relationData = {
             group_id: group.id,
             department_id: department,
@@ -38,7 +37,7 @@ export default {
         });
 
         commit("CONTROL_MODAL");
-        dispatch("fetchGroups");
+        dispatch("fetchPaginatedGroups");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Grupė sėkmingai sukurta.`,
@@ -52,10 +51,15 @@ export default {
         });
       }
     },
-    async deleteGroup({ commit, dispatch }, id) {
+    async deleteGroup({ commit, dispatch, getters }, id) {
       try {
         await this.deleteInstanceInDb(id, "groups");
-        dispatch("fetchGroups");
+
+        if (getters.groups.length === 1) {
+          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+        }
+
+        dispatch("fetchPaginatedGroups");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Grupė buvo ištrinta`,
@@ -74,10 +78,9 @@ export default {
         await this.editInstanceInDb(id, data, "groups");
 
         if (relation.create.length != 0) {
-          let relationData = {}
+          let relationData = {};
 
           relation.create.forEach((department) => {
-
             relationData = {
               group_id: id,
               department_id: department,
@@ -88,15 +91,15 @@ export default {
         }
 
         if (relation.delete.length != 0) {
-
-          relation.delete.forEach(item => {
-
-            dispatch("deleteRelation", {id: item.id, collection: item.collectionName});
-          })
-
+          relation.delete.forEach((item) => {
+            dispatch("deleteRelation", {
+              id: item.id,
+              collection: item.collectionName,
+            });
+          });
         }
 
-        dispatch("fetchGroups");
+        dispatch("fetchPaginatedGroups");
         commit("CONTROL_MODAL");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -123,15 +126,32 @@ export default {
         });
       }
     },
+    async fetchPaginatedGroups({ commit, getters }) {
+      try {
+        const groups = await this.getPaginatedList(
+          "groups",
+          getters.currentPage,
+          getters.perPage
+        );
+        commit("SET_PAGINATION", groups.totalItems);
+        commit("SET_GROUPS", groups.items);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
     async fetchGroupById({ commit }, id) {
       try {
         const group = await this.fetchInstanceByIdFromDb(id, "groups", "");
 
-        commit("SET_ACTIVE_STRUCTURE", { 
+        commit("SET_ACTIVE_STRUCTURE", {
           id: id,
           type: "groups",
-          structure: group }
-          );
+          structure: group,
+        });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -163,9 +183,7 @@ export default {
           "departments_groups",
           data
         );
-      
-      } catch{
-
+      } catch {
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Padaliniui ofisas nebuvo priskirtas.",

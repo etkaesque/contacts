@@ -1,10 +1,10 @@
 import PocketBase from "pocketbase";
 
 const pb = new PocketBase(SERVER_ADDR);
+const perPage = CONTACTS_PER_PAGE;
 
 let contactsAPI = (store) => {
   store.fetchContactsFromDb = async (page, searchTerm, filterData) => {
-    const perPage = CONTACTS_PER_PAGE;
     let filter = "";
     let termFilter = "";
     let structureFilter = "";
@@ -92,14 +92,22 @@ let contactsAPI = (store) => {
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
-  store.createInstanceInDb = async (data, collection) => {
+  (store.getPaginatedList = async (collection, page) => {
     try {
-      const instance = await pb.collection(collection).create(data);
-      return instance;
+      const records = await pb.collection(collection).getList(page, perPage);
+      return records;
     } catch {
-      throw Error;
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
-  };
+  }),
+    (store.createInstanceInDb = async (data, collection) => {
+      try {
+        const instance = await pb.collection(collection).create(data);
+        return instance;
+      } catch {
+        throw Error;
+      }
+    });
   store.editInstanceInDb = async (id, data, collection) => {
     try {
       const instance = await pb.collection(collection).update(id, data);

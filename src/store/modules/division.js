@@ -39,7 +39,7 @@ export default {
         });
 
         commit("CONTROL_MODAL");
-        dispatch("fetchDivisions");
+        dispatch("fetchPaginatedDivisions");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Padalinys sėkmingai sukurtas.`,
@@ -53,10 +53,15 @@ export default {
         });
       }
     },
-    async deleteDivision({ commit, dispatch }, id) {
+    async deleteDivision({ commit, dispatch, getters }, id) {
       try {
         await this.deleteInstanceInDb(id, "divisions");
-        dispatch("fetchDivisions");
+
+        if (getters.divisions.length === 1) {
+          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+        }
+
+        dispatch("fetchPaginatedDivisions");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Padalinys buvo ištrintas`,
@@ -101,7 +106,7 @@ export default {
           });
         }
 
-        dispatch("fetchDivisions");
+        dispatch("fetchPaginatedDivisions");
         commit("CONTROL_MODAL");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -122,6 +127,23 @@ export default {
           sort: "-created",
         });
         commit("SET_DIVISIONS", divisions);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
+    async fetchPaginatedDivisions({ commit, getters }) {
+      try {
+        const divisions = await this.getPaginatedList(
+          "divisions",
+          getters.currentPage,
+          getters.perPage
+        );
+        commit("SET_PAGINATION", divisions.totalItems);
+        commit("SET_DIVISIONS", divisions.items);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,

@@ -72,7 +72,7 @@ export default {
 <style>
 .md-card {
   width: 380px;
-  height: 300px;
+  height: 260px;
   display: inline-block;
   vertical-align: top;
   text-overflow: ellipsis;

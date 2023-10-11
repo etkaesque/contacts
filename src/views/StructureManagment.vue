@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-5/6 flex flex-col">
     <Main>
       <section class="flex flex-col gap-y-2">
         <h1 class="text-5xl font-light mb-2">Struktūra</h1>
@@ -13,67 +13,27 @@
         </div>
       </section>
 
-      <section>
-        <div class="tabsWrapper">
-          <md-tabs>
-            <md-tab
-              id="tab-office"
-              md-label="Ofisai"
-              @click="handleTab('offices')"
-            ></md-tab>
-            <md-tab
-              id="tab-divisions"
-              md-label="Padaliniai"
-              @click="handleTab('divisions')"
-            ></md-tab>
-            <md-tab
-              id="tab-departments"
-              md-label="Skyriai"
-              @click="handleTab('departments')"
-            ></md-tab>
-            <md-tab
-              id="tab-groups"
-              md-label="Grupės"
-              @click="handleTab('groups')"
-            ></md-tab>
-          </md-tabs>
-        </div>
-        <div v-if="structure.length != 0" class="w-full">
-          <md-table>
-            <md-table-row class="headerRow">
-              <md-table-head class="font-medium">Pavadinimas</md-table-head>
-              <md-table-head class="action">
-                <span class="action-text font-medium">Veiksmas</span>
-              </md-table-head>
-            </md-table-row>
-
-            <md-table-row class="t" v-for="item in structure" :key="item.id">
-              <md-table-cell>{{ item.name }}</md-table-cell>
-              <md-table-cell>
-                <div class="flex gap-3 justify-end">
-                  <Edit :id="item.id" :type="type"></Edit>
-                  <Delete :id="item.id" :type="type"></Delete>
-                </div>
-              </md-table-cell>
-            </md-table-row>
-          </md-table>
-        </div>
-        <div
-          v-if="structure.length == 0"
-          class="w-full flex justify-center text-xl mt-6"
-        >
-          Duomenų nėra
-        </div>
-      </section>
+      <Structure
+        :structure="structure"
+        :type="type"
+        @handleTabs="handleTab"
+      ></Structure>
     </Main>
+
+    <Footer class="flex justify-center grow items-end">
+      <Pagination :type="type"></Pagination>
+    </Footer>
   </div>
 </template>
 
 <script>
 import Add from "../components/Buttons/add.vue";
+import Structure from "../components/StructureForms/structure.vue";
+import Pagination from "../components/pagination.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import Edit from "../components/Buttons/editText.vue";
-import Delete from "../components/Buttons/deleteText.vue";
+
+import PocketBase from "pocketbase";
+const pb = new PocketBase(SERVER_ADDR);
 
 export default {
   data() {
@@ -84,40 +44,52 @@ export default {
   },
   components: {
     Add,
-    Edit,
-    Delete,
+    Structure,
+    Pagination,
   },
 
   computed: {
-    ...mapGetters(["offices", "divisions", "departments", "groups"]),
+    ...mapGetters([
+      "offices",
+      "divisions",
+      "departments",
+      "groups",
+      "totalItems",
+    ]),
     structureMessage() {
-      let total = this.structure.length;
-
-      return `Iš viso rasta: <span class="font-semibold">${total}</span>.`;
+      return `Iš viso rasta: <span class="font-semibold">${this.totalItems}</span>.`;
+    },
+    isValid() {
+      if (pb.authStore) {
+        return pb.authStore.isValid;
+      } else {
+        return false;
+      }
     },
   },
   methods: {
-    ...mapMutations([""]),
+    ...mapMutations(["SET_CURRENT_PAGE"]),
     ...mapActions([
-      "fetchGroups",
-      "fetchDivisions",
-      "fetchDepartments",
-      "fetchOffices",
+      "fetchPaginatedGroups",
+      "fetchPaginatedDivisions",
+      "fetchPaginatedDepartments",
+      "fetchPaginatedOffices",
     ]),
     async handleTab(type) {
       this.type = type;
+      this.SET_CURRENT_PAGE(1);
 
       if (type == `offices`) {
-        await this.fetchOffices();
+        await this.fetchPaginatedOffices();
         this.structure = this.offices;
       } else if (type == `divisions`) {
-        await this.fetchDivisions();
+        await this.fetchPaginatedDivisions();
         this.structure = this.divisions;
       } else if (type == `departments`) {
-        await this.fetchDepartments();
+        await this.fetchPaginatedDepartments();
         this.structure = this.departments;
       } else if (type == `groups`) {
-        await this.fetchGroups();
+        await this.fetchPaginatedGroups();
         this.structure = this.groups;
       }
     },
@@ -125,29 +97,38 @@ export default {
   watch: {
     offices() {
       if (this.type == `offices`) {
-        this.structure = this.offices;
+        this.structure = this[this.type];
       }
     },
     divisions() {
       if (this.type == `divisions`) {
-        this.structure = this.divisions;
+        this.structure = this[this.type];
       }
     },
     departments() {
       if (this.type == `departments`) {
-        this.structure = this.departments;
+        this.structure = this[this.type];
       }
     },
     groups() {
       if (this.type == `groups`) {
-        this.structure = this.groups;
+        this.structure = this[this.type];
       }
     },
   },
+  beforeRouteLeave(to, from, next) {
+    console.log("is hit");
+    this.SET_CURRENT_PAGE(1);
+    next();
+  },
   async created() {
-    await this.fetchOffices();
-    this.structure = this.offices;
-    this.type = `offices`;
+    if (pb.authStore && !pb.authStore.isValid) {
+      this.$router.push("/login");
+    } else {
+      await this.fetchPaginatedOffices();
+      this.structure = this.offices;
+      this.type = `offices`;
+    }
   },
 };
 </script>

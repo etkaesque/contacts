@@ -59,16 +59,12 @@
     </div>
 
     <div v-if="isValid" class="relative">
-      <button
-      
-        class="flex gap-x-5 items-center"
-        @click="handleClick"
-      >
+      <button class="flex gap-x-5 items-center" @click="handleClick">
         <span class="text-lg" style="color: white !important">{{ name }}</span>
         <img :src="avatar" style="max-width: 50px" alt="" />
       </button>
 
-      <Menu v-if="menu"></Menu>
+      <Menu @logout="handleLogout" v-if="menu"></Menu>
     </div>
   </header>
 </template>
@@ -82,6 +78,7 @@ const pb = new PocketBase(SERVER_ADDR);
 export default {
   data() {
     return {
+      isValid: false,
       menu: false,
     };
   },
@@ -89,11 +86,6 @@ export default {
     Menu,
   },
   computed: {
-    isValid() {
-      if (pb.authStore) {
-        return pb.authStore.isValid;
-      }
-    },
     readPermissions() {
       if (pb.authStore) {
         return pb.authStore.model.expand.permissions_id.read_permissions;
@@ -108,10 +100,29 @@ export default {
     },
   },
   methods: {
+    handleLogout() {
+      console.log("pb value", pb.authStore.isValid);
+      console.log("log out");
+      pb.authStore.clear();
+      console.log("pb value", pb.authStore.isValid);
+      console.log(pb.authStore);
+
+      if (pb.authStore) {
+        this.isValid = pb.authStore.isValid;
+        this.$router.push("/")
+      }
+    },
+
     handleClick() {
       this.menu = !this.menu;
-    
     },
+  },
+  created() {
+    if (pb.authStore) {
+      this.isValid = pb.authStore.isValid;
+    }
+
+    console.log("im create");
   },
 };
 </script>

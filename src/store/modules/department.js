@@ -32,7 +32,6 @@ export default {
         let relationData = {};
 
         relation.forEach((division) => {
-
           relationData = {
             department_id: department.id,
             division_id: division,
@@ -42,7 +41,7 @@ export default {
         });
 
         commit("CONTROL_MODAL");
-        dispatch("fetchDepartments");
+        dispatch("fetchPaginatedDepartments");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Skyrius sėkmingai sukurtas.`,
@@ -56,10 +55,15 @@ export default {
         });
       }
     },
-    async deleteDepartment({ commit, dispatch }, id) {
+    async deleteDepartment({ commit, dispatch, getters }, id) {
       try {
         await this.deleteInstanceInDb(id, "departments");
-        dispatch("fetchDepartments");
+
+        if (getters.departments.length === 1) {
+          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+        }
+
+        dispatch("fetchPaginatedDepartments");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Skyrius buvo ištrintas`,
@@ -78,7 +82,7 @@ export default {
         await this.editInstanceInDb(id, data, "departments");
 
         if (relation.create.length != 0) {
-          let relationData = {}
+          let relationData = {};
           relation.create.forEach((division) => {
             relationData = {
               department_id: id,
@@ -88,11 +92,14 @@ export default {
           });
         }
         if (relation.delete.length != 0) {
-          relation.delete.forEach(item => {
-            dispatch("deleteRelation", { id: item.id, collection: item.collectionName });
-          })
+          relation.delete.forEach((item) => {
+            dispatch("deleteRelation", {
+              id: item.id,
+              collection: item.collectionName,
+            });
+          });
         }
-        dispatch("fetchDepartments");
+        dispatch("fetchPaginatedDepartments");
         commit("CONTROL_MODAL");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -121,6 +128,23 @@ export default {
         });
       }
     },
+    async fetchPaginatedDepartments({ commit, getters }) {
+      try {
+        const departments = await this.getPaginatedList(
+          "departments",
+          getters.currentPage,
+          getters.perPage
+        );
+        commit("SET_PAGINATION", departments.totalItems);
+        commit("SET_DEPARTMENTS", departments.items);
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+    },
     async fetchDepartmentById({ commit }, id) {
       try {
         const department = await this.fetchInstanceByIdFromDb(
@@ -131,7 +155,7 @@ export default {
         commit("SET_ACTIVE_STRUCTURE", {
           id: id,
           type: "departments",
-          structure: department
+          structure: department,
         });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -158,15 +182,12 @@ export default {
     },
 
     async createDivisionsDepartments({ commit }, data) {
-
       try {
         const divisionsDepartments = await this.createRelation(
           "divisions_departments",
           data
         );
-
       } catch (error) {
-
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Ofisams padalinys nebuvo priskirtas.",

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-screen">
     <Header v-if="$route.path !== '/login'"> ></Header>
     <Modal v-if="modal.status"></Modal>
     <Delete

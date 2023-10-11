@@ -44,7 +44,7 @@
       </div>
 
       <button
-        class="row-start-3 row-end-4 submitBtn uppercase h-10"
+        class="row-start-3 row-end-4 submitBtn uppercase h-10 mt-5"
         @click="handleSubmit()"
       >
         Redaguoti
@@ -118,7 +118,6 @@ export default {
     async officeDataChange(office) {
       this.structure.officeData = office;
       this.structure.officeData.name = this.structure.data.name;
-      console.log(this.structure.officeData);
     },
     async handleSubmit() {
       let target;
@@ -170,10 +169,9 @@ export default {
 
   watch: {
     "structure.data.name"() {
-      if(this.type === "offices") {
+      if (this.type === "offices") {
         this.structure.officeData.name = this.structure.data.name;
       }
-      
     },
   },
 

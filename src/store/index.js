@@ -5,6 +5,7 @@ import data from "./plugins/data";
 import auth from "./plugins/auth";
 
 import contact from "./modules/contact";
+import pagination from "./modules/pagination";
 import company from "./modules/company";
 import department from "./modules/department";
 import division from "./modules/division";
@@ -25,6 +26,7 @@ const store = new Vuex.Store({
     group,
     office,
     admin,
+    pagination
   },
   plugins: [data, auth],
 });

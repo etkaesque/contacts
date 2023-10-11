@@ -13,18 +13,17 @@
 </template>
 
 <script>
-
 import PocketBase from "pocketbase";
 const pb = new PocketBase(SERVER_ADDR);
 
 export default {
+  emits: ["logout"],
   methods: {
     handleLogout() {
-      pb.authStore.clear()
-      this.$router.go()
+      this.$emit("logout")
     },
     handlePassword() {
-      console.log('change pass')
+      console.log("change pass");
     },
   },
 };

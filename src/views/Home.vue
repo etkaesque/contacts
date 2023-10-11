@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col">
+  <div class="h-5/6 flex flex-col">
     <Main>
       <section>
         <h1 class="text-5xl font-light">Kontaktų sistema</h1>
@@ -22,7 +22,7 @@
     </Main>
 
     <Footer class="flex justify-center grow items-end">
-      <Pagination></Pagination>
+      <Pagination :type="`contact`"></Pagination>
     </Footer>
   </div>
 </template>
@@ -54,16 +54,14 @@ export default {
   computed: {
     ...mapGetters([
       "contacts",
-      "contactsTotalItems",
+      "totalItems",
       "searchTerm",
       "currentPage",
       "filterData",
     ]),
 
     foundItemsMessage() {
-      let total = this.contactsTotalItems
-
-      return `Iš viso rasta: <span class="font-semibold">${total}</span>.`;
+      return `Iš viso rasta: <span class="font-semibold">${this.totalItems}</span>.`;
     },
     isValid() {
       if (pb.authStore) {
@@ -96,7 +94,7 @@ export default {
       filterData: this.filterData,
     });
 
-    console.log(this.filterData, this.currentPage, this.currentPage);
+
   },
   beforeRouteLeave(to, from, next) {
     this.SET_CURRENT_PAGE(1);

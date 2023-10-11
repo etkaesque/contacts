@@ -26,30 +26,51 @@ export default {
       arrow,
     };
   },
+  props: {
+    type: String,
+  },
   computed: {
     ...mapGetters([
       "currentPage",
       "perPage",
-      "contactsTotalItems",
       "filterData",
       "searchTerm",
+      "maxPages",
     ]),
-    maxPages() {
-      return Math.ceil(this.contactsTotalItems / this.perPage);
-    },
   },
   methods: {
-    ...mapActions(["fetchContacts"]),
+    ...mapActions([
+      "fetchContacts",
+      "fetchPaginatedCompanies",
+      "fetchPaginatedStructures",
+      "fetchPaginatedGroups",
+      "fetchPaginatedDivisions",
+      "fetchPaginatedDepartments",
+      "fetchPaginatedOffices",
+
+    ]),
     ...mapMutations(["SET_CURRENT_PAGE"]),
-    handlePagination(value) {
+    async handlePagination(value) {
       const page = this.currentPage + value;
       this.SET_CURRENT_PAGE(page);
 
-      this.fetchContacts({
-        page: this.currentPage,
-        searchTerm: this.searchTerm,
-        filterData: this.filterData,
-      });
+      if (this.type == "contact") {
+        await this.fetchContacts({
+          page: this.currentPage,
+          searchTerm: this.searchTerm,
+          filterData: this.filterData,
+        });
+      } else if (this.type == "company") {
+        await this.fetchPaginatedCompanies();
+      } else if (this.type == `offices`) {
+        await this.fetchPaginatedOffices();
+      } else if (this.type == `divisions`) {
+        await this.fetchPaginatedDivisions();
+      } else if (this.type == `departments`) {
+        await this.fetchPaginatedDepartments();
+      } else if (this.type == `groups`) {
+        await this.fetchPaginatedGroups();
+      }
     },
   },
 };

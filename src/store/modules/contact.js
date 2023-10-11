@@ -3,28 +3,21 @@ export default {
     contacts: [],
     activeContact: "",
     contact: {},
-    contactsTotalItems: 0,
     isCard: true,
-    currentPage: 1,
     searchTerm: "",
-    perPage: CONTACTS_PER_PAGE,
     filterData: {},
   },
   getters: {
     contacts: (state) => state.contacts,
     contact: (state) => state.contact,
     isCard: (state) => state.isCard,
-    contactsTotalItems: (state) => state.contactsTotalItems,
     activeContact: (state) => state.activeContact,
-    currentPage: (state) => state.currentPage,
     searchTerm: (state) => state.searchTerm,
-    perPage: (state) => state.perPage,
     filterData: (state) => state.filterData,
   },
   mutations: {
     SET_CONTACTS(state, contacts) {
       state.contacts = contacts.items;
-      state.contactsTotalItems = contacts.totalItems;
     },
     SET_FILTERS(state, filters) {
       if (filters === undefined) {
@@ -77,7 +70,8 @@ export default {
           searchTerm,
           filterData
         );
-
+    
+        commit("SET_PAGINATION", contacts.totalItems);
         commit("SET_CONTACTS", contacts);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
