@@ -1,7 +1,7 @@
 <template>
   <div>
     <Main v-if="Object.keys(contact).length != 0">
-      <h1 class="text-6xl font-light mb-16">Detalesnė kontakto informacija</h1>
+      <h1 class="text-5xl font-light mb-8">Detalesnė kontakto informacija</h1>
       <section class="flex mb-28 gap-x-8 items-center">
         <img
           style="width: auto; height: 80px"
@@ -23,14 +23,14 @@
         />
 
         <div class="truncate">
-          <h2 class="text-5xl">{{ contact.name }} {{ contact.surname }}</h2>
-          <p class="text-3xl">Pozicija: {{ contact.position }}</p>
+          <h2 class="text-4xl">{{ contact.name }} {{ contact.surname }}</h2>
+          <p class="text-2xl">Pozicija: {{ contact.position }}</p>
         </div>
       </section>
 
       <section class="flex shadow-md p-8">
         <div class="flex flex-col gap-y-12 w-3/6">
-          <h3 class="text-3xl">Kontaktinės detalės</h3>
+          <h3 class="text-2xl">Kontaktinės detalės</h3>
           <div class="division"></div>
           <ul class="flex flex-col gap-y-12">
             <li>
@@ -51,7 +51,7 @@
         </div>
 
         <div class="flex flex-col gap-y-12 w-3/6">
-          <h3 class="text-3xl">Kompanijos detalės</h3>
+          <h3 class="text-2xl">Kompanijos detalės</h3>
           <div class="division"></div>
           <ul class="flex flex-col gap-y-12">
             <li>Kompanija: {{ checkStructure(contact.expand.company_id) }}</li>
