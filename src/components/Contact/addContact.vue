@@ -10,66 +10,67 @@
       <div class="col-start-1 col-end-2 row-start-2 row-end-3">
         <h2 class="text-2xl">Pridėti kontaktą:</h2>
         <div class="flex flex-col gap-y-4">
-          <md-field ref="name">
+          <md-field
+            ref="name"
+            :class="{ 'md-invalid': v$.formData.name.$error }"
+          >
             <label>Vardas</label>
             <md-input maxlength="35" v-model="formData.name"></md-input>
-            <span v-if="this.formData.name.trim() === ''" class="md-error">{{
-              validation.message
-            }}</span>
 
-            <span v-else-if="nameSpecial" class="md-error">
-              {{ validation.textTooSpecial }}</span
-            >
-
-            <span v-else-if="nameLow" class="md-error">{{
-              validation.textTooLow
-            }}</span>
+            <div v-if="v$.formData.name.$error">
+              <span class="md-error">{{
+                v$.formData.name.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
 
-          <md-field ref="surname">
+          <md-field
+            ref="surname"
+            :class="{ 'md-invalid': v$.formData.surname.$error }"
+          >
             <label>Pavardė</label>
             <md-input maxlength="35" v-model="formData.surname"></md-input>
-            <span v-if="this.formData.surname.trim() === ''" class="md-error">{{
-              validation.message
-            }}</span>
 
-            <span v-else-if="surnameSpecial" class="md-error">
-              {{ validation.textTooSpecial }}</span
-            >
-
-            <span v-else-if="surnameLow" class="md-error">{{
-              validation.textTooLow
-            }}</span>
+            <div v-if="v$.formData.surname.$error">
+              <span class="md-error">{{
+                v$.formData.surname.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
 
-          <md-field ref="position">
+          <md-field
+            ref="position"
+            :class="{ 'md-invalid': v$.formData.position.$error }"
+          >
             <label>Pozicija</label>
             <md-input maxlength="35" v-model="formData.position"></md-input>
-            <span
-              v-if="this.formData.position.trim() === ''"
-              class="md-error"
-              >{{ validation.message }}</span
-            >
 
-            <span v-else-if="positionSpecial" class="md-error">
-              {{ validation.textTooSpecial }}</span
-            >
-
-            <span v-else-if="positionLow" class="md-error">{{
-              validation.textTooLow
-            }}</span>
+            <div v-if="v$.formData.position.$error">
+              <span class="md-error">{{
+                v$.formData.position.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
         </div>
 
         <div>
           <h3 class="text-lg pt-4">Kontaktinė informacija</h3>
 
-          <md-field ref="email">
+          <md-field
+            ref="email"
+            :class="{ 'md-invalid': v$.formData.email.$error }"
+          >
             <label>Elektroninis paštas</label>
             <md-input maxlength="40" v-model="formData.email"></md-input>
             <span class="md-error">{{
               formData.email == "" ? validation.message : validation.email
             }}</span>
+
+            <div v-if="v$.formData.email.$error">
+              <span class="md-error">{{
+                v$.formData.email.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
 
           <md-field ref="phone_number">
@@ -81,11 +82,15 @@
           </md-field>
         </div>
       </div>
-
+      <!-- company details -->
       <div class="md-layout-item col-start-2 col-end-3 row-start-2 row-end-3">
         <h2 class="text-2xl">Įmonės detalės:</h2>
         <div class="flex flex-col gap-y-4">
-          <md-field ref="company_id" class="fieldElement">
+          <md-field
+            ref="company_id"
+            class="fieldElement"
+            :class="{ 'md-invalid': v$.formData.company_id.$error }"
+          >
             <label v-if="formData.company_id != ''" for="company">Įmonė</label>
             <md-select
               ref="overwrite"
@@ -94,37 +99,62 @@
               name="company"
               id="company"
               @input="handleCompany(formData.company_id)"
+              @md-opened="handleShow(true)"
+              @md-closed="handleShow(false)"
             >
-              <md-option  v-if="formData.company_id != ``" value="">Pasirinkite įmonę</md-option>
+              <md-option value="">
+                {{ show ? "Pasirinkite įmonę " : "" }}</md-option
+              >
               <md-option v-for="company in companies" :value="company.id">{{
                 company.name
               }}</md-option>
             </md-select>
-            <span class="md-error">{{ validation.message }}</span>
+            <!-- 
+            error message -->
+
+            <div v-if="v$.formData.company_id.$error">
+              <span class="md-error">{{
+                v$.formData.company_id.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
 
-          <md-field ref="office_id">
+          <md-field
+            ref="office_id"
+            :class="{ 'md-invalid': v$.formData.office_id.$error }"
+          >
             <label v-if="formData.office_id != ''" for="office">Ofisas</label>
             <md-select
-              :disabled="isCompaniesEmpty"
               placeholder="Pasirinkite ofisą"
               v-model="formData.office_id"
               name="office"
               id="office"
               @input="handleOffice(formData.office_id)"
+              @md-opened="handleShow(true)"
+              @md-closed="handleShow(false)"
             >
-              <md-option v-if="formData.office_id != ``" value="">Pasirinkite ofisą</md-option>
+              <md-option value="">{{
+                show ? "Pasirinkite įmonę " : ""
+              }}</md-option>
               <md-option
                 v-for="office in offices"
                 :value="office.expand.office_id.id"
                 >{{ office.expand.office_id.name }}</md-option
               >
             </md-select>
-            <span class="md-error">{{ validation.message }}</span>
+
+            <div v-if="v$.formData.office_id.$error">
+              <span class="md-error">{{
+                v$.formData.office_id.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
 
           <div>
-            <md-field ref="division_id">
+            <md-field
+              ref="division_id"
+              :class="{ 'md-invalid': v$.formData.division_id.$error }"
+            >
               <label v-if="formData.division_id != ''" for="font"
                 >Padalinys</label
               >
@@ -136,14 +166,21 @@
                 id="division"
                 @input="handleDivisions(formData.division_id)"
               >
-                <md-option v-if="formData.division_id != ``" value="">Pasirinkite padalinį</md-option>
+                <md-option v-if="formData.division_id != ``" value=""
+                  >Pasirinkite padalinį</md-option
+                >
                 <md-option
                   v-for="division in divisions"
                   :value="division.expand.division_id.id"
                   >{{ division.expand.division_id.name }}</md-option
                 >
               </md-select>
-              <span class="md-error">{{ validation.message }}</span>
+
+              <div v-if="v$.formData.division_id.$error">
+                <span class="md-error">{{
+                  v$.formData.division_id.$errors[0].$message
+                }}</span>
+              </div>
             </md-field>
 
             <md-field ref="department_id">
@@ -158,30 +195,35 @@
                 name="department"
                 id="department"
               >
-                <md-option v-if="formData.department_id != ``" value="">Pasirinkite skyrių</md-option>
+                <md-option v-if="formData.department_id != ``" value=""
+                  >Pasirinkite skyrių</md-option
+                >
                 <md-option
                   v-for="department in departments"
                   :value="department.expand.department_id.id"
                   >{{ department.expand.department_id.name }}</md-option
                 >
               </md-select>
-              <span class="md-error">{{ validation.message }}</span>
             </md-field>
 
             <md-field ref="group_id">
               <label v-if="formData.group_id != ''" for="font">Grupė</label>
-              <md-select 
-              :disabled="isDepartmentsEmpty"
-              placeholder="Pasirinkite grupę"
-              v-model="formData.group_id" name="group" id="group">
-                <md-option v-if="formData.group_id != ``" value="">Pasirinkite grupę</md-option>
+              <md-select
+                :disabled="isDepartmentsEmpty"
+                placeholder="Pasirinkite grupę"
+                v-model="formData.group_id"
+                name="group"
+                id="group"
+              >
+                <md-option v-if="formData.group_id != ``" value=""
+                  >Pasirinkite grupę</md-option
+                >
                 <md-option
                   v-for="group in groups"
                   :value="group.expand.group_id.id"
                   >{{ group.expand.group_id.name }}</md-option
                 >
               </md-select>
-              <span class="md-error">{{ validation.message }}</span>
             </md-field>
           </div>
         </div>
@@ -224,24 +266,28 @@
 import dissmissButton from "../Buttons/dissmiss.vue";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 
+import { useVuelidate } from "@vuelidate/core";
+import { required, minLength, helpers, email } from "@vuelidate/validators";
+const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
+const alpha1 = helpers.regex(textPattern);
+
 export default {
+  setup() {
+    return {
+      v$: useVuelidate(),
+    };
+  },
   data() {
     return {
-      nameLow: false,
-      nameSpecial: false,
-      nameShort: false,
-      surnameLow: false,
-      surnameSpecial: false,
-      surnameShort: false,
-      positionLow: false,
-      positionSpecial: false,
-      positionShort: false,
       isFilePhoto: true,
       isFileTooLarge: false,
       photoSelected: false,
+      temporary: "",
+      temporarOffice: "",
+      temporarDivision: "",
+      temporarDepartment: "",
       validation: {
-        isSuccess: false,
-        message: "Nepalikite lauko tusčio.",
+        empty: "Nepalikite lauko tusčio.",
         textTooLow: "Bent trys raidės.",
         textTooSpecial: "Nenaudokite spec. simbolių, skaičių.",
         email: "Neteisingas e. paštas.",
@@ -263,10 +309,60 @@ export default {
         group_id: "",
         photo: "",
       },
+      show: false,
+      showCompany: false,
+      showOffice: false,
+      showDivision: false,
+      showDepartment: false,
       oldOffices: [],
       oldDivisions: [],
       oldDepartments: [],
       oldGroups: [],
+    };
+  },
+  validations() {
+    return {
+      formData: {
+        name: {
+          required: helpers.withMessage(this.validation.empty, required),
+          alpha1: helpers.withMessage(this.validation.textTooSpecial, alpha1),
+          minLength: helpers.withMessage(
+            this.validation.textTooLow,
+            minLength(3)
+          ),
+        },
+        surname: {
+          required: helpers.withMessage(this.validation.empty, required),
+          alpha1: helpers.withMessage(this.validation.textTooSpecial, alpha1),
+          minLength: helpers.withMessage(
+            this.validation.textTooLow,
+            minLength(3)
+          ),
+        },
+
+        email: {
+          email: helpers.withMessage(this.validation.email, email),
+          required: helpers.withMessage(this.validation.empty, required),
+        },
+        position: {
+          required: helpers.withMessage(this.validation.empty, required),
+          alpha1: helpers.withMessage(this.validation.textTooSpecial, alpha1),
+          minLength: helpers.withMessage(
+            this.validation.textTooLow,
+            minLength(3)
+          ),
+        },
+
+        company_id: {
+          required: helpers.withMessage(this.validation.empty, required),
+        },
+        office_id: {
+          required: helpers.withMessage(this.validation.empty, required),
+        },
+        division_id: {
+          required: helpers.withMessage(this.validation.empty, required),
+        },
+      },
     };
   },
   components: {
@@ -290,7 +386,6 @@ export default {
       return this.formData.division_id == "" || this.departments.length == 0;
     },
     isDepartmentsEmpty() {
-
       return this.formData.department_id == "" || this.groups.length == 0;
     },
   },
@@ -314,156 +409,6 @@ export default {
       "SET_DIVISIONS",
       "SET_DEPARTMENTS",
     ]),
-    checkIfFormValid() {
-      let keyList = Object.keys(this.formData);
-      keyList = keyList.filter(
-        (key) =>
-          key !== `photo` &&
-          key !== `group_id` &&
-          key !== `department_id` &&
-          key !== `phone_number`
-      );
-
-      const areFieldEmpty = keyList.map((key) => {
-
-        if (this.formData[key].trim() === "") {
-          this.$refs[key].$el.classList.add("md-invalid");
-          return false;
-        } else {
-          this.$refs[key].$el.classList.remove("md-invalid");
-          return true;
-        }
-      });
-
-      const checkText = (input, element, type) => {
-        const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
-        if (textPattern.test(input.trim())) {
-          element.classList.remove("md-invalid");
-
-          if (type == "name") {
-            this.nameSpecial = false;
-          } else if (type == "surname") {
-            this.surnameSpecial = false;
-          } else {
-            this.positionSpecial = false;
-          }
-
-          return true;
-        } else {
-          element.classList.add("md-invalid");
-
-          if (type == "name") {
-            this.nameSpecial = true;
-          } else if (type == "surname") {
-            this.surnameSpecial = true;
-          } else {
-            this.positionSpecial = true;
-          }
-
-          return false;
-        }
-      };
-
-      const checkText2 = (input, element, type) => {
-        if (input.trim().length < 3) {
-          element.classList.add("md-invalid");
-
-          if (type == "name") {
-            this.nameLow = true;
-          } else if (type == "surname") {
-            this.surnameLow = true;
-          } else {
-            this.positionLow = true;
-          }
-
-          return false;
-        } else {
-          if (type == "name") {
-            this.nameLow = false;
-          } else if (type == "surname") {
-            this.surnameLow = false;
-          } else {
-            this.positionLow = false;
-          }
-          return true;
-        }
-      };
-
-      const checkEmail = () => {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailPattern.test(this.formData.email.trim())) {
-          this.$refs.email.$el.classList.remove("md-invalid");
-          return true;
-        } else {
-          this.$refs.email.$el.classList.add("md-invalid");
-          return false;
-        }
-      };
-
-      const checkPhone = () => {
-        const phonePattern = /^\+[0-9]+$/;
-        if (this.formData.phone_number.trim() == "") {
-          this.$refs.phone_number.$el.classList.remove("md-invalid");
-          return true;
-        } else if (!phonePattern.test(this.formData.phone_number.trim())) {
-          this.$refs.phone_number.$el.classList.add("md-invalid");
-          return false;
-        } else {
-          this.$refs.phone_number.$el.classList.remove("md-invalid");
-          return true;
-        }
-      };
-
-      let isNameSpecial = checkText(
-        this.formData.name,
-        this.$refs.name.$el,
-        `name`
-      );
-      let isNameNotLow = checkText2(
-        this.formData.name,
-        this.$refs.name.$el,
-        `name`
-      );
-
-      let isSurnameSpecial = checkText(
-        this.formData.surname,
-        this.$refs.surname.$el,
-        `surname`
-      );
-      let isSurnameNotLow = checkText2(
-        this.formData.surname,
-        this.$refs.surname.$el,
-        `surname`
-      );
-
-      let isPositionSpecial = checkText(
-        this.formData.position,
-        this.$refs.position.$el,
-        `position`
-      );
-      let isPositionNotLow = checkText2(
-        this.formData.position,
-        this.$refs.position.$el,
-        `position`
-      );
-
-      const isPhoneValid = checkPhone();
-      const isEmailValid = checkEmail();
-      const isTextValid =
-        isNameSpecial &&
-        isNameNotLow &&
-        isSurnameSpecial &&
-        isSurnameNotLow &&
-        isPositionSpecial &&
-        isPositionNotLow;
-
-      return (
-        isEmailValid &&
-        isPhoneValid &&
-        !areFieldEmpty.includes(false) &&
-        isTextValid
-      );
-    },
     handlePhotoUpload(event) {
       const allowedTypes = ["image/png", "image/jpeg"];
       const maxSize = 5 * 1024 * 1024;
@@ -496,8 +441,16 @@ export default {
         this.formData.photo = "";
       }
     },
+    handleShow(boolean) {
+      this.show = boolean;
+    },
     async handleSubmit(event) {
       event.preventDefault();
+
+      let isFormCorrect = await this.v$.$validate();
+      console.log(this.v$);
+      console.log("isFormCorrect", isFormCorrect);
+      if (!isFormCorrect) return;
 
       const data = new FormData();
       data.append("name", this.formData.name);
@@ -512,27 +465,18 @@ export default {
       data.append("group_id", this.formData.group_id);
       data.append("photo", this.formData.photo);
 
-      const isValid = this.checkIfFormValid();
-
-      if (isValid) {
-        await this.createContact(data);
-        this.CONTROL_MODAL();
-      }
+      await this.createContact(data);
+      this.CONTROL_MODAL();
     },
     async handleCompany(id) {
-
-
       this.formData.office_id = "";
       this.formData.division_id = "";
       this.formData.department_id = "";
       this.formData.group_id = "";
 
-      if(id != "") {
+      if (id != "") {
         await this.fetchCompanyOffices(id);
       }
-
-
-  
     },
     async handleOffice(id) {
       this.formData.division_id = "";

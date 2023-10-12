@@ -1,9 +1,11 @@
 <template>
   <div class="h-5/6 flex flex-col">
     <Main>
-      <h1 class="text-5xl font-light mb-2">Įmonės</h1>
-
+  
       <section class="flex flex-col gap-y-2">
+        <h1 class="text-5xl font-light mb-2">Įmonės</h1>
+
+
         <div class="flex items-center gap-x-3">
           <Add :type="`company`"></Add>
           <span class="text-xl">Pridėti naują įmonę</span>
@@ -30,6 +32,7 @@ import Pagination from "../components/pagination.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import PocketBase from "pocketbase";
 const pb = new PocketBase(SERVER_ADDR);
+
 
 export default {
   components: {

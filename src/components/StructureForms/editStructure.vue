@@ -1,19 +1,22 @@
 <template>
-  <div class="styleStructure flex flex-col w-full items-center">
-    <div class="grid grid-auto-col grid-auto-rows gap-x-8">
+  <div class="styleStructure flex flex-col w-full items-start">
+    <div class="grid grid-auto-col grid-auto-rows gap-x-8 mt-6">
       <div
         class="col-start-1 col-end-2 row-start-2 row-end-3 flex flex-col items-start w-72"
       >
-        <h2 class="text-2xl w-full mb-5">{{ structure.header }}</h2>
-
-        <md-field class="w-full">
-          <label>{{ structure.label }}</label>
-          <md-input maxlength="35" v-model="structure.data.name"></md-input>
-        </md-field>
+        <h2 class="text-2xl w-full mb-6">{{ header }}</h2>
 
         <div class="w-full">
-          <md-field>
-            <label for="relation">{{ structure.selectLabel }}</label>
+          <md-field
+            ref="relation"
+            v-if="structure.items.length != 0"
+            :class="{ 'md-invalid': v$.structure.relation.$error }"
+          >
+            <label for="relation">{{
+              this.structure.label
+                ? this.structure.label
+                : "Pasirinkite struktūrą"
+            }}</label>
             <md-select
               aria-placeholder="pasirinkite"
               v-model="structure.relation"
@@ -26,11 +29,39 @@
                 item.name
               }}</md-option>
             </md-select>
+
+            <div v-if="v$.structure.relation.$error">
+              <span class="md-error">{{
+                v$.structure.relation.$errors[0].$message
+              }}</span>
+            </div>
+          </md-field>
+        </div>
+
+        <div class="w-full">
+          <md-field
+            ref="name"
+            :class="{ 'md-invalid': v$.structure.generalData.name.$error }"
+          >
+            <label for="name">Pavadinimas</label>
+            <md-input
+              name="name"
+              id="name"
+              maxlength="35"
+              v-model="structure.generalData.name"
+            ></md-input>
+
+            <div v-if="v$.structure.generalData.name.$error">
+              <span class="md-error">{{
+                v$.structure.generalData.name.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
         </div>
       </div>
 
       <Office
+        ref="officeComponent"
         :officeData="structure.officeData"
         @handleChange="officeDataChange"
         class="col-start-2 col-end-3 row-start-2 row-end-3"
@@ -56,8 +87,20 @@
 <script>
 import Office from "./office.vue";
 import dissmiss from "../Buttons/dissmiss.vue";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minLength, helpers } from "@vuelidate/validators";
 import { mapActions, mapGetters } from "vuex";
+
+const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
+
+const alpha1 = helpers.regex(textPattern);
+
 export default {
+  setup() {
+    return {
+      v$: useVuelidate(),
+    };
+  },
   data() {
     return {
       type: "",
@@ -69,14 +112,36 @@ export default {
         label: "",
         header: "",
         selectLabel: "",
-        data: {
+        generalData: {
           name: "",
         },
-        officeData: {},
+        officeData: {
+          street: "",
+          street_number: "",
+          city: "",
+          country: "",
+        },
       },
-      validation: {
-        tooLow: "",
-        tooSpecial: "",
+      show: false,
+      header: "Redaguokite struktūrą:",
+    };
+  },
+  validations() {
+    return {
+      structure: {
+        generalData: {
+          name: {
+            required: helpers.withMessage("Nepalikite lauko tuščio", required),
+            alpha1: helpers.withMessage(
+              "Nenaudokite specialių simboblių",
+              alpha1
+            ),
+            minLength: helpers.withMessage("Tekstas per trumpas", minLength(3)),
+          },
+        },
+        relation: {
+          required: helpers.withMessage("Nepalikite lauko tuščio", required),
+        },
       },
     };
   },
@@ -115,11 +180,19 @@ export default {
       "editDepartment",
     ]),
 
-    async officeDataChange(office) {
-      this.structure.officeData = office;
-      this.structure.officeData.name = this.structure.data.name;
+    handleShow(boolean) {
+      this.show = boolean;
     },
+
+    officeDataChange(data) {
+      this.structure.officeData = data;
+    },
+
     async handleSubmit() {
+      let isFormCorrect = await this.v$.$validate();
+
+      if (!isFormCorrect) return;
+
       let target;
       if (this.type == "offices") {
         target = "company_id";
@@ -145,14 +218,20 @@ export default {
 
       let params = {
         id: this.id,
-        data: this.structure.data,
+        data: this.structure.generalData,
         relation: { create: addThese, delete: deleteThese },
       };
 
       if (this.type == "offices") {
-        let params = {
+        let data = {
+          ...this.structure.officeData,
+          name: this.structure.generalData.name,
+        };
+
+     
+        params = {
           id: this.id,
-          data: this.structure.officeData,
+          data: data,
           relation: { create: addThese, delete: deleteThese },
         };
 
@@ -167,16 +246,9 @@ export default {
     },
   },
 
-  watch: {
-    "structure.data.name"() {
-      if (this.type === "offices") {
-        this.structure.officeData.name = this.structure.data.name;
-      }
-    },
-  },
-
   async created() {
     this.type = this.active_structure.type;
+  
     this.id = this.active_structure.id;
     this.structure.officeData = this.active_structure.structure;
 
@@ -240,7 +312,7 @@ export default {
       this.structure.selectLabel = `Pasirinkite skyrius`;
     }
 
-    this.structure.data.name = this.active_structure.structure.name;
+    this.structure.generalData.name = this.active_structure.structure.name;
   },
 };
 </script>

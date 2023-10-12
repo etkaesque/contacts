@@ -102,9 +102,11 @@ let contactsAPI = (store) => {
   }),
     (store.createInstanceInDb = async (data, collection) => {
       try {
+     
         const instance = await pb.collection(collection).create(data);
         return instance;
-      } catch {
+      } catch(err) {
+      
         throw Error;
       }
     });

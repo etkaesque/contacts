@@ -9,7 +9,7 @@
         </div>
 
         <div>
-          <span v-html="structureMessage"></span>
+          Iš viso rasta: <span class="font-semibold">{{ total }}</span>.
         </div>
       </section>
 
@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       type: "",
+      total:0,
       structure: [],
     };
   },
@@ -50,15 +51,12 @@ export default {
 
   computed: {
     ...mapGetters([
-      "offices",
-      "divisions",
-      "departments",
-      "groups",
       "totalItems",
+      "paginatedDivisions",
+      "paginatedDepartments",
+      "paginatedGroups",
+      "paginatedOffices"
     ]),
-    structureMessage() {
-      return `Iš viso rasta: <span class="font-semibold">${this.totalItems}</span>.`;
-    },
     isValid() {
       if (pb.authStore) {
         return pb.authStore.isValid;
@@ -81,43 +79,50 @@ export default {
 
       if (type == `offices`) {
         await this.fetchPaginatedOffices();
-        this.structure = this.offices;
+        this.structure = this.paginatedOffices;
       } else if (type == `divisions`) {
         await this.fetchPaginatedDivisions();
-        this.structure = this.divisions;
+        this.structure = this.paginatedDivisions;
       } else if (type == `departments`) {
         await this.fetchPaginatedDepartments();
-        this.structure = this.departments;
+        this.structure = this.paginatedDepartments;
       } else if (type == `groups`) {
         await this.fetchPaginatedGroups();
-        this.structure = this.groups;
+        this.structure = this.paginatedGroups;
       }
+
+      this.total = this.totalItems
     },
   },
   watch: {
-    offices() {
+    paginatedOffices() {
+     
       if (this.type == `offices`) {
-        this.structure = this[this.type];
+        this.structure = this.paginatedOffices;
+        this.total = this.totalItems
       }
     },
-    divisions() {
+    paginatedDivisions() {
       if (this.type == `divisions`) {
-        this.structure = this[this.type];
+        this.structure = this.paginatedDivisions;
+        this.total = this.totalItems
       }
     },
-    departments() {
+    paginatedDepartments() {
       if (this.type == `departments`) {
-        this.structure = this[this.type];
+        this.structure = this.paginatedDepartments;
+        this.total = this.totalItems
       }
     },
-    groups() {
+    paginatedGroups() {
       if (this.type == `groups`) {
-        this.structure = this[this.type];
+        this.structure = this.paginatedGroups;
+        this.total = this.totalItems
       }
     },
   },
   beforeRouteLeave(to, from, next) {
-    console.log("is hit");
+
     this.SET_CURRENT_PAGE(1);
     next();
   },
@@ -126,7 +131,8 @@ export default {
       this.$router.push("/login");
     } else {
       await this.fetchPaginatedOffices();
-      this.structure = this.offices;
+      this.structure = this.paginatedOffices;
+      this.total = this.totalItems
       this.type = `offices`;
     }
   },

@@ -3,7 +3,7 @@
 
     <h2 class="text-2xl mb-6">Ofiso detalės:</h2>
 
-    <md-field ref="street" class="w-full">
+    <md-field ref="street" class="w-full" :class="{ 'md-invalid': v$.office.street.$error }">
       <label for="street">Gatvė</label>
       <md-input
       @input="handleChange"
@@ -13,19 +13,15 @@
         v-model="office.street"
       ></md-input>
 
-      <span v-if="validation.office.street.empty" class="md-error">{{
-              validation.message.empty
-            }}</span>
-            <span v-else-if="validation.office.street.tooLow" class="md-error">{{
-              validation.message.tooLow
-            }}</span>
-            <span v-else="validation.office.street.tooSpecial" class="md-error">{{
-              validation.message.tooSpecial
-            }}</span>
-
+      <div v-if="v$.office.street.$error">
+              <span class="md-error">{{
+                v$.office.street.$errors[0].$message
+              }}</span>
+      </div>
+     
     </md-field>
 
-    <md-field ref="street_number" class="w-full">
+    <md-field ref="street_number" class="w-full" :class="{ 'md-invalid': v$.office.street_number.$error }">
       <label for="street_number">Gatvės numeris</label>
       <md-input
       @input="handleChange"
@@ -35,19 +31,16 @@
         v-model="office.street_number"
       ></md-input>
 
+      <div v-if="v$.office.street_number.$error">
+              <span class="md-error">{{
+                v$.office.street_number.$errors[0].$message
+              }}</span>
+      </div>
 
-      <span v-if="validation.office.street_number.empty" class="md-error">{{
-              validation.message.empty
-            }}</span>
-            <span v-else-if="validation.office.street_number.tooLow" class="md-error">{{
-              validation.message.tooLow
-            }}</span>
-            <span v-else="validation.office.street_number.tooSpecial" class="md-error">{{
-              validation.message.tooSpecial
-            }}</span>
+
     </md-field>
 
-    <md-field  ref="city" class="w-full">
+    <md-field  ref="city" class="w-full" :class="{ 'md-invalid': v$.office.city.$error }">
       <label for="city">Miestas</label>
       <md-input
       @input="handleChange"
@@ -57,18 +50,17 @@
         v-model="office.city"
       ></md-input>
 
-      <span v-if="validation.office.city.empty" class="md-error">{{
-              validation.message.empty
-            }}</span>
-            <span v-else-if="validation.office.city.tooLow" class="md-error">{{
-              validation.message.tooLow
-            }}</span>
-            <span v-else="validation.office.city.tooSpecial" class="md-error">{{
-              validation.message.tooSpecial
-            }}</span>
+      <div v-if="v$.office.city.$error">
+              <span class="md-error">{{
+                v$.office.city.$errors[0].$message
+              }}</span>
+      </div>
+
+
+
     </md-field>
 
-    <md-field ref="country" class="w-full">
+    <md-field ref="country" class="w-full" :class="{ 'md-invalid': v$.office.country.$error }">
       <label for="country">Šalis</label>
       <md-input
       @input="handleChange"
@@ -78,19 +70,10 @@
         v-model="office.country"
       ></md-input>
 
-
-      <span v-if="validation.office.country.empty" class="md-error">{{
-              validation.message.empty
-            }}</span>
-            <span v-else-if="validation.office.country.tooLow" class="md-error">{{
-              validation.message.tooLow
-            }}</span>
-            <span v-else="validation.office.country.tooSpecial" class="md-error">{{
-              validation.message.tooSpecial
-            }}</span>
-
-
-
+      <div v-if="v$.office.country.$error">
+              <span class="md-error">{{
+                v$.office.country.$errors[0].$message}}</span>
+      </div>
 
 
     </md-field>
@@ -98,21 +81,67 @@
 </template>
 
 <script>
+import { useVuelidate } from "@vuelidate/core";
+import {
+  required,
+  minLength,
+  minValue,
+  alpha,
+  helpers,
+} from "@vuelidate/validators";
+
+const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
+const alpha1 = helpers.regex(textPattern)
 export default {
+  setup() {
+    return {
+      v$: useVuelidate(),
+    };
+  },
   data() {
     return {
       office: {
+        
         street: "",
         street_number: "",
         city: "",
         country: "",
       },
+      messageEmpty: "Nepalikite lauko tuščio",
+      messageTooLow: "Įrašykite bent 3 simbolius",
+      messageTooSpecial: "Nenaudokite specialių simbolių, tarpų.",
+      messageHasZero: "Reikšmė neturi būti 0."
     };
+  },
+  validations() {
+    return {
+      office: {
+          city: {
+            required: helpers.withMessage(this.messageEmpty, required),
+            alpha1: helpers.withMessage(
+              this.messageTooSpecial,
+              alpha1
+            ),
+            minLength: helpers.withMessage(this.messageTooLow,  minLength(3)),
+          },
+          country: { 
+            required: helpers.withMessage(this.messageEmpty, required), 
+            alpha1: helpers.withMessage(this.messageTooSpecial, alpha1), 
+            minLength: helpers.withMessage(this.messageTooLow,  minLength(3)) },
+          street: {
+            required: helpers.withMessage(this.messageEmpty, required),
+            minLength: helpers.withMessage(this.messageTooLow,  minLength(3)),
+            alpha1: helpers.withMessage(this.messageTooSpecial, alpha1),
+            
+          },
+          street_number: {
+            required: helpers.withMessage(this.messageEmpty, required), 
+            minValue: helpers.withMessage(this.messageHasZero,  minValue(1))},
+        },
+      }
   },
   props:{
     officeData: Object,
-    validation: Object,
-
   },
   emits: ["handleChange"],
   methods: {
@@ -122,8 +151,7 @@ export default {
   created(){
  
     if(this.officeData) {
-   
-      this.office.name = this.propName
+  
       this.office.street = this.officeData.street
       this.office.street_number = this.officeData.street_number
       this.office.city = this.officeData.city

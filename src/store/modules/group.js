@@ -1,12 +1,12 @@
-import department from "./department";
-
 export default {
   state: {
     groups: [],
     group: {},
+    paginatedGroups: [],
   },
   getters: {
     groups: (state) => state.groups,
+    paginatedGroups: (state) => state.paginatedGroups,
     group: (state) => state.group,
   },
   mutations: {
@@ -15,6 +15,13 @@ export default {
         state.groups = groups;
       } else {
         state.groups = [];
+      }
+    },
+    SET_PAGINATED_GROUPS(state, paginatedGroups) {
+      if (paginatedGroups != undefined) {
+        state.paginatedGroups = paginatedGroups;
+      } else {
+        state.paginatedGroups = [];
       }
     },
     SET_GROUP(state, group) {
@@ -134,7 +141,7 @@ export default {
           getters.perPage
         );
         commit("SET_PAGINATION", groups.totalItems);
-        commit("SET_GROUPS", groups.items);
+        commit("SET_PAGINATED_GROUPS", groups.items);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,

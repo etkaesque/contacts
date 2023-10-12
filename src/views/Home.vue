@@ -1,8 +1,8 @@
 <template>
   <div class="h-5/6 flex flex-col">
     <Main>
-      <section>
-        <h1 class="text-5xl font-light">Kontaktų sistema</h1>
+      <section class="flex flex-col gap-y-2">
+        <h1 class="text-5xl font-light mb-2">Kontaktų sistema</h1>
 
         <div class="flex items-center gap-5">
           <Search></Search>

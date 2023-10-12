@@ -1,13 +1,13 @@
 export default {
   state: {
     departments: [],
-    divisionDepartmens: [],
+    paginatedDepartments: [],
     department: {},
   },
   getters: {
     departments: (state) => state.departments,
     department: (state) => state.department,
-    divisionDepartmens: (state) => state.divisionDepartmens,
+    paginatedDepartments: (state) => state.paginatedDepartments,
   },
   mutations: {
     SET_DEPARTMENTS(state, departments) {
@@ -15,6 +15,13 @@ export default {
         state.departments = departments;
       } else {
         state.departments = [];
+      }
+    },
+    SET_PAGINATED_DEPARTMENTS(state, paginatedDepartments) {
+      if (paginatedDepartments != undefined) {
+        state.paginatedDepartments = paginatedDepartments;
+      } else {
+        state.paginatedDepartments = [];
       }
     },
     SET_DEPARTMENT(state, department) {
@@ -136,7 +143,7 @@ export default {
           getters.perPage
         );
         commit("SET_PAGINATION", departments.totalItems);
-        commit("SET_DEPARTMENTS", departments.items);
+        commit("SET_PAGINATED_DEPARTMENTS", departments.items);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,

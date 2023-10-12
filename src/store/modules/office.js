@@ -1,10 +1,12 @@
 export default {
   state: {
     offices: [],
+    paginatedOffices: [],
     office: {},
   },
   getters: {
     offices: (state) => state.offices,
+    paginatedOffices: (state) => state.paginatedOffices,
     office: (state) => state.office,
   },
   mutations: {
@@ -14,6 +16,16 @@ export default {
       } else {
         state.offices = [];
       }
+    },
+    SET_PAGINATED_OFFICES(state, paginatedOffices, total) {
+      if (paginatedOffices != undefined) {
+        state.paginatedOffices = paginatedOffices;
+        state.totalOffices = total;
+      } else {
+        state.paginatedOffices = [];
+        state.totalOffices = 0;
+      }
+
     },
     SET_OFFICE(state, office) {
       state.office = office;
@@ -136,8 +148,10 @@ export default {
           getters.currentPage,
           getters.perPage
         );
+
+    
         commit("SET_PAGINATION", offices.totalItems);
-        commit("SET_OFFICES", offices.items);
+        commit("SET_PAGINATED_OFFICES", offices.items, offices.totalItems);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,

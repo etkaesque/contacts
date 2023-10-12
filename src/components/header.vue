@@ -101,15 +101,10 @@ export default {
   },
   methods: {
     handleLogout() {
-      console.log("pb value", pb.authStore.isValid);
-      console.log("log out");
       pb.authStore.clear();
-      console.log("pb value", pb.authStore.isValid);
-      console.log(pb.authStore);
-
       if (pb.authStore) {
         this.isValid = pb.authStore.isValid;
-        this.$router.push("/")
+        this.$router.push("/");
       }
     },
 
@@ -122,7 +117,6 @@ export default {
       this.isValid = pb.authStore.isValid;
     }
 
-    console.log("im create");
   },
 };
 </script>

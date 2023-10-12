@@ -7,29 +7,42 @@
         <h2 class="text-2xl w-full mb-6">{{ header }}</h2>
 
         <div class="w-full">
-          <md-field ref="type">
+          <md-field ref="type" :class="{ 'md-invalid': v$.type.$error }">
             <label for="structure">Struktūra</label>
             <md-select
               placeholder="Pasirinkite struktūrą"
               v-model="type"
               name="structure"
               id="structure"
+              @md-opened="handleShow(true)"
+              @md-closed="handleShow(false)"
             >
-              <md-option value="``">Pasirinkite struktūrą</md-option>
+              <md-option value="">{{
+                show ? "Pasirinkite struktūrą " : ""
+              }}</md-option>
               <md-option value="office">Ofisas</md-option>
               <md-option value="division">Padalinys</md-option>
               <md-option value="department">Skyrius</md-option>
               <md-option value="group">Grupė</md-option>
             </md-select>
 
-            <span v-if="validation.type.empty" class="md-error">{{
-              validation.message.empty
-            }}</span>
+            <div v-if="v$.type.$error">
+              <span
+                v-for="error of v$.type.$errors"
+                :key="error.$uid"
+                class="md-error"
+                >{{ error.$message }}</span
+              >
+            </div>
           </md-field>
         </div>
 
         <div class="w-full">
-          <md-field ref="relation" v-if="structure.items.length != 0">
+          <md-field
+            ref="relation"
+            v-if="structure.items.length != 0"
+            :class="{ 'md-invalid': v$.structure.relation.$error }"
+          >
             <label for="relation">{{
               this.structure.label
                 ? this.structure.label
@@ -48,37 +61,38 @@
               }}</md-option>
             </md-select>
 
-            <span v-if="validation.relation.empty" class="md-error">{{
-              validation.message.empty
-            }}</span>
+            <div v-if="v$.structure.relation.$error">
+              <span class="md-error">{{
+                v$.structure.relation.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
         </div>
 
         <div class="w-full">
-          <md-field ref="name">
+          <md-field
+            ref="name"
+            :class="{ 'md-invalid': v$.structure.generalData.name.$error }"
+          >
             <label for="name">Pavadinimas</label>
             <md-input
               name="name"
               id="name"
               maxlength="35"
-              v-model="structure.data.name"
+              v-model="structure.generalData.name"
             ></md-input>
-            <span v-if="validation.name.empty" class="md-error">{{
-              validation.message.empty
-            }}</span>
-            <span v-else-if="validation.name.tooLow" class="md-error">{{
-              validation.message.tooLow
-            }}</span>
-            <span v-else="validation.name.tooSpecial" class="md-error">{{
-              validation.message.tooSpecial
-            }}</span>
+
+            <div v-if="v$.structure.generalData.name.$error">
+              <span class="md-error">{{
+                v$.structure.generalData.name.$errors[0].$message
+              }}</span>
+            </div>
           </md-field>
         </div>
       </div>
 
       <Office
         ref="officeComponent"
-        :validation="validation"
         @handleChange="officeDataChange"
         class="col-start-2 col-end-3 row-start-2 row-end-3"
         v-if="type == `office`"
@@ -101,12 +115,21 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 import Office from "./office.vue";
 import dissmiss from "../Buttons/dissmiss.vue";
-import Validation from "../../validate";
-import { mapActions, mapGetters } from "vuex";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minLength, helpers } from "@vuelidate/validators";
+const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
+const alpha1 = helpers.regex(textPattern);
 
 export default {
+  setup() {
+    return {
+      v$: useVuelidate(),
+    };
+  },
+
   data() {
     return {
       type: "",
@@ -114,7 +137,7 @@ export default {
         items: [],
         relation: [],
         label: "",
-        data: {
+        generalData: {
           name: "",
         },
         officeData: {
@@ -124,48 +147,30 @@ export default {
           country: "",
         },
       },
-      validation: {
-        message: {
-          empty: "Nepalikite lauko tusčio.",
-          tooLow: "Bent trys raidės.",
-          tooSpecial: "Nenaudokite spec. simbolių, skaičių.",
-        },
-        name: {
-          empty: false,
-          tooLow: false,
-          tooSpecial: false,
+      show: false,
+      header: "Pridėkite naują struktūrą:",
+    };
+  },
+  validations() {
+    return {
+      type: {
+        required: helpers.withMessage("Nepalikite lauko tuščio", required),
+      },
+      structure: {
+        generalData: {
+          name: {
+            required: helpers.withMessage("Nepalikite lauko tuščio", required),
+            alpha1: helpers.withMessage(
+              "Nenaudokite specialių simboblių",
+              alpha1
+            ),
+            minLength: helpers.withMessage("Tekstas per trumpas", minLength(3)),
+          },
         },
         relation: {
-          empty: false,
-        },
-        type: {
-          empty: false,
-        },
-        office: {
-          street: {
-            empty: false,
-            tooLow: false,
-            tooSpecial: false,
-          },
-          street_number: {
-            empty: false,
-            tooLow: false,
-            tooSpecial: false,
-          },
-          city: {
-            empty: false,
-            tooLow: false,
-            tooSpecial: false,
-          },
-          country: {
-            empty: false,
-            tooLow: false,
-            tooSpecial: false,
-          },
+          required: helpers.withMessage("Nepalikite lauko tuščio", required),
         },
       },
-
-      header: "Pridėkite naują struktūrą:",
     };
   },
   computed: {
@@ -194,138 +199,44 @@ export default {
       "createGroup",
       "fetchCompanies",
     ]),
-    validateField(value, field, ref) {
-      let isValid = false;
-
-      if (field == `name`) {
-        this.validation[field].tooSpecial =
-          !Validation.validateTextSpecial(value);
-        this.validation[field].tooLow = Validation.validateTextLength(value);
-        console.log(value, field, ref);
-      }
-
-      if (field != `office`) {
-        this.validation[field].empty = Validation.validateEmpty(value);
-        isValid =
-          !this.validation[field].empty &&
-          !this.validation[field].tooSpecial &&
-          !this.validation[field].tooLow;
-
-        if (this.$refs[ref]) {
-          this.$refs[ref].$el.classList.toggle("md-invalid", !isValid);
-        }
-      }
-
-      if (field == "office") {
-        this.validation.office[ref].empty = Validation.validateEmpty(value);
-        this.validation.office[ref].tooSpecial =
-          !Validation.validateTextSpecial(value);
-        this.validation.office[ref].tooLow =
-          Validation.validateTextLength(value);
-
-        isValid =
-          !this.validation.office[ref].empty &&
-          !this.validation.office[ref].tooSpecial &&
-          !this.validation.office[ref].tooLow;
-
-        if (this.$refs.officeComponent.$refs[ref]) {
-          this.$refs.officeComponent.$refs[ref].$el.classList.toggle(
-            "md-invalid",
-            !isValid
-          );
-        }
-      }
-
-      return isValid;
+    handleShow(boolean) {
+      this.show = boolean;
     },
 
-    validateBeforeSubmit() {
-      const isValidName = this.validateField(
-        this.structure.data.name,
-        "name",
-        `name`
-      );
-      const isValidRelation = this.validateField(
-        this.structure.relation,
-        "relation",
-        `relation`
-      );
-      const isValidType = this.validateField(this.type, "type", `type`);
-
-      if (this.type == "office") {
-        console.log("city is", this.structure.officeData.city);
-        console.log("country is", this.structure.officeData.country);
-        console.log("street is", this.structure.officeData.street);
-        console.log(
-          "street_number is",
-          this.structure.officeData.street_number
-        );
-
-        const isValidOfficeCity = this.validateField(
-          this.structure.officeData.city,
-          "office",
-          "city"
-        );
-        const isValidOfficeCountry = this.validateField(
-          this.structure.officeData.country,
-          "office",
-          "country"
-        );
-        const isValidOfficeStreet = this.validateField(
-          this.structure.officeData.street,
-          "office",
-          "street"
-        );
-        const isValidOfficeStreetNumber = this.validateField(
-          this.structure.officeData.street_number,
-          "office",
-          `street_number`
-        );
-        const isOfficeValid =
-          isValidOfficeCity &&
-          isValidOfficeCountry &&
-          isValidOfficeStreet &&
-          isValidOfficeStreetNumber;
-        return isValidName && isValidRelation && isValidType && isOfficeValid;
-      }
-
-      return isValidName && isValidRelation && isValidType;
-    },
     officeDataChange(office) {
-      console.log("change is happening");
-      this.structure.officeData = Object.assign(
-        {},
-        this.structure.data,
-        office
-      );
+      this.structure.officeData = office;
     },
     async handleSubmit() {
-      let isValidated = this.validateBeforeSubmit();
+      let isFormCorrect = await this.v$.$validate();
 
-      if (isValidated) {
-        let params = {
-          data: this.structure.data,
-          relation: this.structure.relation,
+      if (!isFormCorrect) return;
+
+      let params = {
+        data: this.structure.generalData,
+        relation: this.structure.relation,
+      };
+
+      if (this.type == "office") {
+        let data = {
+          ...this.structure.officeData,
+          name: this.structure.generalData.name,
+        };
+        params = {
+
+          data: data,
+          relation: this.structure.relation
+         
         };
 
-        if (this.type == "company") {
-          await this.createCompany(params);
-        } else if (this.type == "office") {
-          let params = {
-            data: this.officeData,
-            relation: this.structure.relation,
-          };
-
-          await this.createOffice(params);
-        } else if (this.type == "division") {
-          await this.createDivision(params);
-        } else if (this.type == "department") {
-          await this.createDepartment(params);
-        } else if (this.type == "group") {
-          await this.createGroup(params);
-        } else {
-          return;
-        }
+        await this.createOffice(params);
+      } else if (this.type == "division") {
+        await this.createDivision(params);
+      } else if (this.type == "department") {
+        await this.createDepartment(params);
+      } else if (this.type == "group") {
+        await this.createGroup(params);
+      } else {
+        return;
       }
     },
   },

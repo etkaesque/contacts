@@ -11,6 +11,9 @@ import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/theme/default.css";
 
 import vueDebounce from "vue-debounce";
+import Vuelidate from 'vuelidate'
+
+Vue.use(Vuelidate)
 
 Vue.use(vueDebounce, {
   listenTo: ["input", "keyup"],

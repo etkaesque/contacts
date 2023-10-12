@@ -5,10 +5,12 @@ export default {
   state: {
     divisions: [],
     division: {},
+    paginatedDivisions: [],
   },
   getters: {
     divisions: (state) => state.divisions,
     division: (state) => state.division,
+    paginatedDivisions: (state) => state.paginatedDivisions,
   },
   mutations: {
     SET_DIVISIONS(state, divisions) {
@@ -16,6 +18,13 @@ export default {
         state.divisions = divisions;
       } else {
         state.divisions = [];
+      }
+    },
+    SET_PAGINATED_DIVISIONS(state, paginatedDivisions) {
+      if (paginatedDivisions != undefined) {
+        state.paginatedDivisions = paginatedDivisions;
+      } else {
+        state.paginatedDivisions = [];
       }
     },
     SET_DIVISION(state, division) {
@@ -143,7 +152,7 @@ export default {
           getters.perPage
         );
         commit("SET_PAGINATION", divisions.totalItems);
-        commit("SET_DIVISIONS", divisions.items);
+        commit("SET_PAGINATED_DIVISIONS", divisions.items);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
