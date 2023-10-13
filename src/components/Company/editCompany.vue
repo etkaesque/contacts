@@ -68,19 +68,19 @@ export default {
     dissmiss,
   },
   computed: {
-    ...mapGetters(["active_company", "company"]),
+    ...mapGetters(["company"]),
   },
   methods: {
     ...mapActions(["editCompany", "fetchCompanyById"]),
     async handleSubmit() {
       let isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) return;
-      await this.editCompany({ id: this.active_company, data: this.companyData });
+      await this.editCompany({ id: this.company.id, data: this.companyData });
     },
   },
   watch: {
     company(){
-      this.companyData.name = this.company.name;
+      this.companyData.name = this.company.data.name;
     }
   }
   

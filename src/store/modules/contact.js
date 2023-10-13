@@ -1,8 +1,7 @@
 export default {
   state: {
     contacts: [],
-    activeContact: "",
-    contact: {},
+    contact: {data: {}, id: ""},
     isCard: true,
     searchTerm: "",
     filterData: {},
@@ -11,7 +10,6 @@ export default {
     contacts: (state) => state.contacts,
     contact: (state) => state.contact,
     isCard: (state) => state.isCard,
-    activeContact: (state) => state.activeContact,
     searchTerm: (state) => state.searchTerm,
     filterData: (state) => state.filterData,
   },
@@ -27,17 +25,10 @@ export default {
       }
     },
     SET_CONTACT(state, contact) {
-      if (contact === undefined) {
-        state.contact = {};
-      }
-      state.contact = contact;
-    },
-    SET_ACTIVE_CONTACT(state, id) {
-      if (id === undefined) {
-        state.activeContact = "";
-        state.contact = {};
+      if (contact != undefined) {
+        state.contact = { data: contact.data, id: contact.id };
       } else {
-        state.activeContact = id;
+        state.contact = { data: {}, id: "" };
       }
     },
     SET_VIEW_MODE(state) {
@@ -91,7 +82,7 @@ export default {
           "employees",
           query
         );
-        commit("SET_CONTACT", contact);
+        commit("SET_CONTACT", {data: contact, id: id});
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -102,6 +93,8 @@ export default {
     },
     async createContact({ commit, dispatch, getters }, formData) {
       try {
+
+      console.log("how1")
         await this.createInstanceInDb(formData, "employees");
 
         dispatch("fetchContacts", {
@@ -131,7 +124,7 @@ export default {
           searchTerm: getters.searchTerm,
           filterData: getters.filterData,
         });
-        commit("SET_ACTIVE_CONTACT");
+        commit("SET_CONTACT");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Kontaktas sėkmingai redaguotas.",
@@ -153,6 +146,7 @@ export default {
           commit("SET_CURRENT_PAGE", getters.currentPage - 1);
         }
 
+        commit("SET_CONTACT") // clear
         dispatch("fetchContacts", {
           page: getters.currentPage,
           searchTerm: getters.searchTerm,

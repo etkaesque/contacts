@@ -20,10 +20,10 @@
               <md-option value="">{{
                 show ? "Pasirinkite struktūrą " : ""
               }}</md-option>
-              <md-option value="office">Ofisas</md-option>
-              <md-option value="division">Padalinys</md-option>
-              <md-option value="department">Skyrius</md-option>
-              <md-option value="group">Grupė</md-option>
+              <md-option value="offices">Ofisas</md-option>
+              <md-option value="divisions">Padalinys</md-option>
+              <md-option value="departments">Skyrius</md-option>
+              <md-option value="groups">Grupė</md-option>
             </md-select>
 
             <div v-if="v$.type.$error">
@@ -91,12 +91,12 @@
         </div>
       </div>
 
-      <Office
-        ref="officeComponent"
-        @handleChange="officeDataChange"
+      <office
+        ref="officesComponent"
+        @handleChange="officesDataChange"
         class="col-start-2 col-end-3 row-start-2 row-end-3"
-        v-if="type == `office`"
-      ></Office>
+        v-if="type == `offices`"
+      ></office>
 
       <div
         class="w-full text-2xl col-start-1 col-span-4 row-start-1 row-end-2 h-10 flex justify-end"
@@ -115,8 +115,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-import Office from "./office.vue";
+import { mapActions, mapGetters, mapMutations } from "vuex";
+import office from "./office.vue";
 import dissmiss from "../Buttons/dissmiss.vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, helpers } from "@vuelidate/validators";
@@ -140,7 +140,7 @@ export default {
         generalData: {
           name: "",
         },
-        officeData: {
+        officesData: {
           street: "",
           street_number: "",
           city: "",
@@ -174,24 +174,22 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      "active_structure",
-      "offices",
-      "companies",
-      "divisions",
-      "departments",
-    ]),
+    ...mapGetters(["offices", "companies", "divisions", "departments", "tab"]),
   },
   components: {
     dissmiss,
-    Office,
+    office,
   },
   methods: {
     ...mapActions([
       "fetchOffices",
+      "fetchPaginatedOffices",
       "fetchDivisions",
+      "fetchPaginatedDivisions",
       "fetchDepartments",
+      "fetchPaginatedDepartments",
       "fetchGroups",
+      "fetchPaginatedGroups",
       "createCompany",
       "createOffice",
       "createDivision",
@@ -199,12 +197,14 @@ export default {
       "createGroup",
       "fetchCompanies",
     ]),
+    ...mapMutations(["CONTROL_MODAL"]),
+
     handleShow(boolean) {
       this.show = boolean;
     },
 
-    officeDataChange(office) {
-      this.structure.officeData = office;
+    officesDataChange(offices) {
+      this.structure.officesData = offices;
     },
     async handleSubmit() {
       let isFormCorrect = await this.v$.$validate();
@@ -216,45 +216,49 @@ export default {
         relation: this.structure.relation,
       };
 
-      if (this.type == "office") {
+      if (this.type == "offices") {
         let data = {
-          ...this.structure.officeData,
+          ...this.structure.officesData,
           name: this.structure.generalData.name,
         };
         params = {
-
           data: data,
-          relation: this.structure.relation
-         
+          relation: this.structure.relation,
         };
 
         await this.createOffice(params);
-      } else if (this.type == "division") {
+
+        console.log(this.type === this.tab, this.tab, this.type);
+        if (this.type === this.tab) await this.fetchPaginatedOffices();
+      } else if (this.type == "divisions") {
         await this.createDivision(params);
-      } else if (this.type == "department") {
+        if (this.type === this.tab) await this.fetchPaginatedDivisions();
+      } else if (this.type == "departments") {
         await this.createDepartment(params);
-      } else if (this.type == "group") {
+        if (this.type === this.tab) await this.fetchPaginatedDepartments();
+      } else if (this.type == "groups") {
         await this.createGroup(params);
-      } else {
-        return;
+        if (this.type === this.tab) await this.fetchPaginatedGroups();
       }
+
+      this.CONTROL_MODAL();
     },
   },
   watch: {
     async type() {
-      if (this.type == "office") {
+      if (this.type == "offices") {
         await this.fetchCompanies();
         this.structure.items = this.companies;
         this.structure.label = `Pasirinkite įmones`;
-      } else if (this.type == "division") {
+      } else if (this.type == "divisions") {
         await this.fetchOffices();
         this.structure.items = this.offices;
         this.structure.label = `Pasirinkite ofisus`;
-      } else if (this.type == "department") {
+      } else if (this.type == "departments") {
         await this.fetchDivisions();
         this.structure.items = this.divisions;
         this.structure.label = `Pasirinkite padalinius`;
-      } else if (this.type == "group") {
+      } else if (this.type == "groups") {
         await this.fetchDepartments();
         this.structure.items = this.departments;
         this.structure.label = `Pasirinkite skyrius`;

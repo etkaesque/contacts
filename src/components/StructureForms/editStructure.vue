@@ -1,5 +1,5 @@
 <template>
-  <div class="styleStructure flex flex-col w-full items-start">
+  <div class="stylestructureData flex flex-col w-full items-start">
     <div class="grid grid-auto-col grid-auto-rows gap-x-8 mt-6">
       <div
         class="col-start-1 col-end-2 row-start-2 row-end-3 flex flex-col items-start w-72"
@@ -9,30 +9,30 @@
         <div class="w-full">
           <md-field
             ref="relation"
-            v-if="structure.items.length != 0"
-            :class="{ 'md-invalid': v$.structure.relation.$error }"
+            v-if="structureData.items.length != 0"
+            :class="{ 'md-invalid': v$.structureData.relation.$error }"
           >
             <label for="relation">{{
-              this.structure.label
-                ? this.structure.label
+              this.structureData.selectLabel
+                ? this.structureData.selectLabel
                 : "Pasirinkite struktūrą"
             }}</label>
             <md-select
               aria-placeholder="pasirinkite"
-              v-model="structure.relation"
+              v-model="structureData.relation"
               name="relation"
               id="relation"
               md-dense
               multiple
             >
-              <md-option v-for="item in structure.items" :value="item.id">{{
+              <md-option v-for="item in structureData.items" :value="item.id">{{
                 item.name
               }}</md-option>
             </md-select>
 
-            <div v-if="v$.structure.relation.$error">
+            <div v-if="v$.structureData.relation.$error">
               <span class="md-error">{{
-                v$.structure.relation.$errors[0].$message
+                v$.structureData.relation.$errors[0].$message
               }}</span>
             </div>
           </md-field>
@@ -41,19 +41,19 @@
         <div class="w-full">
           <md-field
             ref="name"
-            :class="{ 'md-invalid': v$.structure.generalData.name.$error }"
+            :class="{ 'md-invalid': v$.structureData.generalData.name.$error }"
           >
-            <label for="name">Pavadinimas</label>
+            <label for="name">{{ structureData.label }}</label>
             <md-input
               name="name"
               id="name"
               maxlength="35"
-              v-model="structure.generalData.name"
+              v-model="structureData.generalData.name"
             ></md-input>
 
-            <div v-if="v$.structure.generalData.name.$error">
+            <div v-if="v$.structureData.generalData.name.$error">
               <span class="md-error">{{
-                v$.structure.generalData.name.$errors[0].$message
+                v$.structureData.generalData.name.$errors[0].$message
               }}</span>
             </div>
           </md-field>
@@ -62,7 +62,7 @@
 
       <Office
         ref="officeComponent"
-        :officeData="structure.officeData"
+        :officeData="structureData.officeData"
         @handleChange="officeDataChange"
         class="col-start-2 col-end-3 row-start-2 row-end-3"
         v-if="type == `offices`"
@@ -89,7 +89,7 @@ import Office from "./office.vue";
 import dissmiss from "../Buttons/dissmiss.vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, helpers } from "@vuelidate/validators";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
 
@@ -105,7 +105,7 @@ export default {
     return {
       type: "",
       id: "",
-      structure: {
+      structureData: {
         items: [],
         relation: [],
         relationOld: [],
@@ -128,7 +128,7 @@ export default {
   },
   validations() {
     return {
-      structure: {
+      structureData: {
         generalData: {
           name: {
             required: helpers.withMessage("Nepalikite lauko tuščio", required),
@@ -151,7 +151,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "active_structure",
+      "structure",
       "relations",
       "companies",
       "offices",
@@ -178,14 +178,14 @@ export default {
       "editGroup",
       "editOffice",
       "editDepartment",
-    ]),
+    ]), ...mapMutations(["CONTROL_MODAL"]),
 
     handleShow(boolean) {
       this.show = boolean;
     },
 
     officeDataChange(data) {
-      this.structure.officeData = data;
+      this.structureData.officeData = data;
     },
 
     async handleSubmit() {
@@ -205,33 +205,33 @@ export default {
       }
 
       let deleteThese = this.relations.rels.filter((item) => {
-        if (!this.structure.relation.includes(item[target])) {
+        if (!this.structureData.relation.includes(item[target])) {
           return { id: item.id, collection: item.collectionName };
         }
       });
 
-      let addThese = this.structure.relation.filter((item) => {
-        if (!this.structure.relationOld.includes(item)) {
+      let addThese = this.structureData.relation.filter((item) => {
+        if (!this.structureData.relationOld.includes(item)) {
           return item;
         }
       });
 
       let params = {
         id: this.id,
-        data: this.structure.generalData,
+        data: this.structureData.generalData,
         relation: { create: addThese, delete: deleteThese },
       };
 
       if (this.type == "offices") {
-        let data = {
-          ...this.structure.officeData,
-          name: this.structure.generalData.name,
+        let dataForOffice = {
+          ...this.structureData.officeData,
+          name: this.structureData.generalData.name,
         };
 
      
         params = {
           id: this.id,
-          data: data,
+          data: dataForOffice,
           relation: { create: addThese, delete: deleteThese },
         };
 
@@ -243,14 +243,16 @@ export default {
       } else if (this.type == "groups") {
         await this.editGroup(params);
       }
+
+      this.CONTROL_MODAL()
     },
   },
 
   async created() {
-    this.type = this.active_structure.type;
+    this.type = this.structure.type;
   
-    this.id = this.active_structure.id;
-    this.structure.officeData = this.active_structure.structure;
+    this.id = this.structure.id;
+    this.structureData.officeData = this.structure.data;
 
     if (this.type == "offices") {
       await this.fetchCompanies();
@@ -260,12 +262,12 @@ export default {
         type: "office_id",
       });
 
-      this.structure.items = this.companies;
-      this.structure.relation = this.relations.ids;
-      this.structure.relationOld = this.relations.ids;
-      this.structure.header = `Redaguoti ofisą:`;
-      this.structure.label = `Ofiso pavadinimas`;
-      this.structure.selectLabel = `Pasirinkite įmones`;
+      this.structureData.items = this.companies;
+      this.structureData.relation = this.relations.ids;
+      this.structureData.relationOld = this.relations.ids;
+      this.structureData.header = `Redaguoti ofisą:`;
+      this.structureData.label = `Ofiso pavadinimas`;
+      this.structureData.selectLabel = `Pasirinkite įmones`;
     } else if (this.type == "divisions") {
       await this.fetchOffices();
       await this.fetchRelation({
@@ -274,12 +276,12 @@ export default {
         type: "division_id",
       });
 
-      this.structure.items = this.offices;
-      this.structure.relation = this.relations.ids;
-      this.structure.relationOld = this.relations.ids;
-      this.structure.header = `Redaguoti padalinį:`;
-      this.structure.label = `Padalinio pavadinimas`;
-      this.structure.selectLabel = `Pasirinkite ofisus`;
+      this.structureData.items = this.offices;
+      this.structureData.relation = this.relations.ids;
+      this.structureData.relationOld = this.relations.ids;
+      this.structureData.header = `Redaguoti padalinį:`;
+      this.structureData.label = `Padalinio pavadinimas`;
+      this.structureData.selectLabel = `Pasirinkite ofisus`;
     } else if (this.type == "departments") {
       await this.fetchDivisions();
       await this.fetchRelation({
@@ -288,13 +290,13 @@ export default {
         type: "department_id",
       });
 
-      this.structure.items = this.divisions;
-      this.structure.relation = this.relations.ids;
-      this.structure.relationOld = this.relations.ids;
+      this.structureData.items = this.divisions;
+      this.structureData.relation = this.relations.ids;
+      this.structureData.relationOld = this.relations.ids;
 
-      this.structure.header = `Redaguoti skyrių`;
-      this.structure.label = `Skyriaus pavadinimas:`;
-      this.structure.selectLabel = `Pasirinkite padalinius`;
+      this.structureData.header = `Redaguoti skyrių`;
+      this.structureData.label = `Skyriaus pavadinimas:`;
+      this.structureData.selectLabel = `Pasirinkite padalinius`;
     } else if (this.type == "groups") {
       await this.fetchDepartments();
       await this.fetchRelation({
@@ -303,22 +305,22 @@ export default {
         type: "group_id",
       });
 
-      this.structure.items = this.departments;
-      this.structure.relation = this.relations.ids;
-      this.structure.relationOld = this.relations.ids;
+      this.structureData.items = this.departments;
+      this.structureData.relation = this.relations.ids;
+      this.structureData.relationOld = this.relations.ids;
 
-      this.structure.header = `Redaguoti grupę:`;
-      this.structure.label = `Grupės pavadinimas`;
-      this.structure.selectLabel = `Pasirinkite skyrius`;
+      this.structureData.header = `Redaguoti grupę:`;
+      this.structureData.label = `Grupės pavadinimas`;
+      this.structureData.selectLabel = `Pasirinkite skyrius`;
     }
 
-    this.structure.generalData.name = this.active_structure.structure.name;
+    this.structureData.generalData.name = this.structure.data.name;
   },
 };
 </script>
 
 <style>
-.styleStructure {
+.stylestructureData {
   width: auto !important;
   min-width: 350px;
   z-index: 300 !important;

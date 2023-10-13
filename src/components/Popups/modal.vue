@@ -2,7 +2,7 @@
   <div class="overlay" @click="dismissModal">
     <div class="modal">
       <KeepAlive>
-        <component :is="modal.form" />
+        <component :is="modal.form" :propData="componentProps" />
       </KeepAlive>
     </div>
   </div>
@@ -12,10 +12,13 @@
 import { mapGetters, mapMutations } from "vuex";
 import editContact from "../Contact/editContact.vue";
 import createContact from "../Contact/addContact.vue";
-import editCompany from "../Company/editCompany.vue"
+import editCompany from "../Company/editCompany.vue";
 import addCompany from "../Company/addCompany.vue";
 import addStructure from "../StructureForms/addStructure.vue";
 import editStructure from "../StructureForms/editStructure.vue";
+import addAdmin from "../Admin/addAdmin.vue";
+import editAdmin from "../Admin/editAdmin.vue";
+import DeleteFrom from "./delete.vue";
 
 export default {
   components: {
@@ -24,21 +27,78 @@ export default {
     editCompany,
     addCompany,
     editStructure,
-    addStructure
-
+    addStructure,
+    addAdmin,
+    editAdmin,
+    DeleteFrom,
   },
   computed: {
-    ...mapGetters(["modal"]),
+    ...mapGetters(["modal", "company", "admin", "contact", "structure"]),
+    componentProps() {
+      let header;
+      let text;
+      let id;
+      let type;
+
+      if (this.modal.type == "company") {
+        return {
+          header: `įmonę`,
+          text: `Pavadinimas: ${this.company.data.name}.`,
+          id: this.company.id,
+          type: this.modal.type,
+        };
+      } else if (this.modal.type == "admin") {
+        return {
+          header: `kontaktą`,
+          text: `Vardas`,
+          id: this.admin.id,
+          type: this.modal.type,
+        };
+      } else if (this.modal.type == "contact") {
+        return {
+          header: `kontaktą`,
+          text: `Vardas ir pavardė: ${this.contact.data.name} ${this.contact.data.surname}. <br> Pozicija: ${this.contact.data.position}.`,
+          id: this.contact.id,
+          type: this.modal.type,
+        };
+      } else  {
+
+        type = this.structure.type;
+
+        if (type == "offices") {
+          header = "ofisą";
+        } else if (type == "divisions") {
+          header = "padalinį";
+        } else if (type == "departments") {
+          header = "skyrių";
+        } else if (type == "groups") {
+          header = "grupę";
+        }
+      }
+
+      return {
+        header: header,
+        type: type,
+        text: `Pavadinimas: ${this.structure.data.name}.`,
+        id: this.structure.id,
+      };
+    },
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_CONTACT","SET_ACTIVE_COMPANY","SET_ACTIVE_STRUCTURE"]),
+    ...mapMutations([
+      "CONTROL_MODAL",
+      "SET_CONTACT",
+      "SET_COMPANY",
+      "SET_STRUCTURE",
+      "SET_ADMIN"
+    ]),
     dismissModal(event) {
       if (event.target.className === "overlay") {
         this.CONTROL_MODAL();
-        this.SET_ACTIVE_CONTACT()
-        this.SET_ACTIVE_COMPANY()
-        this.SET_ACTIVE_STRUCTURE({})
-        
+        this.SET_CONTACT();
+        this.SET_COMPANY();
+        this.SET_STRUCTURE();
+        this.SET_ADMIN();
       }
     },
   },
@@ -46,7 +106,6 @@ export default {
 </script>
 
 <style>
-
 .contact {
   width: 800px !important;
   padding: 10px 10px;

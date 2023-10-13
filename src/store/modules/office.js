@@ -46,8 +46,8 @@ export default {
           dispatch("createCompanyOffices", relationData);
         });
 
-        commit("CONTROL_MODAL");
-        dispatch("fetchPaginatedOffices");
+
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Ofisas sėkmingai sukurtas.`,
@@ -65,7 +65,7 @@ export default {
       try {
         await this.deleteInstanceInDb(id, "offices");
 
-        if (getters.offices.length === 1) {
+        if (getters.paginatedOffices.length === 1) {
           commit("SET_CURRENT_PAGE", getters.currentPage - 1);
         }
 
@@ -115,7 +115,7 @@ export default {
         }
 
         dispatch("fetchPaginatedOffices");
-        commit("CONTROL_MODAL");
+       
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Ofisas sėkmingai redaguotas.",
@@ -164,10 +164,10 @@ export default {
     async fetchOfficeById({ commit }, id) {
       try {
         const office = await this.fetchInstanceByIdFromDb(id, "offices", "");
-        commit("SET_ACTIVE_STRUCTURE", {
+        commit("SET_STRUCTURE", {
           id: id,
           type: "offices",
-          structure: office,
+          data: office,
         });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {

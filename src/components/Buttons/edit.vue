@@ -11,7 +11,7 @@
 
 <script>
 import editIcon from "../../assets/edit.svg";
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -23,12 +23,14 @@ export default {
     contactId: String,
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_CONTACT"]),
-    handleClick(event) {
+    ...mapActions(["fetchContactById"]),
+    ...mapMutations(["CONTROL_MODAL"]),
+    async handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
-      this.SET_ACTIVE_CONTACT(this.contactId);
-      this.CONTROL_MODAL({ status: true, form: "editContact" });
+
+      await this.fetchContactById(this.contactId)
+      this.CONTROL_MODAL({ status: true, form: "editContact", type: `contact` });
     },
   },
 };

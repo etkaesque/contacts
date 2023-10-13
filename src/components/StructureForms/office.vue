@@ -1,5 +1,5 @@
 <template>
-  <div class="w-72">
+  <div class="w-72 flex flex-col">
 
     <h2 class="text-2xl mb-6">Ofiso detalės:</h2>
 
@@ -84,14 +84,15 @@
 import { useVuelidate } from "@vuelidate/core";
 import {
   required,
+  alpha,
   minLength,
   minValue,
-  alpha,
   helpers,
 } from "@vuelidate/validators";
 
 const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
 const alpha1 = helpers.regex(textPattern)
+
 export default {
   setup() {
     return {
@@ -101,7 +102,6 @@ export default {
   data() {
     return {
       office: {
-        
         street: "",
         street_number: "",
         city: "",
@@ -109,8 +109,9 @@ export default {
       },
       messageEmpty: "Nepalikite lauko tuščio",
       messageTooLow: "Įrašykite bent 3 simbolius",
-      messageTooSpecial: "Nenaudokite specialių simbolių, tarpų.",
-      messageHasZero: "Reikšmė neturi būti 0."
+      messageTooSpecial: "Nenaudokite specialių simbolių",
+      messageHasZero: "Reikšmė neturi būti 0",
+      messageHasNumbers: "Nenaudokite skaičių"
     };
   },
   validations() {
@@ -128,10 +129,11 @@ export default {
             required: helpers.withMessage(this.messageEmpty, required), 
             alpha1: helpers.withMessage(this.messageTooSpecial, alpha1), 
             minLength: helpers.withMessage(this.messageTooLow,  minLength(3)) },
+            
           street: {
             required: helpers.withMessage(this.messageEmpty, required),
             minLength: helpers.withMessage(this.messageTooLow,  minLength(3)),
-            alpha1: helpers.withMessage(this.messageTooSpecial, alpha1),
+            alpha1: helpers.withMessage(this.messageTooSpecial, alpha1)
             
           },
           street_number: {

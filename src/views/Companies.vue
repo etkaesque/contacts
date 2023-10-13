@@ -1,11 +1,8 @@
 <template>
   <div class="h-5/6 flex flex-col">
     <Main>
-  
       <section class="flex flex-col gap-y-2">
         <h1 class="text-5xl font-light mb-2">Įmonės</h1>
-
-
         <div class="flex items-center gap-x-3">
           <Add :type="`company`"></Add>
           <span class="text-xl">Pridėti naują įmonę</span>
@@ -42,9 +39,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["companies", "totalCompanies"]),
+    ...mapGetters(["companies", "totalItems"]),
     foundItemsMessage() {
-      let total = this.totalCompanies;
+      let total = this.totalItems;
       return `Iš viso rasta: <span class="font-semibold">${total}</span>.`;
     },
     isValid() {

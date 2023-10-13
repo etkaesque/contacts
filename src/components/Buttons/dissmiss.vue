@@ -18,15 +18,17 @@ export default {
   methods: {
     ...mapMutations([
       "CONTROL_MODAL",
-      "SET_ACTIVE_CONTACT",
-      "SET_ACTIVE_COMPANY",
-      "SET_ACTIVE_STRUCTURE"
+      "SET_CONTACT",
+      "SET_COMPANY",
+      "SET_STRUCTURE",
+      "SET_ADMIN"
     ]),
     dismiss() {
       this.CONTROL_MODAL();
-      this.SET_ACTIVE_CONTACT();
-      this.SET_ACTIVE_COMPANY();
-      this.SET_ACTIVE_STRUCTURE({})
+      this.SET_CONTACT();
+      this.SET_ADMIN()
+      this.SET_COMPANY();
+      this.SET_STRUCTURE()
     },
   },
 };

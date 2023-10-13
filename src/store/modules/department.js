@@ -25,7 +25,12 @@ export default {
       }
     },
     SET_DEPARTMENT(state, department) {
-      state.department = department;
+      if(department != undefined) {
+        state.department = department;
+      } else {
+        state.department = {}
+      }
+ 
     },
     SET_DATA(state, record) {
       state.divisionDepartmens = record;
@@ -47,8 +52,8 @@ export default {
           dispatch("createDivisionsDepartments", relationData);
         });
 
-        commit("CONTROL_MODAL");
-        dispatch("fetchPaginatedDepartments");
+
+     
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Skyrius sėkmingai sukurtas.`,
@@ -66,10 +71,11 @@ export default {
       try {
         await this.deleteInstanceInDb(id, "departments");
 
-        if (getters.departments.length === 1) {
+        if (getters.paginatedDepartments.length === 1) {
           commit("SET_CURRENT_PAGE", getters.currentPage - 1);
         }
 
+        commit("SET_DEPARTMENT") // clear
         dispatch("fetchPaginatedDepartments");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -107,7 +113,7 @@ export default {
           });
         }
         dispatch("fetchPaginatedDepartments");
-        commit("CONTROL_MODAL");
+    
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Skyrius sėkmingai redaguotas.",
@@ -159,10 +165,10 @@ export default {
           "departments",
           ""
         );
-        commit("SET_ACTIVE_STRUCTURE", {
+        commit("SET_STRUCTURE", {
           id: id,
           type: "departments",
-          structure: department,
+          data: department,
         });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {

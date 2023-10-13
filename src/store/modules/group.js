@@ -25,7 +25,11 @@ export default {
       }
     },
     SET_GROUP(state, group) {
-      state.group = group;
+      if (group != undefined) {
+        state.group = group;
+      } else {
+        state.group = {};
+      }
     },
   },
   actions: {
@@ -43,8 +47,8 @@ export default {
           dispatch("createDepartmentsGroups", relationData);
         });
 
-        commit("CONTROL_MODAL");
-        dispatch("fetchPaginatedGroups");
+    
+ 
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Grupė sėkmingai sukurta.`,
@@ -62,10 +66,11 @@ export default {
       try {
         await this.deleteInstanceInDb(id, "groups");
 
-        if (getters.groups.length === 1) {
+        if (getters.paginatedGroups.length === 1) {
           commit("SET_CURRENT_PAGE", getters.currentPage - 1);
         }
 
+        commit("SET_GROUP"); // clear
         dispatch("fetchPaginatedGroups");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -107,7 +112,7 @@ export default {
         }
 
         dispatch("fetchPaginatedGroups");
-        commit("CONTROL_MODAL");
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Grupė sėkmingai redaguota.",
@@ -154,10 +159,10 @@ export default {
       try {
         const group = await this.fetchInstanceByIdFromDb(id, "groups", "");
 
-        commit("SET_ACTIVE_STRUCTURE", {
+        commit("SET_STRUCTURE", {
           id: id,
           type: "groups",
-          structure: group,
+          data: group,
         });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {

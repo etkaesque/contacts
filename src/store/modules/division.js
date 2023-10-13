@@ -28,7 +28,12 @@ export default {
       }
     },
     SET_DIVISION(state, division) {
-      state.department = division;
+      if(division != undefined) {
+        state.division = division;
+      } else {
+        state.division = {}
+      } 
+ 
     },
   },
   actions: {
@@ -47,8 +52,6 @@ export default {
           dispatch("createOfficeDivisions", relationData);
         });
 
-        commit("CONTROL_MODAL");
-        dispatch("fetchPaginatedDivisions");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Padalinys sėkmingai sukurtas.`,
@@ -66,10 +69,14 @@ export default {
       try {
         await this.deleteInstanceInDb(id, "divisions");
 
-        if (getters.divisions.length === 1) {
+        console.log("CORRENT PAGE", getters.currentPage)
+        console.log("MINUSING", getters.currentPage - 1)
+
+        if (getters.paginatedDivisions.length === 1) {
           commit("SET_CURRENT_PAGE", getters.currentPage - 1);
         }
 
+        commit("SET_DIVISION") // clear
         dispatch("fetchPaginatedDivisions");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -116,7 +123,7 @@ export default {
         }
 
         dispatch("fetchPaginatedDivisions");
-        commit("CONTROL_MODAL");
+       
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Padalinys sėkmingai redaguotas.",
@@ -168,10 +175,10 @@ export default {
           "divisions",
           ""
         );
-        commit("SET_ACTIVE_STRUCTURE", {
+        commit("SET_STRUCTURE", {
           id: id,
           type: "divisions",
-          structure: division,
+          data: division,
         });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {

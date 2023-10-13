@@ -19,7 +19,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["CONTROL_MODAL", "SET_ACTIVE_STRUCTURE"]),
+    ...mapMutations(["CONTROL_MODAL"]),
     handleAdd() {
       let options;
 
@@ -27,6 +27,8 @@ export default {
         options = { status: true, form: "createContact" };
       } else if (this.type == "company") {
         options = { status: true, form: "addCompany" };
+      } else if (this.type == "admin") {
+        options = { status: true, form: "addAdmin" };
       } else {
         options = { status: true, form: "addStructure" };
       }

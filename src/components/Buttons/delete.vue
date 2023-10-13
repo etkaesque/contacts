@@ -11,7 +11,7 @@
 
 <script>
 import deleteIcon from "../../assets/delete.svg";
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -23,13 +23,15 @@ export default {
     contactId: String,
   },
   methods: {
-    ...mapMutations(["CONTROL_DELETE", "SET_ACTIVE_CONTACT"]),
-    handleClick(event) {
+    ...mapActions(["fetchContactById"]),
+    ...mapMutations(["CONTROL_MODAL"]),
+    async handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
 
-      this.CONTROL_DELETE();
-      this.SET_ACTIVE_CONTACT(this.contactId);
+      await this.fetchContactById(this.contactId);
+      this.CONTROL_MODAL({ status: true, form: "DeleteFrom", type: "contact" });
+  
     },
   },
 };

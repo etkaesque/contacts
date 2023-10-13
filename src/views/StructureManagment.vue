@@ -66,7 +66,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["SET_CURRENT_PAGE"]),
+    ...mapMutations(["SET_CURRENT_PAGE","SET_TAB"]),
     ...mapActions([
       "fetchPaginatedGroups",
       "fetchPaginatedDivisions",
@@ -75,6 +75,7 @@ export default {
     ]),
     async handleTab(type) {
       this.type = type;
+      this.SET_TAB(type)
       this.SET_CURRENT_PAGE(1);
 
       if (type == `offices`) {
@@ -134,6 +135,7 @@ export default {
       this.structure = this.paginatedOffices;
       this.total = this.totalItems
       this.type = `offices`;
+      this.SET_TAB(this.type)
     }
   },
 };

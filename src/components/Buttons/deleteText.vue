@@ -13,23 +13,22 @@ export default {
     type: String,
   },
   methods: {
-    ...mapActions(["setActiveStructure"]),
-    ...mapMutations([
-      "CONTROL_DELETE",
-      "SET_ACTIVE_COMPANY",
-      "SET_ACTIVE_STRUCTURE",
-    ]),
-    handleClick(event) {
+    ...mapActions(["setActiveStructure", "fetchAdminById", "fetchCompanyById"]),
+    ...mapMutations(["CONTROL_MODAL"]),
+    async handleClick(event) {
       event.preventDefault();
       event.stopPropagation();
 
       if (this.type == `company`) {
-        this.SET_ACTIVE_COMPANY(this.id);
+        console.log(this.type)
+        await this.fetchCompanyById(this.id);
+      } else if (this.type == `admin`) {
+        await this.fetchAdminById(this.id);
       } else {
-        this.setActiveStructure({ id: this.id, type: this.type });
+        await this.setActiveStructure({ id: this.id, type: this.type });
       }
 
-      this.CONTROL_DELETE();
+      this.CONTROL_MODAL({ status: true, form: "DeleteFrom", type: this.type });
     },
   },
 };

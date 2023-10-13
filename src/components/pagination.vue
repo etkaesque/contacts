@@ -70,6 +70,8 @@ export default {
         await this.fetchPaginatedDepartments();
       } else if (this.type == `groups`) {
         await this.fetchPaginatedGroups();
+      } else if(this.type == `admin`){
+        console.log("fetchPaginatedAdmins")
       }
     },
   },

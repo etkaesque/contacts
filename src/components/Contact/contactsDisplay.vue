@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import profileIcon from "../../assets/user.svg";
+import profileIcon from "../../assets/epicuser.svg";
 import Cards from "./contactsGridView.vue";
 import Tables from "./contactsTableView.vue";
 import { mapActions, mapGetters } from "vuex";

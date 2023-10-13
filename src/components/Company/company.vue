@@ -13,7 +13,7 @@
           <md-table-cell>{{ company.name }}</md-table-cell>
           <md-table-cell>
             <div class="flex gap-3 justify-end">
-              <Edit :id="company.id" :type="`company`"></Edit>
+              <Edit :id="company.id" :editLabel="`Redaguoti`" :type="`company`"></Edit>
               <Delete :id="company.id" :type="`company`"></Delete>
             </div>
           </md-table-cell>
@@ -34,6 +34,7 @@ import Delete from "../Buttons/deleteText.vue";
 
 
 export default {
+    
     props:{
         companies: Array,
 

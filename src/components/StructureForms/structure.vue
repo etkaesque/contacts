@@ -1,26 +1,30 @@
 <template>
   <section>
     <div class="tabsWrapper">
-      <md-tabs>
+      <md-tabs style="z-index: 1 !important;">
         <md-tab
           id="tab-office"
           md-label="Ofisai"
           @click="handleTab('offices')"
+          style="z-index: 1 !important;"
         ></md-tab>
         <md-tab
           id="tab-divisions"
           md-label="Padaliniai"
           @click="handleTab('divisions')"
+          style="z-index: 1 !important;"
         ></md-tab>
         <md-tab
           id="tab-departments"
           md-label="Skyriai"
           @click="handleTab('departments')"
+          style="z-index: 1 !important;"
         ></md-tab>
         <md-tab
           id="tab-groups"
           md-label="Grupės"
           @click="handleTab('groups')"
+          style="z-index: 1 !important;"
         ></md-tab>
       </md-tabs>
     </div>
@@ -37,7 +41,7 @@
           <md-table-cell>{{ item.name }}</md-table-cell>
           <md-table-cell>
             <div class="flex gap-3 justify-end">
-              <Edit :id="item.id" :type="type"></Edit>
+              <Edit :id="item.id" :editLabel="`Redaguoti`" :type="type"></Edit>
               <Delete :id="item.id" :type="type"></Delete>
             </div>
           </md-table-cell>
@@ -64,7 +68,7 @@ export default {
   },
   components: {
     Edit,
-    Delete,
+    Delete
   },
   methods: {
     handleTab(value){
@@ -73,3 +77,4 @@ export default {
   }
 };
 </script>
+

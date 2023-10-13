@@ -1,21 +1,28 @@
 export default {
   state: {
     companies: [],
-    company: {},
-    active_company: "",
+    company: { data: {}, id: "" },
     totalCompanies: 0,
-    active_structure: { id: "", type: "", structure: {} },
+    structure: { id: "", type: "", data: {} },
     relations: [],
+    tab:"",
   },
   getters: {
     companies: (state) => state.companies,
     company: (state) => state.company,
-    active_company: (state) => state.active_company,
-    active_structure: (state) => state.active_structure,
+    structure: (state) => state.structure,
     totalCompanies: (state) => state.totalCompanies,
     relations: (state) => state.relations,
+    tab: (state) => state.tab,
   },
   mutations: {
+    SET_TAB(state, tab){
+      if (tab != undefined) {
+        state.tab = tab;
+      } else {
+        state.tab = "";
+      }
+    },
     SET_COMPANIES(state, companies) {
       if (companies != undefined) {
         state.companies = companies;
@@ -24,24 +31,25 @@ export default {
         state.companies = [];
       }
     },
-    SET_ACTIVE_COMPANY(state, id) {
-      if (id == undefined) {
-        state.active_company = "";
-        state.company = {};
-      } else {
-        state.active_company = id;
-      }
-    },
-    SET_ACTIVE_STRUCTURE(state, { id, type, structure }) {
-      if (id == undefined && type == undefined && structure == undefined) {
-        state.active_structure = { id: "", type: "", structure: {} };
-      } else {
-        state.active_structure = { id: id, type: type, structure: structure };
-      }
-    },
     SET_COMPANY(state, company) {
-      state.company = company;
+      if (company != undefined) {
+        state.company = { data: company.data, id: company.id };
+      } else {
+        state.company = { data: {}, id: "" };
+      }
     },
+    SET_STRUCTURE(state, structure) {
+      if (structure != undefined) {
+        state.structure = {
+          id: structure.id,
+          type: structure.type,
+          data: structure.data,
+        };
+      } else {
+        state.structure = { id: "", type: "", data: {} };
+      }
+    },
+
     SET_RELATIONS(state, { relations, ids }) {
       if (relations == undefined) {
         state.relations = [];
@@ -76,7 +84,7 @@ export default {
         if (getters.companies.length === 1) {
           commit("SET_CURRENT_PAGE", getters.currentPage - 1);
         }
-
+        commit("SET_COMPANY") // clear
         dispatch("fetchPaginatedCompanies");
 
         commit("CONTROL_NOTIFICATION", {
@@ -120,7 +128,7 @@ export default {
     async fetchCompanyById({ commit }, id) {
       try {
         const company = await this.fetchInstanceByIdFromDb(id, "companies", "");
-        commit("SET_COMPANY", company);
+        commit("SET_COMPANY", { data: company, id: id });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -163,7 +171,7 @@ export default {
 
     async setActiveStructure({ commit, dispatch }, { id, type }) {
       if (id == undefined) {
-        commit.SET_ACTIVE_STRUCTURE({}); // clear
+        commit.SET_STRUCTURE(); // clear
       }
 
       if (type == "offices") {

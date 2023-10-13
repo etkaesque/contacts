@@ -1,6 +1,6 @@
 <template>
   <md-button class="edit-btn-text md-raised" @click="handleClick($event)">
-    Redaguoti
+    {{ editLabel }}
   </md-button>
 </template>
 
@@ -8,16 +8,17 @@
 import { mapMutations, mapActions } from "vuex";
 
 export default {
+
   props: {
+    editLabel: String,
     type: String,
     id: String,
   },
   methods: {
-    ...mapActions(["setActiveStructure"]),
+    ...mapActions(["setActiveStructure", "fetchAdminById", "fetchCompanyById"]),
     ...mapMutations([
       "CONTROL_MODAL",
-      "SET_ACTIVE_COMPANY",
-      "SET_ACTIVE_STRUCTURE",
+      "SET_STRUCTURE",
     ]),
    async handleClick(event) {
       event.preventDefault();
@@ -27,7 +28,10 @@ export default {
 
       if (this.type == `company`) {
         options = { status: true, form: "editCompany" };
-        this.SET_ACTIVE_COMPANY(this.id);
+        this.fetchCompanyById(this.id);
+      } else if (this.type == `admin`) {
+        options = { status: true, form: "editAdmin" };
+        await this.fetchAdminById(this.id)
       } else {
         options = { status: true, form: "editStructure" };
         await this.setActiveStructure({ id: this.id, type: this.type });
