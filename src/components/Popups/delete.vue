@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <div class="h-5/6 truncate">
+  <div class="p-2 ">
+    <div class="h-5/6 truncate flex flex-col gap-y-2">
       <h2 class="text-2xl">Ar tikrai norite ištrinti {{ propData.header }}?</h2>
       <p v-html="propData.text" class="opacity-80"></p>
     </div>
-    <div class="w-full flex justify-end gap-5">
+    <div class="w-full flex justify-end gap-5 mt-2">
       <button class="text-teltonikaBlue uppercase" @click="handleDelete">
         Taip
       </button>
@@ -51,15 +51,14 @@ export default {
       this.CONTROL_MODAL();
     },
     async handleDelete() {
-      console.log("delete activated", this.id);
+
 
       if (this.type == `company`) {
-        console.log("deleteting company");
         await this.deleteCompany(this.id);
       } else if (this.type == `contact`) {
         await this.deleteContact(this.id);
       } else if (this.type == `admin`) {
-        await this.deleteAdmin(this.id);
+        await this.deleteAdmin({admin_id:this.propData.admin_id, permissions_id: this.propData.permissions_id});
       } else {
         await this.deleteStructure({ id: this.id, type: this.type });
       }
@@ -69,7 +68,10 @@ export default {
   },
   created() {
     this.type = this.propData.type;
-    this.id = this.propData.id;
+    if(this.propData.id) {
+      this.id = this.propData.id;
+    }
+
   },
 };
 </script>

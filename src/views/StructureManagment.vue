@@ -4,8 +4,10 @@
       <section class="flex flex-col gap-y-2">
         <h1 class="text-5xl font-light mb-2">Struktūra</h1>
         <div class="flex items-center gap-x-3">
-          <Add :type="type"></Add>
+          <Add v-if="editOffices || editStructure" :type="type"></Add>
           <span class="text-xl">Pridėti naują struktūrą</span>
+
+          
         </div>
 
         <div>
@@ -17,6 +19,10 @@
         :structure="structure"
         :type="type"
         @handleTabs="handleTab"
+        :editOffices="editOffices"
+        :editStructure="editStructure"
+        :deleteOffices="deleteOffices"
+        :deleteStructure="deleteStructure"
       ></Structure>
     </Main>
 
@@ -63,6 +69,26 @@ export default {
       } else {
         return false;
       }
+    },
+    editOffices() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.edit_offices;
+      }
+    },
+    deleteOffices() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.delete_offices;
+      } 
+    },
+    editStructure() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.edit_structure;
+      }
+    },
+    deleteStructure() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.delete_structure;
+      } 
     },
   },
   methods: {

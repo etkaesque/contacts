@@ -106,7 +106,6 @@ let contactsAPI = (store) => {
         const instance = await pb.collection(collection).create(data);
         return instance;
       } catch(err) {
-      
         throw Error;
       }
     });
@@ -114,7 +113,7 @@ let contactsAPI = (store) => {
     try {
       const instance = await pb.collection(collection).update(id, data);
       return instance;
-    } catch {
+    } catch(err) {
       throw Error;
     }
   };

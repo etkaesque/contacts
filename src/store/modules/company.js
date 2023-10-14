@@ -111,7 +111,7 @@ export default {
       try {
         await this.editInstanceInDb(id, data, "companies");
         dispatch("fetchCompanies");
-        commit("CONTROL_MODAL");
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Įmonė sėkmingai redaguota.",

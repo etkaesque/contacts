@@ -22,7 +22,7 @@
         <li>
           <router-link :to="`/structure`">Struktūra</router-link>
         </li>
-        <li v-if="readPermissions">
+        <li v-if="editPermissions || deletePermissions">
           <router-link :to="`/admin`">Paskyros</router-link>
         </li>
       </ul>
@@ -74,9 +74,18 @@ export default {
     Menu,
   },
   computed: {
-    readPermissions() {
+    editPermissions() {
+   
       if (pb.authStore) {
-        return pb.authStore.model.expand.permissions_id.read_permissions;
+
+        return pb.authStore.model.expand.permissions_id.edit_permissions;
+      }
+    },
+    deletePermissions() {
+   
+      if (pb.authStore) {
+
+        return pb.authStore.model.expand.permissions_id.delete_permissions;
       }
     },
     name() {
@@ -103,7 +112,6 @@ export default {
         }
       }
     },
-
     handleClick() {
       this.menu = !this.menu;
     },

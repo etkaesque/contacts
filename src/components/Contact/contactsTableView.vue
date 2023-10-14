@@ -7,6 +7,7 @@
         <md-table-head class="font-medium">Telefono numeris</md-table-head>
         <md-table-head class="font-medium">Elektroninis paštas</md-table-head>
         <md-table-head class="font-medium">Adresas</md-table-head>
+        <md-table-head v-if="editEmployees || deleteEmployees" class="font-medium">Veiksmas</md-table-head>
       </md-table-row>
 
       <md-table-row

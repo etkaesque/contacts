@@ -3,7 +3,7 @@
     <Main>
       <section class="flex flex-col gap-y-2">
         <h1 class="text-5xl font-light mb-2">Įmonės</h1>
-        <div class="flex items-center gap-x-3">
+        <div class="flex items-center gap-x-3" v-if="editCompanies">
           <Add :type="`company`"></Add>
           <span class="text-xl">Pridėti naują įmonę</span>
         </div>
@@ -13,7 +13,7 @@
         </div>
       </section>
 
-      <Company :companies="companies"></Company>
+      <Company :companies="companies" :editCompanies="editCompanies" :deleteCompanies="deleteCompanies"></Company>
     </Main>
 
     <Footer class="flex justify-center grow items-end">
@@ -51,6 +51,17 @@ export default {
         return false;
       }
     },
+    editCompanies() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.edit_companies;
+      }
+    },
+    deleteCompanies() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.delete_companies;
+      } 
+    },
+
   },
   methods: {
     ...mapActions(["fetchPaginatedCompanies"]),

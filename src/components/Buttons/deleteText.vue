@@ -20,7 +20,6 @@ export default {
       event.stopPropagation();
 
       if (this.type == `company`) {
-        console.log(this.type)
         await this.fetchCompanyById(this.id);
       } else if (this.type == `admin`) {
         await this.fetchAdminById(this.id);

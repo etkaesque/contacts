@@ -1,10 +1,10 @@
 <template>
-  <div class="editCompany flex flex-col w-full items-center">
-    <div class="flex w-full justify-end">
+  <div class="editCompany grid grid-auto-col grid-auto-rows">
+    <div class="col-start-2 col-end-3 row-start-1 row-end-2 h-10 flex justify-start">
       <dissmiss></dissmiss>
     </div>
 
-    <div class="w-3/4">
+    <div class="col-start-1 col-end-2 row-start-2 row-end-3 flex flex-col items-start">
       <h2 class="text-2xl w-full mb-2">Redaguoti įmonę:</h2>
 
       <md-field class="w-full" :class="{ 'md-invalid': v$.companyData.name.$error }">
@@ -20,10 +20,13 @@
 
       </md-field>
 
-      <button class="submitBtn uppercase mt-6" @click="handleSubmit()">
+   
+    </div>
+
+    <button class="submitBtn uppercase mt-6 row-start-3 row-end-4 " @click="handleSubmit()">
         Redaguoti
       </button>
-    </div>
+
   </div>
 </template>
 
@@ -89,6 +92,6 @@ export default {
 
 <style>
 .editCompany {
-  width: 350px !important;
+  width: auto !important;
 }
 </style>

@@ -69,8 +69,6 @@ export default {
       try {
         await this.deleteInstanceInDb(id, "divisions");
 
-        console.log("CORRENT PAGE", getters.currentPage)
-        console.log("MINUSING", getters.currentPage - 1)
 
         if (getters.paginatedDivisions.length === 1) {
           commit("SET_CURRENT_PAGE", getters.currentPage - 1);

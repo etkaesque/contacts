@@ -464,12 +464,7 @@ export default {
       }
     },
     async handleSubmit(event) {
-
-      console.log("how")
-
       event.preventDefault();
-
-      console.log("valid photo", this.photoValid);
 
       let isFormCorrect = await this.v$.$validate();
       isFormCorrect = isFormCorrect && this.photoValid;

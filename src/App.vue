@@ -56,4 +56,19 @@ footer {
   z-index: 1 !important;
 }
 
+.md-table-head-label{
+  margin-left: 10px !important;
+  padding-left: 10px !important;
+}
+
+.md-table-cell-container{
+  margin-left: 10px !important;
+  padding-left: 10px !important;
+}
+
+.md-table-cell{
+  min-width: 200px !important;
+}
+
+
 </style>

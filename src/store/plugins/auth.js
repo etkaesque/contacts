@@ -12,9 +12,19 @@ let authAPI = (store) => {
         });
       return authData;
     } catch {
-      throw Error("Prisijungimas nepavyko.");
+      throw Error("Prisijungimas nepavyko. Neteisingas e. paštas arba slaptažodis.");
     }
   };
+  store.adminRefresh = async () =>{
+    try {
+      const authData = await pb.collection('users').authRefresh({
+        expand: "permissions_id"
+      });
+      return authData
+    } catch {
+      throw Error("Nepavyko atnaujinti administratoriaus duomenis.");
+    }
+  }
 };
 
 export default authAPI;

@@ -8,6 +8,9 @@
           <Add :type="`admin`"></Add>
           <span class="text-xl">Pridėti naują administratorių (-e)</span>
         </div>
+        <div>
+          Iš viso rasta: <span class="font-semibold">{{ totalItems }}</span>.
+        </div>
 
         <AdminsTable :admins="admins"></AdminsTable>
       </section>
@@ -35,7 +38,7 @@ export default {
     };
   },
   computed:{
-    ...mapGetters(["admins"])
+    ...mapGetters(["admins", "totalItems"])
   },
   methods:{
     ...mapActions(["fetchPaginatedAdmins"]),
@@ -52,14 +55,13 @@ export default {
   },
   async created() {
 
-    if (pb.authStore && !pb.authStore.isValid) {
+    if (!pb.authStore.isValid) {
       this.$router.push("/login");
     } else {
       await this.fetchPaginatedAdmins();
 
     }
 
-    console.log(this.admins)
   },
 };
 </script>

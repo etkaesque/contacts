@@ -3,9 +3,9 @@
       <div v-if="admins.length != 0" class="w-full">
         <md-table>
           <md-table-row class="headerRow">
-            <md-table-head class="font-medium">Vardas</md-table-head>
-            <md-table-head class="font-medium">El.Paštas</md-table-head>
-            <md-table-head class="action">
+            <md-table-head  class="tableHead font-medium">Vardas</md-table-head>
+            <md-table-head class="tableHead font-medium">El.Paštas</md-table-head>
+            <md-table-head class="tableHead action">
               <span class="action-text font-medium">Veiksmas</span>
             </md-table-head>
           </md-table-row>
@@ -59,6 +59,8 @@
   
 
 <style>
+
+
 
 .action {
   text-align: center;

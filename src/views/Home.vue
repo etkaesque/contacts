@@ -8,7 +8,7 @@
           <Search></Search>
           <paginationFilter></paginationFilter>
           <viewMode></viewMode>
-          <add v-if="isValid" :type="'Contact'"></add>
+          <add v-if="isValid && addEmployees" :type="'Contact'"></add>
         </div>
 
         <div>
@@ -68,6 +68,11 @@ export default {
         return pb.authStore.isValid;
       }
     },
+    addEmployees(){
+      if(pb.authStore && pb.authStore.model){
+        return pb.authStore.model.expand.permissions_id.edit_employees;
+      }
+    }
   },
   methods: {
     ...mapActions(["fetchContacts"]),

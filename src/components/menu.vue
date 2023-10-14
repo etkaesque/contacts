@@ -23,7 +23,7 @@ export default {
       this.$emit("logout")
     },
     handlePassword() {
-      console.log("change pass");
+      ("change pass");
     },
   },
 };

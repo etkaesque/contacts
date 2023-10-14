@@ -52,14 +52,14 @@ export default {
       }
     },
     editEmployees() {
-      if (pb.authStore.model) {
+      if (pb.authStore && pb.authStore.model) {
         return pb.authStore.model.expand.permissions_id.edit_employees;
       }
     },
     deleteEmployees() {
-      if (pb.authStore.model) {
+      if (pb.authStore && pb.authStore.model) {
         return pb.authStore.model.expand.permissions_id.delete_employees;
-      }
+      } 
     },
   },
 

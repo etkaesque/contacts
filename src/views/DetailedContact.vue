@@ -88,7 +88,7 @@ export default {
     },
   },
   async created() {
-    console.log(this.contact)
+
     await this.fetchContactById(this.$route.params.id);
   },
 };

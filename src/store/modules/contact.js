@@ -94,7 +94,6 @@ export default {
     async createContact({ commit, dispatch, getters }, formData) {
       try {
 
-      console.log("how1")
         await this.createInstanceInDb(formData, "employees");
 
         dispatch("fetchContacts", {

@@ -20,10 +20,10 @@
               <md-option value="">{{
                 show ? "Pasirinkite struktūrą " : ""
               }}</md-option>
-              <md-option value="offices">Ofisas</md-option>
-              <md-option value="divisions">Padalinys</md-option>
-              <md-option value="departments">Skyrius</md-option>
-              <md-option value="groups">Grupė</md-option>
+              <md-option v-if="createOffices" value="offices">Ofisas</md-option>
+              <md-option v-if="createStructure" value="divisions">Padalinys</md-option>
+              <md-option v-if="createStructure" value="departments">Skyrius</md-option>
+              <md-option v-if="createStructure" value="groups">Grupė</md-option>
             </md-select>
 
             <div v-if="v$.type.$error">
@@ -115,6 +115,8 @@
 </template>
 
 <script>
+import PocketBase from "pocketbase";
+const pb = new PocketBase(SERVER_ADDR);
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import office from "./office.vue";
 import dissmiss from "../Buttons/dissmiss.vue";
@@ -175,6 +177,16 @@ export default {
   },
   computed: {
     ...mapGetters(["offices", "companies", "divisions", "departments", "tab"]),
+    createOffices() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.edit_offices;
+      }
+    },
+    createStructure() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.edit_structure;
+      }
+    },
   },
   components: {
     dissmiss,
@@ -227,8 +239,6 @@ export default {
         };
 
         await this.createOffice(params);
-
-        console.log(this.type === this.tab, this.tab, this.type);
         if (this.type === this.tab) await this.fetchPaginatedOffices();
       } else if (this.type == "divisions") {
         await this.createDivision(params);

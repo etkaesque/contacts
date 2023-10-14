@@ -48,10 +48,12 @@ export default {
           type: this.modal.type,
         };
       } else if (this.modal.type == "admin") {
+    
         return {
-          header: `kontaktą`,
-          text: `Vardas`,
-          id: this.admin.id,
+          header: `paskyrą`,
+          text: `Vardas: ${this.admin.data.name}`,
+          admin_id: this.admin.id,
+          permissions_id:this.admin.data.permissions_id,
           type: this.modal.type,
         };
       } else if (this.modal.type == "contact") {
@@ -119,7 +121,7 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #f7f4f4;
-  padding: 20px 20px !important;
+  padding: 15px 15px 15px 15px !important;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   z-index: 100;
   display: flex;

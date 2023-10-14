@@ -47,6 +47,7 @@ export default {
       "fetchPaginatedDivisions",
       "fetchPaginatedDepartments",
       "fetchPaginatedOffices",
+      "fetchPaginatedAdmins"
 
     ]),
     ...mapMutations(["SET_CURRENT_PAGE"]),
@@ -71,7 +72,7 @@ export default {
       } else if (this.type == `groups`) {
         await this.fetchPaginatedGroups();
       } else if(this.type == `admin`){
-        console.log("fetchPaginatedAdmins")
+        await this.fetchPaginatedAdmins()
       }
     },
   },
