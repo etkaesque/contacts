@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import editContact from "../Contact/editContact.vue";
 import createContact from "../Contact/addContact.vue";
 import editCompany from "../Company/editCompany.vue";
@@ -41,6 +41,7 @@ export default {
       let type;
 
       if (this.modal.type == "company") {
+
         return {
           header: `įmonę`,
           text: `Pavadinimas: ${this.company.data.name}.`,
@@ -77,6 +78,7 @@ export default {
           header = "grupę";
         }
       }
+   
 
       return {
         header: header,

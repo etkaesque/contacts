@@ -92,7 +92,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["SET_CURRENT_PAGE","SET_TAB"]),
+    ...mapMutations(["SET_CURRENT_PAGE","SET_TAB","SET_STRUCTURE"]),
     ...mapActions([
       "fetchPaginatedGroups",
       "fetchPaginatedDivisions",
@@ -156,6 +156,7 @@ export default {
   async created() {
     if (pb.authStore && !pb.authStore.isValid) {
       this.$router.push("/login");
+      this.SET_STRUCTURE()
     } else {
       await this.fetchPaginatedOffices();
       this.structure = this.paginatedOffices;

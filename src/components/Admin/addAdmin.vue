@@ -14,7 +14,7 @@
                 <label>Vardas</label>
                 <md-input v-model="formData.adminData.name"></md-input>
 
-                <div  v-if="v$.formData.adminData.name.$error">
+                <div v-if="v$.formData.adminData.name.$error">
                     <span class="md-error ml-9">{{
                         v$.formData.adminData.name.$errors[0].$message
                     }}</span>
@@ -49,7 +49,7 @@
                         photoSelected ? "Failas pasirinktas." : "Pasirinkite failą."
                     }}</span>
                 </div>
-               
+
             </div>
 
         </div>
@@ -120,8 +120,8 @@ import emailIcon from "../../assets/email3.svg"
 import { mapActions, mapGetters, mapMutations } from "vuex";
 
 
-const emailExists = function(value) {
-  return !this.emails.includes(value);
+const emailExists = function (value) {
+    return !this.emails.includes(value);
 };
 
 export default {
@@ -165,10 +165,10 @@ export default {
                 isTextValid: "Nenaudokite specialių simbolių",
                 fileTooLarge: "Failo dydis neturi būti didesnis nei 5Mb.",
                 fileNotPhoto:
-                "Neteisingas failo formatas. Pridėkite JPEG arba PNG failą.",
+                    "Neteisingas failo formatas. Pridėkite JPEG arba PNG failą.",
                 emailExists: "Toks e. paštas jau egzistuoja."
             },
-      
+
             photoValid: true,
             isFilePhoto: true,
             isFileTooLarge: false,
@@ -207,40 +207,40 @@ export default {
             let password = '';
 
             for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * charset.length);
-            password += charset[randomIndex];
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset[randomIndex];
             }
 
             return password;
         },
         ...mapActions(["createAdmin"]),
         ...mapMutations(["CONTROL_MODAL"]),
-       async handleSubmit() {
+        async handleSubmit() {
 
             let isFormCorrect = await this.v$.$validate();
             isFormCorrect = this.photoValid && isFormCorrect
 
             let password = this.generatePassword()
             this.formData.adminData.password = password
-            this.formData.adminData.passwordConfirm  = password
+            this.formData.adminData.passwordConfirm = password
 
-        
-            if(!isFormCorrect){
+
+            if (!isFormCorrect) {
                 return
             }
 
-            await this.createAdmin({adminData: this.formData.adminData, permissionsData: this.formData.permissionsData})
+            await this.createAdmin({ adminData: this.formData.adminData, permissionsData: this.formData.permissionsData })
             this.CONTROL_MODAL();
         },
         handlePhotoUpload(event) {
             const allowedTypes = ["image/png", "image/jpeg"];
             const maxSize = 5 * 1024 * 1024;
-        
+
             if (event.target.files.length > 0) {
                 const selectedFile = event.target.files[0];
 
                 if (!allowedTypes.includes(selectedFile.type)) {
-                  
+
                     this.isFilePhoto = false;
                     this.isFileTooLarge = false;
                     this.formData.adminData.avatar = "";
@@ -250,7 +250,7 @@ export default {
                 }
 
                 if (selectedFile.size > maxSize) {
-                  
+
                     this.isFileTooLarge = true;
                     this.isFilePhoto = true;
                     this.formData.adminData.avatar = "";
@@ -258,14 +258,14 @@ export default {
 
                     return;
                 }
-     
+
                 this.formData.adminData.avatar = selectedFile;
                 this.isFileTooLarge = false;
                 this.isFilePhoto = true;
                 this.photoSelected = true;
                 this.photoValid = true
             } else {
-           
+
                 this.photoSelected = false;
                 this.isFileTooLarge = false;
                 this.isFilePhoto = true;
@@ -273,7 +273,8 @@ export default {
                 this.photoValid = true
             }
         },
-    }
+    },
+
 
 
 

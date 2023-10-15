@@ -121,9 +121,16 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 import office from "./office.vue";
 import dissmiss from "../Buttons/dissmiss.vue";
 import { useVuelidate } from "@vuelidate/core";
-import { required, minLength, helpers } from "@vuelidate/validators";
-const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
+import { required, minLength, helpers, alphaNum } from "@vuelidate/validators";
+
+const textPattern = /^[a-zA-ZĄąČčĘęĖėĮįŠšŲųŪūŽž0-9 ]+$/;
 const alpha1 = helpers.regex(textPattern);
+
+
+const structureExists = function (value) {
+    return !this.structure_names.names.includes(value);
+};
+
 
 export default {
   setup() {
@@ -162,11 +169,13 @@ export default {
         generalData: {
           name: {
             required: helpers.withMessage("Nepalikite lauko tuščio", required),
+  
             alpha1: helpers.withMessage(
               "Nenaudokite specialių simboblių",
               alpha1
             ),
             minLength: helpers.withMessage("Tekstas per trumpas", minLength(3)),
+            structureExists: helpers.withMessage("Toks pavadinimas jau egzistuoja", structureExists),
           },
         },
         relation: {
@@ -176,7 +185,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["offices", "companies", "divisions", "departments", "tab"]),
+    ...mapGetters(["offices", "companies", "divisions", "departments", "tab", "structure_names"]),
     createOffices() {
       if (pb.authStore) {
         return pb.authStore.model.expand.permissions_id.edit_offices;
@@ -208,6 +217,7 @@ export default {
       "createDepartment",
       "createGroup",
       "fetchCompanies",
+      "fetchStructureName"
     ]),
     ...mapMutations(["CONTROL_MODAL"]),
 
@@ -256,6 +266,12 @@ export default {
   },
   watch: {
     async type() {
+
+      if(this.type != ""){
+        await this.fetchStructureName(this.type)
+    
+      }
+
       if (this.type == "offices") {
         await this.fetchCompanies();
         this.structure.items = this.companies;

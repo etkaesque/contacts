@@ -1,26 +1,16 @@
 <template>
   <div class="flex justify-start flex-wrap gap-3">
     <article v-for="contact in contacts" :key="contact.id">
-      <router-link class="links" :to="`contact/${contact.id}`">
+      <router-link class="links" :to="`contact/${contact.id}`" target="_blank">
         <md-card md-with-hover class="card">
           <md-card-header>
-            <img
-              v-if="contact.photo == ''"
-              :src="profileIcon"
-              alt="Contact picture"
-            />
-
-            <img
-              v-else
-              style="
+            <img v-if="contact.photo == ''" :src="profileIcon" alt="Contact picture" />
+            <img v-else style="
                 width: 60px;
                 height: 60px;
                 object-fit: cover !important;
                 border-radius: 50px;
-              "
-              :src="`${SERVER_ADDR}/api/files/employees/${contact.id}/${contact.photo}`"
-              alt="Contact picture"
-            />
+              " :src="`${SERVER_ADDR}/api/files/employees/${contact.id}/${contact.photo}`" alt="Contact picture" />
 
             <div class="flex flex-col">
               <div class="text-xl">
@@ -66,7 +56,7 @@ import Delete from "../Buttons/delete.vue";
 import { mapGetters } from "vuex";
 
 export default {
-  data(){
+  data() {
     return {
       SERVER_ADDR
     }
@@ -98,5 +88,4 @@ export default {
 .links {
   text-decoration: none !important;
 }
-
 </style>

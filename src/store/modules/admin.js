@@ -87,14 +87,6 @@ export default {
           isSuccess: false,
         });
       }
-
-
-
-
-
-
-
-
     },
 
     async login({ commit }, { email, password }) {

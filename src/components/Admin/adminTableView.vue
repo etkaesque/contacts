@@ -5,7 +5,7 @@
           <md-table-row class="headerRow">
             <md-table-head  class="tableHead font-medium">Vardas</md-table-head>
             <md-table-head class="tableHead font-medium">El.Paštas</md-table-head>
-            <md-table-head class="tableHead action">
+            <md-table-head v-if="editPermissions || deletePermissions" class="tableHead action">
               <span class="action-text font-medium">Veiksmas</span>
             </md-table-head>
           </md-table-row>
@@ -15,8 +15,8 @@
             <md-table-cell>{{ admin.email }}</md-table-cell>
             <md-table-cell>
               <div class="flex gap-3 justify-end">
-                <Edit :id="admin.id" :editLabel="editLabel" :type="`admin`"></Edit>
-                <Delete :id="admin.id" :type="`admin`"></Delete>
+                <Edit v-if="editPermissions" :id="admin.id" :editLabel="editLabel" :type="`admin`"></Edit>
+                <Delete   v-if="deletePermissions"  :id="admin.id" :type="`admin`"></Delete>
               </div>
             </md-table-cell>
           </md-table-row>
@@ -44,6 +44,8 @@
       }, 
       props:{
           admins: Array,
+          editPermissions: Boolean,
+          deletePermissions: Boolean,
   
       },
       components:{

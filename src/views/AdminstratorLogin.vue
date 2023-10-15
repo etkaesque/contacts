@@ -9,12 +9,10 @@
             <md-input v-model="formData.email"></md-input>
 
             <div v-if="v$.formData.email.$error">
-                    <span class="md-error">{{
-                        v$.formData.email.$errors[0].$message
-                    }}</span>
+              <span class="md-error">{{
+                v$.formData.email.$errors[0].$message
+              }}</span>
             </div>
-
-
           </md-field>
 
           <md-field :class="{ 'md-invalid': v$.formData.password.$error }">
@@ -22,14 +20,11 @@
             <md-input v-model="formData.password" type="password"></md-input>
 
             <div v-if="v$.formData.password.$error">
-                    <span class="md-error">{{
-                        v$.formData.password.$errors[0].$message
-            }}</span>
+              <span class="md-error">{{
+                v$.formData.password.$errors[0].$message
+              }}</span>
             </div>
-
-
           </md-field>
-
           <button class="submitBtn mt-20 w-3/4 align-center" @click="handleLogin($event)">
             Prisijungti
           </button>
@@ -64,7 +59,6 @@ export default {
       validation: {
         fieldEmpty: "Nepalikite tusčio lauko",
         emailInvalid: "Neteisingas e. pašto adresas",
-
       },
     };
   },
@@ -90,7 +84,7 @@ export default {
     async handleLogin(e) {
       e.preventDefault();
       let isFormCorrect = await this.v$.$validate();
-      if(!isFormCorrect) return
+      if (!isFormCorrect) return
 
       await this.login({
         email: this.formData.email,
@@ -108,7 +102,6 @@ export default {
 .section {
   background: white;
 }
-
 .submitBtn {
   padding: 10px 60px;
   background-color: #0054a6;
@@ -116,7 +109,6 @@ export default {
   border: none;
   cursor: pointer;
 }
-
 .goBack {
   position: absolute !important;
   top: 40px;

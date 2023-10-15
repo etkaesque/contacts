@@ -105,7 +105,7 @@ let contactsAPI = (store) => {
      
         const instance = await pb.collection(collection).create(data);
         return instance;
-      } catch(err) {
+      } catch {
         throw Error;
       }
     });

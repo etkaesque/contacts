@@ -15,6 +15,7 @@
         v-for="contact in contacts"
         :key="contact.id"
         @click="handleClick(contact.id)"
+
       >
         <md-table-cell>{{ contact.name }} {{ contact.surname }}</md-table-cell>
         <md-table-cell>{{ contact.position }}</md-table-cell>
@@ -60,7 +61,8 @@ export default {
   },
   methods: {
     handleClick(id) {
-      this.$router.push(`contact/${id}`);
+      const url = `contact/${id}`;
+      window.open(url, "_blank");
     },
   },
 };

@@ -12,20 +12,20 @@
         <md-input maxlength="35" v-model="companyData.name"></md-input>
 
 
-        <div v-if="v$.companyData.name.$error" >
-              <span class="md-error">{{
-                v$.companyData.name.$errors[0].$message
-              }}</span>
-            </div>
+        <div v-if="v$.companyData.name.$error">
+          <span class="md-error">{{
+            v$.companyData.name.$errors[0].$message
+          }}</span>
+        </div>
 
       </md-field>
 
-   
+
     </div>
 
     <button class="submitBtn uppercase mt-6 row-start-3 row-end-4 " @click="handleSubmit()">
-        Redaguoti
-      </button>
+      Redaguoti
+    </button>
 
   </div>
 </template>
@@ -35,9 +35,15 @@ import dissmiss from "../Buttons/dissmiss.vue";
 import { mapGetters, mapActions } from "vuex";
 
 import { useVuelidate } from "@vuelidate/core";
-import { required, minLength, helpers } from "@vuelidate/validators";
-const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
+import { required, minLength, helpers, alphaNum } from "@vuelidate/validators";
+const companyExists = function (value) {
+  return !this.structure_names.names.includes(value);
+};
+
+
+const textPattern = /^[a-zA-ZĄąČčĘęĖėĮįŠšŲųŪūŽž0-9 ]+$/;
 const alpha1 = helpers.regex(textPattern);
+
 
 export default {
   setup() {
@@ -52,18 +58,19 @@ export default {
       },
     };
   },
-  validations(){
-    return{
-      companyData:{
+  validations() {
+    return {
+      companyData: {
         name: {
-        required: helpers.withMessage("Nepalikite lauko tuščio", required),
-        alpha1: helpers.withMessage(
-              "Nenaudokite specialių simboblių",
-              alpha1
-            ),
-        minLength: helpers.withMessage("Tekstas per trumpas", minLength(3))
-      
-      }
+          required: helpers.withMessage("Nepalikite lauko tuščio", required),
+          alpha1: helpers.withMessage(
+            "Nenaudokite specialių simboblių",
+            alpha1
+          ),
+          minLength: helpers.withMessage("Tekstas per trumpas", minLength(3)),
+          companyExists: helpers.withMessage("Įmonė tokiu pavadinimu jau egzistuoja", companyExists)
+
+        }
       }
     }
   },
@@ -71,10 +78,10 @@ export default {
     dissmiss,
   },
   computed: {
-    ...mapGetters(["company"]),
+    ...mapGetters(["company", "structure_names"]),
   },
   methods: {
-    ...mapActions(["editCompany", "fetchCompanyById"]),
+    ...mapActions(["editCompany", "fetchCompanyById", "fetchStructureName"]),
     async handleSubmit() {
       let isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) return;
@@ -82,11 +89,17 @@ export default {
     },
   },
   watch: {
-    company(){
+    company() {
       this.companyData.name = this.company.data.name;
     }
+  },
+  async created() {
+
+    await this.fetchStructureName("companies")
+
   }
-  
+
+
 };
 </script>
 

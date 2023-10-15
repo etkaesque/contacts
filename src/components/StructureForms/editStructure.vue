@@ -91,8 +91,12 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, helpers } from "@vuelidate/validators";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 
-const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
 
+const structureExists = function (value) {
+    return !this.structure_names.names.includes(value);
+};
+
+const textPattern = /^[a-zA-ZĄąČčĘęĖėĮįŠšŲųŪūŽž0-9 ]+$/;
 const alpha1 = helpers.regex(textPattern);
 
 export default {
@@ -137,6 +141,7 @@ export default {
               alpha1
             ),
             minLength: helpers.withMessage("Tekstas per trumpas", minLength(3)),
+            structureExists: helpers.withMessage("Toks pavadinimas jau egzistuoja", structureExists)
           },
         },
         relation: {
@@ -158,6 +163,7 @@ export default {
       "divisions",
       "departments",
       "groups",
+      "structure_names"
     ]),
   },
   methods: {
@@ -178,6 +184,7 @@ export default {
       "editGroup",
       "editOffice",
       "editDepartment",
+      "fetchStructureName"
     ]), ...mapMutations(["CONTROL_MODAL"]),
 
     handleShow(boolean) {
@@ -249,9 +256,13 @@ export default {
   },
 
   async created() {
-    this.type = this.structure.type;
-  
+
+    await this.fetchStructureName(this.structure.type)
+
+
+    this.type = this.structure.type;  
     this.id = this.structure.id;
+  
     this.structureData.officeData = this.structure.data;
 
     if (this.type == "offices") {

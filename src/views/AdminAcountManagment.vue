@@ -4,7 +4,7 @@
       <section class="flex flex-col gap-y-2">
         <h1 class="text-5xl font-light mb-2">Paskyros</h1>
 
-        <div class="flex items-center gap-x-3">
+        <div v-if="editPermissions" class="flex items-center gap-x-3">
           <Add :type="`admin`"></Add>
           <span class="text-xl">Pridėti naują administratorių (-e)</span>
         </div>
@@ -12,7 +12,7 @@
           Iš viso rasta: <span class="font-semibold">{{ totalItems }}</span>.
         </div>
 
-        <AdminsTable :admins="admins"></AdminsTable>
+        <AdminsTable :admins="admins" :editPermissions="editPermissions" :deletePermissions="deletePermissions"></AdminsTable>
       </section>
     </Main>
 
@@ -38,7 +38,17 @@ export default {
     };
   },
   computed:{
-    ...mapGetters(["admins", "totalItems"])
+    ...mapGetters(["admins", "totalItems"]),
+    editPermissions() {
+      if (pb.authStore) {
+        return pb.authStore.model.expand.permissions_id.edit_permissions;
+      }
+    },
+    deletePermissions() {
+        if (pb.authStore) {
+          return pb.authStore.model.expand.permissions_id.delete_permissions;
+        } 
+      },
   },
   methods:{
     ...mapActions(["fetchPaginatedAdmins"]),
@@ -49,6 +59,7 @@ export default {
     Pagination,
     AdminsTable
   },
+
   beforeRouteLeave(to, from, next) {
     this.SET_CURRENT_PAGE(1);
     next();
@@ -57,6 +68,8 @@ export default {
 
     if (!pb.authStore.isValid) {
       this.$router.push("/login");
+    } else if(!this.editPermissions && !this.deletePermissions){
+      this.$router.push("/");
     } else {
       await this.fetchPaginatedAdmins();
 

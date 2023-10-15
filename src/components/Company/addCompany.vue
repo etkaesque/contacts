@@ -24,7 +24,7 @@
 
     <button class="submitBtn uppercase mt-6 row-start-3 row-end-4 " @click="handleSubmit()">
         Pridėti
-      </button>
+    </button>
 
   </div>
 </template>
@@ -33,12 +33,16 @@
 
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, helpers } from "@vuelidate/validators";
-const textPattern = /^[\p{L}\p{M}\p{S}\sĄąČčĘęĖėĮįŠšŲųŪūŽž.]+$/u;
+const companyExists = function (value) {
+    return !this.structure_names.names.includes(value);
+};
+
+const textPattern = /^[a-zA-ZĄąČčĘęĖėĮįŠšŲųŪūŽž0-9 ]+$/;
 const alpha1 = helpers.regex(textPattern);
 
 
 import dissmiss from "../Buttons/dissmiss.vue";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
   setup() {
     return {
@@ -61,17 +65,21 @@ export default {
               "Nenaudokite specialių simboblių",
               alpha1
             ),
-        minLength: helpers.withMessage("Tekstas per trumpas", minLength(3))
+        minLength: helpers.withMessage("Tekstas per trumpas", minLength(3)),
+        companyExists: helpers.withMessage("Toks pavadinimas jau egzistuoja", companyExists)
       
       }
       }
     }
   },
+  computed:{
+    ...mapGetters(["structure_names"])
+  },
   components: {
     dissmiss,
   },
   methods: {
-    ...mapActions(["createCompany"]),
+    ...mapActions(["createCompany", "fetchStructureName"]),
 
     async handleSubmit() {
       let isFormCorrect = await this.v$.$validate();
@@ -79,6 +87,11 @@ export default {
       await this.createCompany(this.companyData);
     },
   },
+  async created(){
+
+  await this.fetchStructureName("companies")
+
+}
 };
 </script>
 

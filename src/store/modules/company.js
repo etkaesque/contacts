@@ -1,6 +1,7 @@
 export default {
   state: {
     companies: [],
+    structure_names: {names: [], collection: ""},
     company: { data: {}, id: "" },
     totalCompanies: 0,
     structure: { id: "", type: "", data: {} },
@@ -11,6 +12,7 @@ export default {
     companies: (state) => state.companies,
     company: (state) => state.company,
     structure: (state) => state.structure,
+    structure_names: (state) => state.structure_names,
     totalCompanies: (state) => state.totalCompanies,
     relations: (state) => state.relations,
     tab: (state) => state.tab,
@@ -57,6 +59,13 @@ export default {
         state.relations = { rels: relations, ids: ids };
       }
     },
+    SET_NAMES(state, data){
+      if (data != undefined) {
+        state.structure_names = {names: data.names, collection: data.collection}
+      } else {
+        state.structure_names = {names: [], collection: ""}
+      }
+    }
   },
   actions: {
     async createCompany({ commit, dispatch }, data) {
@@ -110,7 +119,8 @@ export default {
     async editCompany({ commit, dispatch }, { id, data }) {
       try {
         await this.editInstanceInDb(id, data, "companies");
-        dispatch("fetchCompanies");
+        commit("CONTROL_MODAL");
+        dispatch("fetchPaginatedCompanies");
 
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -173,7 +183,6 @@ export default {
       if (id == undefined) {
         commit.SET_STRUCTURE(); // clear
       }
-
       if (type == "offices") {
         await dispatch("fetchOfficeById", id);
       } else if (type == "divisions") {
@@ -183,6 +192,40 @@ export default {
       } else if (type == "groups") {
         await dispatch("fetchGroupById", id);
       }
+    },
+    async fetchStructureName({commit, dispatch, getters}, collection){
+
+      try {
+        const records = await this.getFullList(collection, {
+          fields: "name",
+        });
+
+        let names = []
+
+        records.forEach(record =>{
+
+          if(collection == 'companies') {
+            if(getters.company.data.name != record.name){
+              names.push(record.name)
+            }
+          } else {
+            if(getters.structure.data.name != record.name){
+              names.push(record.name)
+            }
+          }
+  
+        })
+
+      
+        commit("SET_NAMES", {names: names, collection: collection});
+      } catch (error) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: error.message,
+          isSuccess: false,
+        });
+      }
+
     },
 
     async deleteStructure({ commit, dispatch }, { id, type }) {
@@ -230,7 +273,7 @@ export default {
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: "Nebuvo redaguota.",
+          message: "Įvyko klaida. Pabandykite vėliau.",
           isSuccess: false,
         });
       }

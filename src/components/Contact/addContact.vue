@@ -62,10 +62,7 @@
           >
             <label>Elektroninis paštas</label>
             <md-input maxlength="40" v-model="formData.email"></md-input>
-            <span class="md-error">{{
-              formData.email == "" ? validation.message : validation.email
-            }}</span>
-
+  
             <div v-if="v$.formData.email.$error">
               <span class="md-error">{{
                 v$.formData.email.$errors[0].$message
@@ -282,6 +279,11 @@ const phonePattern = /^\+[0-9]+$/;
 const alpha1 = helpers.regex(textPattern);
 const phone1 = helpers.regex(phonePattern);
 
+
+const emailExists = function (value) {
+    return !this.contact_emails.includes(value);
+};
+
 export default {
   setup() {
     return {
@@ -356,8 +358,10 @@ export default {
         },
 
         email: {
-          email: helpers.withMessage(this.validation.email, email),
+          emailExists: helpers.withMessage("Toks e. paštas jau egzistuoja", emailExists),
           required: helpers.withMessage(this.validation.empty, required),
+          email: helpers.withMessage(this.validation.email, email),
+          
         },
         position: {
           required: helpers.withMessage(this.validation.empty, required),
@@ -390,6 +394,7 @@ export default {
       "divisions",
       "offices",
       "groups",
+      "contact_emails"
     ]),
   },
   methods: {
@@ -404,6 +409,7 @@ export default {
       "fetchOfficeDivisions",
       "fetchDivisionDepartmens",
       "fetchDepartmentGroups",
+      "fetchContactEmails"
     ]),
     ...mapMutations([
       "CONTROL_MODAL",
@@ -531,6 +537,9 @@ export default {
     },
   },
   async created() {
+
+    await this.fetchContactEmails()
+
     this.oldOffices = this.offices;
     this.oldDivisions = this.divisions;
     this.oldDepartments = this.departments;
