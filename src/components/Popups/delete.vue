@@ -32,7 +32,7 @@ export default {
       "deleteContact",
       "deleteCompany",
       "deleteStructure",
-      "deleteAdmin",
+      "deleteAdmin"
     ]),
     ...mapMutations([
       "CONTROL_MODAL",
@@ -51,9 +51,8 @@ export default {
       this.CONTROL_MODAL();
     },
     async handleDelete() {
-
-
       if (this.type == `company`) {
+
         await this.deleteCompany(this.id);
       } else if (this.type == `contact`) {
         await this.deleteContact(this.id);
@@ -71,6 +70,7 @@ export default {
     if(this.propData.id) {
       this.id = this.propData.id;
     }
+
 
   },
 };

@@ -5,12 +5,14 @@ export default {
     admins: [],
     admin: { data: {}, id: "", permissions: {}},
     emails: [],
+    password: "",
 
   },
   getters: {
     admins: (state) => state.admins,
     admin: (state) => state.admin,
     emails: (state) => state.emails,
+    password: (state) => state.password,
   },
   mutations: {
     SET_ADMINS(state, admins) {
@@ -18,6 +20,13 @@ export default {
         state.admins = admins;
       } else {
         state.admins = [];
+      }
+    },
+    SET_PASSWORD(state, password) {
+      if (password != undefined) {
+        state.password = password;
+      } else {
+        state.password = "";
       }
     },
     SET_EMAILS(state, emails){
@@ -57,7 +66,7 @@ export default {
       } catch {
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: `Adminstratoriaus (-ės) nepavyko sukurti.`,
+          message: `Paskyra nebuvo sukurta. Pabandykite vėliau.`,
           isSuccess: false,
         });
       }
@@ -83,7 +92,7 @@ export default {
       } catch {
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: `Paskyra nebuvo redaguota`,
+          message: `Paskyra nebuvo redaguota. Pabandykite vėliau.`,
           isSuccess: false,
         });
       }
@@ -91,6 +100,7 @@ export default {
 
     async login({ commit }, { email, password }) {
       try {
+        localStorage.removeItem("perPage");
         await this.adminLogin(email, password);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -117,9 +127,12 @@ export default {
         });
 
         commit("SET_EMAILS",emails)
-        commit("SET_PAGINATION", admins.totalItems);
+        commit("SET_PAGINATION", {total:admins.totalItems, isStructure: true});
         commit("SET_ADMINS", admins.items);
       } catch (error) {
+        commit("SET_EMAILS")
+        commit("SET_PAGINATION", {total:0, isStructure: true});
+        commit("SET_ADMINS");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
@@ -134,6 +147,7 @@ export default {
 
         commit("SET_ADMIN", { data: admin, id: id, permissions: permissions});
       } catch (error) {
+        
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
@@ -165,7 +179,7 @@ export default {
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
-          message: error.message,
+          message: "Paskyra nebuvo ištrinta. Pabandykite vėliau.",
           isSuccess: false,
         });
       }

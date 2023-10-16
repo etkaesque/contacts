@@ -120,6 +120,14 @@ import emailIcon from "../../assets/email3.svg"
 import { mapActions, mapGetters, mapMutations } from "vuex";
 
 
+const textPattern2 = /^[a-zA-ZĄąČčĘęĖėĮįŠšŲųŪūŽž. ]+$/
+const alpha2 = helpers.regex(textPattern2);
+
+const textPattern3 = /^[^\d]+$/
+const alpha3 = helpers.regex(textPattern3)
+
+
+
 const emailExists = function (value) {
     return !this.emails.includes(value);
 };
@@ -162,11 +170,12 @@ export default {
             validation: {
                 fieldEmpty: "Nepalikite tusčio lauko",
                 emailInvalid: "Neteisingas e. pašto adresas",
-                isTextValid: "Nenaudokite specialių simbolių",
                 fileTooLarge: "Failo dydis neturi būti didesnis nei 5Mb.",
                 fileNotPhoto:
                     "Neteisingas failo formatas. Pridėkite JPEG arba PNG failą.",
-                emailExists: "Toks e. paštas jau egzistuoja."
+                emailExists: "Toks e. paštas jau egzistuoja.",
+                messageOnlyLetter: "Nenaudokite skaičių",
+                messageTooSpecial: "Nenaudokite specialių simbolių",
             },
 
             photoValid: true,
@@ -182,8 +191,9 @@ export default {
             formData: {
                 adminData: {
                     name: {
-                        alphaNum: helpers.withMessage(this.validation.isTextValid, alphaNum),
-                        required: helpers.withMessage(this.validation.fieldEmpty, required),
+                        alpha3: helpers.withMessage(this.validation.messageOnlyLetter, alpha3),
+                        alpha2: helpers.withMessage(this.validation.messageTooSpecial, alpha2),
+                        required: helpers.withMessage(this.validation.fieldEmpty, required)
                     },
                     email: {
                         email: helpers.withMessage(this.validation.emailInvalid, email),
@@ -214,7 +224,7 @@ export default {
             return password;
         },
         ...mapActions(["createAdmin"]),
-        ...mapMutations(["CONTROL_MODAL"]),
+        ...mapMutations(["CONTROL_MODAL", "SET_PASSWORD"]),
         async handleSubmit() {
 
             let isFormCorrect = await this.v$.$validate();
@@ -231,6 +241,9 @@ export default {
 
             await this.createAdmin({ adminData: this.formData.adminData, permissionsData: this.formData.permissionsData })
             this.CONTROL_MODAL();
+            this.SET_PASSWORD(password)
+            this.CONTROL_MODAL({ status: true, form: "password", type: "password" })
+        
         },
         handlePhotoUpload(event) {
             const allowedTypes = ["image/png", "image/jpeg"];

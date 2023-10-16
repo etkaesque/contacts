@@ -72,7 +72,7 @@ export default {
         await this.deleteInstanceInDb(id, "departments");
 
         if (getters.paginatedDepartments.length === 1) {
-          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
         }
 
         commit("SET_DEPARTMENT") // clear
@@ -148,9 +148,12 @@ export default {
           getters.currentPage,
           getters.perPage
         );
-        commit("SET_PAGINATION", departments.totalItems);
+
+        commit("SET_PAGINATION", {total:departments.totalItems, isStructure: true});
         commit("SET_PAGINATED_DEPARTMENTS", departments.items);
       } catch (error) {
+        commit("SET_PAGINATION", {total:0, isStructure: true});
+        commit("SET_PAGINATED_DEPARTMENTS")
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,

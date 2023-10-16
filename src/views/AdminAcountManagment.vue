@@ -17,7 +17,7 @@
     </Main>
 
     <Footer class="flex justify-center grow items-end">
-      <Pagination :type="`admin`"></Pagination>
+      <Pagination v-if="admins.length != 0" :type="`admin`"></Pagination>
     </Footer>
   </div>
 </template>
@@ -61,7 +61,7 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-    this.SET_CURRENT_PAGE(1);
+    this.SET_CURRENT_PAGE({page: 1});
     next();
   },
   async created() {

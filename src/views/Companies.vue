@@ -17,7 +17,7 @@
     </Main>
 
     <Footer class="flex justify-center grow items-end">
-      <Pagination :type="`company`"></Pagination>
+      <Pagination v-if="companies.length != 0" :type="`company`"></Pagination>
     </Footer>
   </div>
 </template>
@@ -68,7 +68,7 @@ export default {
     ...mapMutations(["SET_CURRENT_PAGE", "SET_COMPANIES", "SET_COMPANY"]),
   },
   beforeRouteLeave(to, from, next) {
-    this.SET_CURRENT_PAGE(1);
+    this.SET_CURRENT_PAGE({page: 1});
     this.SET_COMPANIES()
     this.SET_COMPANY()
     next();
@@ -79,7 +79,6 @@ export default {
     } else {
       await this.fetchPaginatedCompanies();
     }
-
 
   },
 };

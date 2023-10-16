@@ -27,7 +27,7 @@
     </Main>
 
     <Footer class="flex justify-center grow items-end">
-      <Pagination :type="type"></Pagination>
+      <Pagination v-if="structure.length != 0" :type="type"></Pagination>
     </Footer>
   </div>
 </template>
@@ -102,7 +102,7 @@ export default {
     async handleTab(type) {
       this.type = type;
       this.SET_TAB(type)
-      this.SET_CURRENT_PAGE(1);
+      this.SET_CURRENT_PAGE({page: 1});
 
       if (type == `offices`) {
         await this.fetchPaginatedOffices();
@@ -150,7 +150,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
 
-    this.SET_CURRENT_PAGE(1);
+    this.SET_CURRENT_PAGE({page: 1});
     next();
   },
   async created() {

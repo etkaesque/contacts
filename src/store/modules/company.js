@@ -1,12 +1,12 @@
 export default {
   state: {
     companies: [],
-    structure_names: {names: [], collection: ""},
+    structure_names: { names: [], collection: "" },
     company: { data: {}, id: "" },
     totalCompanies: 0,
     structure: { id: "", type: "", data: {} },
-    relations: [],
-    tab:"",
+    relations: { rels: [], ids: [] },
+    tab: "",
   },
   getters: {
     companies: (state) => state.companies,
@@ -18,7 +18,7 @@ export default {
     tab: (state) => state.tab,
   },
   mutations: {
-    SET_TAB(state, tab){
+    SET_TAB(state, tab) {
       if (tab != undefined) {
         state.tab = tab;
       } else {
@@ -51,21 +51,23 @@ export default {
         state.structure = { id: "", type: "", data: {} };
       }
     },
-
     SET_RELATIONS(state, { relations, ids }) {
       if (relations == undefined) {
-        state.relations = [];
+        state.relations = { rels: [], ids: [] };
       } else {
         state.relations = { rels: relations, ids: ids };
       }
     },
-    SET_NAMES(state, data){
+    SET_NAMES(state, data) {
       if (data != undefined) {
-        state.structure_names = {names: data.names, collection: data.collection}
+        state.structure_names = {
+          names: data.names,
+          collection: data.collection,
+        };
       } else {
-        state.structure_names = {names: [], collection: ""}
+        state.structure_names = { names: [], collection: "" };
       }
-    }
+    },
   },
   actions: {
     async createCompany({ commit, dispatch }, data) {
@@ -91,9 +93,9 @@ export default {
         await this.deleteInstanceInDb(id, "companies");
 
         if (getters.companies.length === 1) {
-          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
         }
-        commit("SET_COMPANY") // clear
+        commit("SET_COMPANY"); // clear
         dispatch("fetchPaginatedCompanies");
 
         commit("CONTROL_NOTIFICATION", {
@@ -168,9 +170,13 @@ export default {
           getters.currentPage,
           getters.perPage
         );
-        commit("SET_PAGINATION", companies.totalItems);
+      
+        commit("SET_PAGINATION", {total:companies.totalItems, isStructure: true});
         commit("SET_COMPANIES", companies.items);
       } catch (error) {
+        commit("SET_PAGINATION", {total:0, isStructure: true});
+        commit("SET_COMPANIES")
+        commit("SET_NAMES")
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
@@ -193,31 +199,26 @@ export default {
         await dispatch("fetchGroupById", id);
       }
     },
-    async fetchStructureName({commit, dispatch, getters}, collection){
-
+    async fetchStructureName({ commit, getters }, collection) {
       try {
         const records = await this.getFullList(collection, {
           fields: "name",
         });
 
-        let names = []
+        let names = [];
 
-        records.forEach(record =>{
-
-          if(collection == 'companies') {
-            if(getters.company.data.name != record.name){
-              names.push(record.name)
+        records.forEach((record) => {
+          if (collection == "companies") {
+            if (getters.company.data.name != record.name) {
+              names.push(record.name);
             }
           } else {
-            if(getters.structure.data.name != record.name){
-              names.push(record.name)
+            if (getters.structure.data.name != record.name) {
+              names.push(record.name);
             }
           }
-  
-        })
-
-      
-        commit("SET_NAMES", {names: names, collection: collection});
+        });
+        commit("SET_NAMES", { names: names, collection: collection });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -225,19 +226,50 @@ export default {
           isSuccess: false,
         });
       }
-
     },
 
-    async deleteStructure({ commit, dispatch }, { id, type }) {
+    async deleteStructure({ commit, dispatch, getters }, { id, type }) {
+      let deleteAction;
+      let errorMessage;
+      let collection;
+      let target;
+
       if (type == "offices") {
-        dispatch("deleteOffice", id);
+        collection = "offices_divisions";
+        target = "office_id";
+        errorMessage = "Ofisas turi prikirtų padalinių.";
+        deleteAction = "deleteOffice";
       } else if (type == "divisions") {
-        dispatch("deleteDivision", id);
+        collection = "divisions_departments";
+        target = "division_id";
+        errorMessage = "Padalinys turi prikirtų skyrių.";
+        deleteAction = "deleteDivision";
       } else if (type == "departments") {
-        dispatch("deleteDepartment", id);
+        collection = "departments_groups";
+        target = "department_id";
+        errorMessage = "Skyrius turi priskirtų grupių.";
+        deleteAction = "deleteDepartment";
       } else if (type == "groups") {
-        dispatch("deleteGroup", id);
+        deleteAction = "deleteGroup"
+        await dispatch(deleteAction, id);
+        return
       }
+
+      await dispatch("fetchRelation", {
+        id: id,
+        collection: collection,
+        type: target,
+      });
+
+      if (getters.relations.rels.length != 0) {
+        commit("CONTROL_NOTIFICATION", {
+          status: true,
+          message: errorMessage,
+          isSuccess: false,
+        });
+        return;
+      }
+      await dispatch(deleteAction, id);
     },
 
     async fetchRelation({ commit }, { id, collection, type }) {
@@ -257,6 +289,7 @@ export default {
             ids.push(item.department_id);
           }
         });
+
         commit("SET_RELATIONS", { relations: relations.items, ids: ids });
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {

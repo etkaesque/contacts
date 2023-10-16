@@ -63,11 +63,12 @@ export default {
       }
     },
     async deleteGroup({ commit, dispatch, getters }, id) {
+
       try {
         await this.deleteInstanceInDb(id, "groups");
 
         if (getters.paginatedGroups.length === 1) {
-          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
         }
 
         commit("SET_GROUP"); // clear
@@ -145,9 +146,12 @@ export default {
           getters.currentPage,
           getters.perPage
         );
-        commit("SET_PAGINATION", groups.totalItems);
+
+        commit("SET_PAGINATION", {total:groups.totalItems, isStructure: true});
         commit("SET_PAGINATED_GROUPS", groups.items);
       } catch (error) {
+        commit("SET_PAGINATION", {total:0, isStructure: true});
+        commit("SET_PAGINATED_GROUPS")
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,

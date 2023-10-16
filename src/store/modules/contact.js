@@ -17,7 +17,12 @@ export default {
   },
   mutations: {
     SET_CONTACTS(state, contacts) {
-      state.contacts = contacts.items;
+      if (contacts === undefined) {
+        state.contacts = [];
+      } else {
+        state.contacts = contacts.items;
+      }
+   
     },
     SET_FILTERS(state, filters) {
       if (filters === undefined) {
@@ -36,18 +41,7 @@ export default {
     SET_VIEW_MODE(state) {
       state.isCard = !state.isCard;
     },
-    SET_CURRENT_PAGE(state, page) {
-      let maxPages = Math.ceil(state.contactsTotalItems / state.perPage);
 
-      if (page >= maxPages) {
-        page = maxPages;
-      }
-      if (page < 1) {
-        page = 1;
-      }
-
-      state.currentPage = page;
-    },
     SET_SEARCH_TERM(state, term) {
       state.searchTerm = term;
     },
@@ -61,19 +55,21 @@ export default {
   },
   actions: {
     async fetchContacts(
-      { commit },
+      { commit,getters },
       { page = 1, searchTerm = "", filterData = {} }
     ) {
       try {
         const contacts = await this.fetchContactsFromDb(
-          page,
+          page, getters.perPage,
           searchTerm,
           filterData
         );
 
-        commit("SET_PAGINATION", contacts.totalItems);
+        commit("SET_PAGINATION", {total:contacts.totalItems, isStructure: false});
         commit("SET_CONTACTS", contacts);
       } catch (error) {
+        commit("SET_PAGINATION", {total:0, isStructure: false});
+        commit("SET_CONTACTS")
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `${error.message}`,
@@ -81,7 +77,7 @@ export default {
         });
       }
     },
-    async fetchContactEmails({ commit, dispatch, getters }) {
+    async fetchContactEmails({ commit, getters }) {
 
       try {
         const records = await this.getFullList("employees", {
@@ -95,8 +91,6 @@ export default {
             emails.push(record.email)
           }
         })
-
-        console.log(emails)
         commit("SET_CONTACT_EMAILS", emails)
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
@@ -177,7 +171,7 @@ export default {
         await this.deleteInstanceInDb(id, "employees");
 
         if (getters.contacts.length === 1) {
-          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1, isContact: true});
         }
 
         commit("SET_CONTACT") // clear

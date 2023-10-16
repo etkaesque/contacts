@@ -1,10 +1,12 @@
 import PocketBase from "pocketbase";
-
+import module from "../modules/pagination"
 const pb = new PocketBase(SERVER_ADDR);
-const perPage = CONTACTS_PER_PAGE;
+
+const structurePerPage = module.state.structurePerPage
+
 
 let contactsAPI = (store) => {
-  store.fetchContactsFromDb = async (page, searchTerm, filterData) => {
+  store.fetchContactsFromDb = async (page, perPage, searchTerm, filterData) => {
     let filter = "";
     let termFilter = "";
     let structureFilter = "";
@@ -64,6 +66,7 @@ let contactsAPI = (store) => {
     }
 
     try {
+
       const contacts = await pb.collection("employees").getList(page, perPage, {
         expand: "office_id",
         filter,
@@ -94,7 +97,10 @@ let contactsAPI = (store) => {
   };
   (store.getPaginatedList = async (collection, page) => {
     try {
+
+      let perPage = structurePerPage
       const records = await pb.collection(collection).getList(page, perPage);
+
       return records;
     } catch {
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
@@ -118,11 +124,12 @@ let contactsAPI = (store) => {
     }
   };
   store.deleteInstanceInDb = async (id, collection) => {
+
     try {
       const instance = await pb.collection(collection).delete(id);
       return instance;
-    } catch (ClientResponseErr) {
-      throw Error(ClientResponseErr.status);
+    } catch {
+      throw Error
     }
   };
   store.createRelation = async (collection, data) => {
@@ -131,7 +138,7 @@ let contactsAPI = (store) => {
         .collection(collection)
         .create(data, { requestKey: null });
       return relation;
-    } catch (error) {
+    } catch {
       throw Error;
     }
   };
@@ -147,6 +154,7 @@ let contactsAPI = (store) => {
     }
   };
   store.deleteRelationInDb = async (id, collection) => {
+
     try {
       const relation = await pb
         .collection(collection)

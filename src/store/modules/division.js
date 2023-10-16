@@ -68,10 +68,9 @@ export default {
     async deleteDivision({ commit, dispatch, getters }, id) {
       try {
         await this.deleteInstanceInDb(id, "divisions");
-
-
+        
         if (getters.paginatedDivisions.length === 1) {
-          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
         }
 
         commit("SET_DIVISION") // clear
@@ -141,7 +140,9 @@ export default {
           sort: "-created",
         });
         commit("SET_DIVISIONS", divisions);
+        
       } catch (error) {
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
@@ -156,9 +157,12 @@ export default {
           getters.currentPage,
           getters.perPage
         );
-        commit("SET_PAGINATION", divisions.totalItems);
+
+        commit("SET_PAGINATION", {total:divisions.totalItems, isStructure: true});
         commit("SET_PAGINATED_DIVISIONS", divisions.items);
       } catch (error) {
+        commit("SET_PAGINATION", {total:0, isStructure: true});
+        commit("SET_PAGINATED_DIVISIONS")
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,

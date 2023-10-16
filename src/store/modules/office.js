@@ -63,10 +63,11 @@ export default {
     },
     async deleteOffice({ commit, dispatch, getters }, id) {
       try {
-        await this.deleteInstanceInDb(id, "offices");
+
+        await this.deleteInstanceInDb(id, "offices");    
 
         if (getters.paginatedOffices.length === 1) {
-          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
         }
 
         dispatch("fetchPaginatedOffices");
@@ -148,11 +149,12 @@ export default {
           getters.currentPage,
           getters.perPage
         );
-
-    
-        commit("SET_PAGINATION", offices.totalItems);
+          
+        commit("SET_PAGINATION", {total:offices.totalItems, isStructure: true});
         commit("SET_PAGINATED_OFFICES", offices.items, offices.totalItems);
       } catch (error) {
+        commit("SET_PAGINATION", {total:0, isStructure: true});
+        commit("SET_PAGINATED_OFFICES")
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,

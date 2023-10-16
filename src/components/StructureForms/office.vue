@@ -71,6 +71,8 @@ const alpha2 = helpers.regex(textPattern2);
 
 const textPattern3 = /^[^\d]+$/
 const alpha3 = helpers.regex(textPattern3)
+const textPatter4 = /^(?=.*\d).+$/
+const alpha4 = helpers.regex(textPatter4)
 
 export default {
   setup() {
@@ -90,7 +92,8 @@ export default {
       messageTooLow: "Įrašykite bent 3 simbolius",
       messageTooSpecial: "Nenaudokite specialių simbolių",
       messageHasZero: "Reikšmė neturi būti 0",
-      messageOnlyLetter: "Nenaudokite skaičių"
+      messageOnlyLetter: "Nenaudokite skaičių",
+      meesageNeedsNumbers: "Įveskite bent vieną skaičių"
     };
   },
   validations() {
@@ -125,6 +128,7 @@ export default {
         },
         street_number: {
           required: helpers.withMessage(this.messageEmpty, required),
+          alpha4: helpers.withMessage(this.meesageNeedsNumbers, alpha4)
         },
       },
     }

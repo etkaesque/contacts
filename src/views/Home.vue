@@ -6,7 +6,7 @@
 
         <div class="flex items-center gap-5">
           <Search></Search>
-          <paginationFilter></paginationFilter>
+          <perPageSetting></perPageSetting>
           <viewMode></viewMode>
           <add v-if="isValid && addEmployees" :type="'Contact'"></add>
         </div>
@@ -22,14 +22,14 @@
     </Main>
 
     <Footer class="flex justify-center grow items-end">
-      <Pagination :type="`contact`"></Pagination>
+      <Pagination v-if="contacts.length != 0" :type="`contact`"></Pagination>
     </Footer>
   </div>
 </template>
 
 <script>
 import viewMode from "../components/Buttons/viewMode.vue";
-import paginationFilter from "../components/Buttons/paginationFilter.vue";
+import perPageSetting from "../components/Buttons/perPageSetting.vue";
 import add from "../components/Buttons/add.vue";
 import Contacts from "../components/Contact/contactsDisplay.vue";
 
@@ -46,7 +46,7 @@ export default {
     Contacts,
     viewMode,
     add,
-    paginationFilter,
+    perPageSetting,
     Search,
     Pagination,
     Filters,
@@ -58,6 +58,7 @@ export default {
       "searchTerm",
       "currentPage",
       "filterData",
+      "perPage"
     ]),
 
     foundItemsMessage() {
@@ -85,9 +86,18 @@ export default {
       "SET_CURRENT_PAGE",
       "SET_SEARCH_TERM",
       "SET_FILTERS",
+      "SET_PER_PAGE"
     ]),
   },
   async created() {
+
+    if(localStorage.getItem("perPage") == undefined){
+    
+      this.SET_PER_PAGE(8)
+    } else {
+      this.SET_PER_PAGE(localStorage.getItem("perPage"))
+    }
+
     this.SET_COMPANIES();
     this.SET_OFFICES();
     this.SET_GROUPS();
@@ -99,10 +109,9 @@ export default {
       filterData: this.filterData,
     });
 
-
   },
   beforeRouteLeave(to, from, next) {
-    this.SET_CURRENT_PAGE(1);
+    this.SET_CURRENT_PAGE({page: 1});
     this.SET_SEARCH_TERM("");
     this.SET_FILTERS();
 

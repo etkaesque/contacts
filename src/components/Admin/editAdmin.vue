@@ -6,7 +6,7 @@
 
       <div class="col-start-1 col-end-2 row-start-2 row-end-3 flex flex-col items-center">
 
-          <h2 class="text-2xl w-full mb-2 ml-9">Pridėti administratorių (-ę):</h2>
+          <h2 class="text-2xl w-full mb-2 ml-9">Redaguoti administratorių (-ę):</h2>
 
           <md-field :class="{ 'md-invalid': v$.formData.adminData.name.$error }">
               <md-icon>
@@ -103,7 +103,7 @@
 
 
       <button class="col-start-3 row-start-3 row-end-4 submitBtn  uppercase h-10" @click="handleSubmit()">
-          Pridėti
+          Redaguoti
       </button>
 
 
@@ -123,6 +123,16 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 const emailExists = function(value) {
 return !this.emails.includes(value);
 };
+
+
+
+const textPattern2 = /^[a-zA-ZĄąČčĘęĖėĮįŠšŲųŪūŽž. ]+$/
+const alpha2 = helpers.regex(textPattern2);
+
+const textPattern3 = /^[^\d]+$/
+const alpha3 = helpers.regex(textPattern3)
+
+
 
 export default {
   setup() {
@@ -165,7 +175,9 @@ export default {
               fileTooLarge: "Failo dydis neturi būti didesnis nei 5Mb.",
               fileNotPhoto:
               "Neteisingas failo formatas. Pridėkite JPEG arba PNG failą.",
-              emailExists: "Toks e. paštas jau egzistuoja."
+              emailExists: "Toks e. paštas jau egzistuoja.",
+              messageOnlyLetter: "Nenaudokite skaičių",
+              messageTooSpecial: "Nenaudokite specialių simbolių",
           },
     
           photoValid: true,
@@ -181,8 +193,9 @@ export default {
           formData: {
               adminData: {
                   name: {
-                      alphaNum: helpers.withMessage(this.validation.isTextValid, alphaNum),
-                      required: helpers.withMessage(this.validation.fieldEmpty, required),
+                    alpha3: helpers.withMessage(this.validation.messageOnlyLetter, alpha3),
+                    alpha2: helpers.withMessage(this.validation.messageTooSpecial, alpha2),
+                    required: helpers.withMessage(this.validation.fieldEmpty, required),
                   },
                   // email: {
                   //     email: helpers.withMessage(this.validation.emailInvalid, email),

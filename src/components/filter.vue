@@ -156,7 +156,7 @@ export default {
       this.SET_GROUPS();
       this.SET_DIVISIONS();
       this.SET_DEPARTMENTS();
-      this.SET_CURRENT_PAGE(1);
+      this.SET_CURRENT_PAGE({page:1, isContact: true});
       this.SET_FILTERS(this.filterData);
 
       await this.fetchCompanyOffices(this.filterData.company_id);
@@ -189,7 +189,7 @@ export default {
       this.SET_GROUPS();
       this.SET_DEPARTMENTS();
       this.SET_DIVISIONS();
-      this.SET_CURRENT_PAGE(1);
+      this.SET_CURRENT_PAGE({page:1, isContact: true});
       this.SET_FILTERS(this.filterData);
 
       await this.fetchOfficeDivisions(id);
@@ -219,7 +219,7 @@ export default {
 
       this.SET_GROUPS();
       this.SET_DEPARTMENTS();
-      this.SET_CURRENT_PAGE(1);
+      this.SET_CURRENT_PAGE({page:1, isContact: true});
       this.SET_FILTERS(this.filterData);
 
       await this.fetchDivisionDepartmens(id);
@@ -250,7 +250,7 @@ export default {
 
       this.filterData.group_id = "";
       this.SET_GROUPS();
-      this.SET_CURRENT_PAGE(1);
+      this.SET_CURRENT_PAGE({page:1, isContact: true});
       this.SET_FILTERS(this.filterData);
 
       await this.fetchDepartmentGroups(id);
@@ -275,7 +275,7 @@ export default {
       }
 
       this.SET_FILTERS(this.filterData);
-      this.SET_CURRENT_PAGE(1);
+      this.SET_CURRENT_PAGE({page:1, isContact: true});
 
       await this.fetchContacts({
         page: this.currentPage,

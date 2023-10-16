@@ -21,7 +21,8 @@ export default {
       "SET_CONTACT",
       "SET_COMPANY",
       "SET_STRUCTURE",
-      "SET_ADMIN"
+      "SET_ADMIN",
+      "SET_PASSWORD"
     ]),
     dismiss() {
       this.CONTROL_MODAL();
@@ -29,6 +30,7 @@ export default {
       this.SET_ADMIN()
       this.SET_COMPANY();
       this.SET_STRUCTURE()
+      this.SET_PASSWORD()
     },
   },
 };

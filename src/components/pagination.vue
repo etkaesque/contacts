@@ -47,13 +47,17 @@ export default {
       "fetchPaginatedDivisions",
       "fetchPaginatedDepartments",
       "fetchPaginatedOffices",
-      "fetchPaginatedAdmins"
-
+      "fetchPaginatedAdmins",
     ]),
     ...mapMutations(["SET_CURRENT_PAGE"]),
     async handlePagination(value) {
       const page = this.currentPage + value;
-      this.SET_CURRENT_PAGE(page);
+
+      if (this.type == `contact`) {
+        this.SET_CURRENT_PAGE({ page: page, isContact: true });
+      } else {
+        this.SET_CURRENT_PAGE({ page: page });
+      }
 
       if (this.type == "contact") {
         await this.fetchContacts({
@@ -71,8 +75,8 @@ export default {
         await this.fetchPaginatedDepartments();
       } else if (this.type == `groups`) {
         await this.fetchPaginatedGroups();
-      } else if(this.type == `admin`){
-        await this.fetchPaginatedAdmins()
+      } else if (this.type == `admin`) {
+        await this.fetchPaginatedAdmins();
       }
     },
   },

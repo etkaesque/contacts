@@ -19,6 +19,8 @@ import editStructure from "../StructureForms/editStructure.vue";
 import addAdmin from "../Admin/addAdmin.vue";
 import editAdmin from "../Admin/editAdmin.vue";
 import DeleteFrom from "./delete.vue";
+import perPageSetting from "../perPageSetting.vue";
+import password from "../password.vue";
 
 export default {
   components: {
@@ -31,9 +33,18 @@ export default {
     addAdmin,
     editAdmin,
     DeleteFrom,
+    perPageSetting,
+    password,
   },
   computed: {
-    ...mapGetters(["modal", "company", "admin", "contact", "structure"]),
+    ...mapGetters([
+      "modal",
+      "company",
+      "admin",
+      "contact",
+      "structure",
+      "password",
+    ]),
     componentProps() {
       let header;
       let text;
@@ -41,7 +52,6 @@ export default {
       let type;
 
       if (this.modal.type == "company") {
-
         return {
           header: `įmonę`,
           text: `Pavadinimas: ${this.company.data.name}.`,
@@ -49,12 +59,11 @@ export default {
           type: this.modal.type,
         };
       } else if (this.modal.type == "admin") {
-    
         return {
           header: `paskyrą`,
           text: `Vardas: ${this.admin.data.name}`,
           admin_id: this.admin.id,
-          permissions_id:this.admin.data.permissions_id,
+          permissions_id: this.admin.data.permissions_id,
           type: this.modal.type,
         };
       } else if (this.modal.type == "contact") {
@@ -64,8 +73,11 @@ export default {
           id: this.contact.id,
           type: this.modal.type,
         };
-      } else  {
-
+      } else if (this.modal.type == "password") {
+        return {
+          password: this.password,
+        };
+      } else {
         type = this.structure.type;
 
         if (type == "offices") {
@@ -78,7 +90,6 @@ export default {
           header = "grupę";
         }
       }
-   
 
       return {
         header: header,
@@ -94,7 +105,8 @@ export default {
       "SET_CONTACT",
       "SET_COMPANY",
       "SET_STRUCTURE",
-      "SET_ADMIN"
+      "SET_ADMIN",
+      "SET_PASSWORD",
     ]),
     dismissModal(event) {
       if (event.target.className === "overlay") {
@@ -103,6 +115,7 @@ export default {
         this.SET_COMPANY();
         this.SET_STRUCTURE();
         this.SET_ADMIN();
+        this.SET_PASSWORD();
       }
     },
   },

@@ -265,6 +265,7 @@ export default {
   
     this.structureData.officeData = this.structure.data;
 
+
     if (this.type == "offices") {
       await this.fetchCompanies();
       await this.fetchRelation({
