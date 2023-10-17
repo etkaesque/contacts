@@ -10,7 +10,7 @@
                 height: 60px;
                 object-fit: cover !important;
                 border-radius: 50px;
-              " :src="`${SERVER_ADDR}/api/files/employees/${contact.id}/${contact.photo}`" alt="Contact picture" />
+              " :src="`https://contactspb.hop.sh/api/files/employees/${contact.id}/${contact.photo}`" alt="Contact picture" />
 
             <div class="flex flex-col">
               <div class="text-xl">
@@ -53,15 +53,12 @@
 import Edit from "../Buttons/edit.vue";
 import Delete from "../Buttons/delete.vue";
 
+
 import { mapGetters } from "vuex";
 
 
 export default {
-  data() {
-    return {
-      SERVER_ADDR: SERVER_ADDR
-    }
-  },
+
   computed: {
     ...mapGetters(["contacts"]),
   },

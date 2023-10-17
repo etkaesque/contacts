@@ -18,7 +18,7 @@
             object-fit: cover !important;
             border-radius: 50px;
           "
-          :src="`${SERVER_ADDR}/api/files/employees/${contact.id}/${contact.data.photo}`"
+          :src="`https://contactspb.hop.sh/api/files/employees/${contact.id}/${contact.data.photo}`"
           alt="Contact picture"
         />
 
@@ -72,7 +72,6 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      SERVER_ADDR:SERVER_ADDR,
       profileIcon,
     };
   },
