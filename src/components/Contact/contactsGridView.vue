@@ -55,10 +55,11 @@ import Delete from "../Buttons/delete.vue";
 
 import { mapGetters } from "vuex";
 
+
 export default {
   data() {
     return {
-      SERVER_ADDR
+      SERVER_ADDR: SERVER_ADDR
     }
   },
   computed: {
