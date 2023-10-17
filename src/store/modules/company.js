@@ -93,7 +93,7 @@ export default {
         await this.deleteInstanceInDb(id, "companies");
 
         if (getters.companies.length === 1) {
-          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
+          commit("SET_CURRENT_PAGE", { page: getters.currentPage - 1 });
         }
         commit("SET_COMPANY"); // clear
         dispatch("fetchPaginatedCompanies");
@@ -170,13 +170,16 @@ export default {
           getters.currentPage,
           getters.perPage
         );
-      
-        commit("SET_PAGINATION", {total:companies.totalItems, isStructure: true});
+
+        commit("SET_PAGINATION", {
+          total: companies.totalItems,
+          isStructure: true,
+        });
         commit("SET_COMPANIES", companies.items);
       } catch (error) {
-        commit("SET_PAGINATION", {total:0, isStructure: true});
-        commit("SET_COMPANIES")
-        commit("SET_NAMES")
+        commit("SET_PAGINATION", { total: 0, isStructure: true });
+        commit("SET_COMPANIES");
+        commit("SET_NAMES");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
@@ -250,9 +253,9 @@ export default {
         errorMessage = "Skyrius turi priskirtų grupių.";
         deleteAction = "deleteDepartment";
       } else if (type == "groups") {
-        deleteAction = "deleteGroup"
+        deleteAction = "deleteGroup";
         await dispatch(deleteAction, id);
-        return
+        return;
       }
 
       await dispatch("fetchRelation", {

@@ -163,7 +163,7 @@ export default {
         await this.deleteInstanceInDb(permissions_id,"user_permissions")
 
         if (getters.admins.length === 1) {
-          commit("SET_CURRENT_PAGE", getters.currentPage - 1);
+          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
         }
 
         dispatch("fetchPaginatedAdmins")

@@ -65,7 +65,7 @@ export default {
     handleSearch() {
       const term = this.searchTerm.trim();
       this.SET_SEARCH_TERM(term);
-      this.SET_CURRENT_PAGE(1)
+      this.SET_CURRENT_PAGE({ page: 1, isContact: true });
       this.fetchContacts({
         page: this.currentPage,
         searchTerm: term,

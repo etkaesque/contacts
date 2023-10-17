@@ -22,7 +22,7 @@ let authAPI = (store) => {
       });
       return authData
     } catch {
-      throw Error("Nepavyko atnaujinti administratoriaus duomenis.");
+      throw Error("Nepavyko atnaujinti administratoriaus duomenų.");
     }
   }
 };

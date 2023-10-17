@@ -25,12 +25,11 @@ export default {
       }
     },
     SET_DEPARTMENT(state, department) {
-      if(department != undefined) {
+      if (department != undefined) {
         state.department = department;
       } else {
-        state.department = {}
+        state.department = {};
       }
- 
     },
     SET_DATA(state, record) {
       state.divisionDepartmens = record;
@@ -52,8 +51,6 @@ export default {
           dispatch("createDivisionsDepartments", relationData);
         });
 
-
-     
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Skyrius sėkmingai sukurtas.`,
@@ -72,10 +69,10 @@ export default {
         await this.deleteInstanceInDb(id, "departments");
 
         if (getters.paginatedDepartments.length === 1) {
-          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
+          commit("SET_CURRENT_PAGE", { page: getters.currentPage - 1 });
         }
 
-        commit("SET_DEPARTMENT") // clear
+        commit("SET_DEPARTMENT"); // clear
         dispatch("fetchPaginatedDepartments");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -113,7 +110,7 @@ export default {
           });
         }
         dispatch("fetchPaginatedDepartments");
-    
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Skyrius sėkmingai redaguotas.",
@@ -149,11 +146,14 @@ export default {
           getters.perPage
         );
 
-        commit("SET_PAGINATION", {total:departments.totalItems, isStructure: true});
+        commit("SET_PAGINATION", {
+          total: departments.totalItems,
+          isStructure: true,
+        });
         commit("SET_PAGINATED_DEPARTMENTS", departments.items);
       } catch (error) {
-        commit("SET_PAGINATION", {total:0, isStructure: true});
-        commit("SET_PAGINATED_DEPARTMENTS")
+        commit("SET_PAGINATION", { total: 0, isStructure: true });
+        commit("SET_PAGINATED_DEPARTMENTS");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,

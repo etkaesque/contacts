@@ -1,7 +1,10 @@
 <template>
   <div class="flex gap-x-5 items-center mb-7" v-if="maxPages != 0">
     <div class="flex">
-      <button class="pagButton" @click="handlePagination(-1)">
+      <button  :disabled="buttonDisabled"
+      :class="{ 'pagButton': !buttonDisabled, 'pagButtonDisabled': buttonDisabled }"
+      
+      @click="handlePagination(-1)">
         <img :src="arrow" alt="" />
         Praeitas Puslapis
       </button>
@@ -9,7 +12,9 @@
 
     <div>{{ currentPage }}/{{ maxPages }}</div>
 
-    <button class="pagButton" @click="handlePagination(1)">
+    <button :disabled="buttonDisabled" 
+    :class="{ 'pagButton': !buttonDisabled, 'pagButtonDisabled': buttonDisabled }"
+    class="pagButton" @click="handlePagination(1)">
       Kitas Puslapis
       <img :src="arrow" alt="" class="rotate-180" />
     </button>
@@ -17,12 +22,15 @@
 </template>
 
 <script>
+import PocketBase from "pocketbase";
 import arrow from "../assets/darrow.png";
 import { mapActions, mapGetters, mapMutations } from "vuex";
+const pb = new PocketBase(SERVER_ADDR);
 
 export default {
   data() {
     return {
+      buttonDisabled: false,
       arrow,
     };
   },
@@ -48,10 +56,23 @@ export default {
       "fetchPaginatedDepartments",
       "fetchPaginatedOffices",
       "fetchPaginatedAdmins",
+      "checkServer"
     ]),
     ...mapMutations(["SET_CURRENT_PAGE"]),
     async handlePagination(value) {
       const page = this.currentPage + value;
+
+      const isServerUp = await this.checkServer()
+  
+      if (!isServerUp) {
+        this.buttonDisabled = true
+        return;
+      } else {
+        this.buttonDisabled = false
+      }
+
+
+
 
       if (this.type == `contact`) {
         this.SET_CURRENT_PAGE({ page: page, isContact: true });
@@ -93,5 +114,18 @@ export default {
   width: 270px;
   height: 40px;
   padding: 10px;
+}
+
+.pagButtonDisabled {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  opacity: 0.5;
+  background-color: grey;
+  width: 270px;
+  height: 40px;
+  padding: 10px;
+
 }
 </style>

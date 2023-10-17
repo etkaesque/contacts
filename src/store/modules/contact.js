@@ -22,7 +22,6 @@ export default {
       } else {
         state.contacts = contacts.items;
       }
-   
     },
     SET_FILTERS(state, filters) {
       if (filters === undefined) {
@@ -51,25 +50,29 @@ export default {
       } else {
         state.contact_emails = [];
       }
-    }
+    },
   },
   actions: {
     async fetchContacts(
-      { commit,getters },
+      { commit, getters },
       { page = 1, searchTerm = "", filterData = {} }
     ) {
       try {
         const contacts = await this.fetchContactsFromDb(
-          page, getters.perPage,
+          page,
+          getters.perPage,
           searchTerm,
           filterData
         );
 
-        commit("SET_PAGINATION", {total:contacts.totalItems, isStructure: false});
+        commit("SET_PAGINATION", {
+          total: contacts.totalItems,
+          isStructure: false,
+        });
         commit("SET_CONTACTS", contacts);
       } catch (error) {
-        commit("SET_PAGINATION", {total:0, isStructure: false});
-        commit("SET_CONTACTS")
+        commit("SET_PAGINATION", { total: 0, isStructure: false });
+        commit("SET_CONTACTS");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `${error.message}`,
@@ -78,20 +81,19 @@ export default {
       }
     },
     async fetchContactEmails({ commit, getters }) {
-
       try {
         const records = await this.getFullList("employees", {
           fields: "email",
         });
 
-        let emails = []
+        let emails = [];
 
-        records.forEach(record => {
+        records.forEach((record) => {
           if (getters.contact.data.email != record.email) {
-            emails.push(record.email)
+            emails.push(record.email);
           }
-        })
-        commit("SET_CONTACT_EMAILS", emails)
+        });
+        commit("SET_CONTACT_EMAILS", emails);
       } catch (error) {
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -99,7 +101,6 @@ export default {
           isSuccess: false,
         });
       }
-
     },
     async fetchContactById({ commit }, id) {
       try {
@@ -122,7 +123,6 @@ export default {
     },
     async createContact({ commit, dispatch, getters }, formData) {
       try {
-
         await this.createInstanceInDb(formData, "employees");
 
         dispatch("fetchContacts", {
@@ -171,10 +171,13 @@ export default {
         await this.deleteInstanceInDb(id, "employees");
 
         if (getters.contacts.length === 1) {
-          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1, isContact: true});
+          commit("SET_CURRENT_PAGE", {
+            page: getters.currentPage - 1,
+            isContact: true,
+          });
         }
 
-        commit("SET_CONTACT") // clear
+        commit("SET_CONTACT"); // clear
         dispatch("fetchContacts", {
           page: getters.currentPage,
           searchTerm: getters.searchTerm,

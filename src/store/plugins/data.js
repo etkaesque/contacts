@@ -1,9 +1,8 @@
 import PocketBase from "pocketbase";
-import module from "../modules/pagination"
+import module from "../modules/pagination";
 const pb = new PocketBase(SERVER_ADDR);
 
-const structurePerPage = module.state.structurePerPage
-
+const structurePerPage = module.state.structurePerPage;
 
 let contactsAPI = (store) => {
   store.fetchContactsFromDb = async (page, perPage, searchTerm, filterData) => {
@@ -66,7 +65,6 @@ let contactsAPI = (store) => {
     }
 
     try {
-
       const contacts = await pb.collection("employees").getList(page, perPage, {
         expand: "office_id",
         filter,
@@ -97,9 +95,10 @@ let contactsAPI = (store) => {
   };
   (store.getPaginatedList = async (collection, page) => {
     try {
-
-      let perPage = structurePerPage
-      const records = await pb.collection(collection).getList(page, perPage);
+      let perPage = structurePerPage;
+      const records = await pb
+        .collection(collection)
+        .getList(page, perPage, { requestKey: null });
 
       return records;
     } catch {
@@ -108,7 +107,6 @@ let contactsAPI = (store) => {
   }),
     (store.createInstanceInDb = async (data, collection) => {
       try {
-     
         const instance = await pb.collection(collection).create(data);
         return instance;
       } catch {
@@ -119,17 +117,16 @@ let contactsAPI = (store) => {
     try {
       const instance = await pb.collection(collection).update(id, data);
       return instance;
-    } catch(err) {
+    } catch (err) {
       throw Error;
     }
   };
   store.deleteInstanceInDb = async (id, collection) => {
-
     try {
       const instance = await pb.collection(collection).delete(id);
       return instance;
     } catch {
-      throw Error
+      throw Error;
     }
   };
   store.createRelation = async (collection, data) => {
@@ -154,7 +151,6 @@ let contactsAPI = (store) => {
     }
   };
   store.deleteRelationInDb = async (id, collection) => {
-
     try {
       const relation = await pb
         .collection(collection)
@@ -162,6 +158,14 @@ let contactsAPI = (store) => {
       return relation;
     } catch (error) {
       throw Error;
+    }
+  };
+  store.checkServerConnection = async () => {
+    try {
+      await pb.health.check();
+      return true;
+    } catch {
+      throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);
     }
   };
 };

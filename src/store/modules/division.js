@@ -28,12 +28,11 @@ export default {
       }
     },
     SET_DIVISION(state, division) {
-      if(division != undefined) {
+      if (division != undefined) {
         state.division = division;
       } else {
-        state.division = {}
-      } 
- 
+        state.division = {};
+      }
     },
   },
   actions: {
@@ -68,12 +67,12 @@ export default {
     async deleteDivision({ commit, dispatch, getters }, id) {
       try {
         await this.deleteInstanceInDb(id, "divisions");
-        
+
         if (getters.paginatedDivisions.length === 1) {
-          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
+          commit("SET_CURRENT_PAGE", { page: getters.currentPage - 1 });
         }
 
-        commit("SET_DIVISION") // clear
+        commit("SET_DIVISION"); // clear
         dispatch("fetchPaginatedDivisions");
         commit("CONTROL_NOTIFICATION", {
           status: true,
@@ -120,7 +119,7 @@ export default {
         }
 
         dispatch("fetchPaginatedDivisions");
-       
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Padalinys sėkmingai redaguotas.",
@@ -140,9 +139,7 @@ export default {
           sort: "-created",
         });
         commit("SET_DIVISIONS", divisions);
-        
       } catch (error) {
-
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
@@ -158,11 +155,14 @@ export default {
           getters.perPage
         );
 
-        commit("SET_PAGINATION", {total:divisions.totalItems, isStructure: true});
+        commit("SET_PAGINATION", {
+          total: divisions.totalItems,
+          isStructure: true,
+        });
         commit("SET_PAGINATED_DIVISIONS", divisions.items);
       } catch (error) {
-        commit("SET_PAGINATION", {total:0, isStructure: true});
-        commit("SET_PAGINATED_DIVISIONS")
+        commit("SET_PAGINATION", { total: 0, isStructure: true });
+        commit("SET_PAGINATED_DIVISIONS");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,

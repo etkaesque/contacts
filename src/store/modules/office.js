@@ -25,7 +25,6 @@ export default {
         state.paginatedOffices = [];
         state.totalOffices = 0;
       }
-
     },
     SET_OFFICE(state, office) {
       state.office = office;
@@ -46,8 +45,6 @@ export default {
           dispatch("createCompanyOffices", relationData);
         });
 
-
-
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: `Ofisas sėkmingai sukurtas.`,
@@ -63,11 +60,10 @@ export default {
     },
     async deleteOffice({ commit, dispatch, getters }, id) {
       try {
-
-        await this.deleteInstanceInDb(id, "offices");    
+        await this.deleteInstanceInDb(id, "offices");
 
         if (getters.paginatedOffices.length === 1) {
-          commit("SET_CURRENT_PAGE", {page: getters.currentPage - 1});
+          commit("SET_CURRENT_PAGE", { page: getters.currentPage - 1 });
         }
 
         dispatch("fetchPaginatedOffices");
@@ -116,7 +112,7 @@ export default {
         }
 
         dispatch("fetchPaginatedOffices");
-       
+
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: "Ofisas sėkmingai redaguotas.",
@@ -149,12 +145,15 @@ export default {
           getters.currentPage,
           getters.perPage
         );
-          
-        commit("SET_PAGINATION", {total:offices.totalItems, isStructure: true});
+
+        commit("SET_PAGINATION", {
+          total: offices.totalItems,
+          isStructure: true,
+        });
         commit("SET_PAGINATED_OFFICES", offices.items, offices.totalItems);
       } catch (error) {
-        commit("SET_PAGINATION", {total:0, isStructure: true});
-        commit("SET_PAGINATED_OFFICES")
+        commit("SET_PAGINATION", { total: 0, isStructure: true });
+        commit("SET_PAGINATED_OFFICES");
         commit("CONTROL_NOTIFICATION", {
           status: true,
           message: error.message,
@@ -162,7 +161,6 @@ export default {
         });
       }
     },
-
     async fetchOfficeById({ commit }, id) {
       try {
         const office = await this.fetchInstanceByIdFromDb(id, "offices", "");
