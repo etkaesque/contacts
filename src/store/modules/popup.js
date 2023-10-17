@@ -5,7 +5,6 @@ export default {
   },
   getters: {
     modal: (state) => state.modal,
-
     notification: (state) => state.notification,
 
   },

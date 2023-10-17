@@ -13,6 +13,9 @@ export default {
     maxPages: (state) => state.maxPages,
   },
   mutations: {
+    SET_TOTAL_ITEMS(state){
+      state.totalItems = 0
+    },
     SET_CURRENT_PAGE(state, { page, isContact }) {
       let perPage;
 

@@ -95,7 +95,7 @@ export default {
       if (pb.authStore.model.avatar.length == 0) {
         return false;
       } else {
-        let source = `http://127.0.0.1:8090/api/files/users/${pb.authStore.model.id}/${pb.authStore.model.avatar}`;
+        let source = `${SERVER_ADDR}/api/files/users/${pb.authStore.model.id}/${pb.authStore.model.avatar}`;
         return source;
       }
     },

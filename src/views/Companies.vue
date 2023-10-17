@@ -65,12 +65,13 @@ export default {
   },
   methods: {
     ...mapActions(["fetchPaginatedCompanies"]),
-    ...mapMutations(["SET_CURRENT_PAGE", "SET_COMPANIES", "SET_COMPANY"]),
+    ...mapMutations(["SET_CURRENT_PAGE", "SET_COMPANIES", "SET_COMPANY", "SET_TOTAL_ITEMS"]),
   },
   beforeRouteLeave(to, from, next) {
     this.SET_CURRENT_PAGE({page: 1});
     this.SET_COMPANIES()
     this.SET_COMPANY()
+    this.SET_TOTAL_ITEMS()
     next();
   },
   async created() {

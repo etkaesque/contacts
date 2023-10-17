@@ -9,7 +9,8 @@ export default defineConfig({
     environment: "jsdom",
   },
   define: {
-    SERVER_ADDR: JSON.stringify("http://127.0.0.1:8090"),
-    STRUCTURES_PER_PAGE: 10,
-  },
+    SERVER_ADDR: JSON.stringify('https://contactspb.hop.sh'),
+    STRUCTURES_PER_PAGE:8
+
+  }
 });

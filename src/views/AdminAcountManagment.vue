@@ -52,7 +52,7 @@ export default {
   },
   methods:{
     ...mapActions(["fetchPaginatedAdmins"]),
-    ...mapMutations(["SET_CURRENT_PAGE"]),
+    ...mapMutations(["SET_CURRENT_PAGE", "SET_TOTAL_ITEMS"]),
   },
   components:{
     Add,
@@ -61,6 +61,7 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
+    this.SET_TOTAL_ITEMS()
     this.SET_CURRENT_PAGE({page: 1});
     next();
   },

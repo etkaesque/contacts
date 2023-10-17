@@ -162,7 +162,7 @@ let contactsAPI = (store) => {
   };
   store.checkServerConnection = async () => {
     try {
-      await pb.health.check();
+      await pb.health.check({ requestKey: null });
       return true;
     } catch {
       throw Error(`Nėra kontakto su serveriu. Bandykite vėliau.`);

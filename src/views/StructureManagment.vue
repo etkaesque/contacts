@@ -92,7 +92,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["SET_CURRENT_PAGE","SET_TAB","SET_STRUCTURE"]),
+    ...mapMutations(["SET_CURRENT_PAGE","SET_TAB","SET_STRUCTURE", "SET_TOTAL_ITEMS"]),
     ...mapActions([
       "fetchPaginatedGroups",
       "fetchPaginatedDivisions",
@@ -151,6 +151,7 @@ export default {
   beforeRouteLeave(to, from, next) {
 
     this.SET_CURRENT_PAGE({page: 1});
+    this.SET_TOTAL_ITEMS()
     next();
   },
   async created() {

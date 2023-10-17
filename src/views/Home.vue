@@ -86,7 +86,8 @@ export default {
       "SET_CURRENT_PAGE",
       "SET_SEARCH_TERM",
       "SET_FILTERS",
-      "SET_PER_PAGE"
+      "SET_PER_PAGE",
+      "SET_TOTAL_ITEMS"
     ]),
   },
   async created() {
@@ -114,6 +115,7 @@ export default {
     this.SET_CURRENT_PAGE({page: 1});
     this.SET_SEARCH_TERM("");
     this.SET_FILTERS();
+    this.SET_TOTAL_ITEMS()
 
     next();
   },

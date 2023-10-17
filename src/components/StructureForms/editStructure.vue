@@ -140,7 +140,7 @@ export default {
               "Nenaudokite specialių simboblių",
               alpha1
             ),
-            minLength: helpers.withMessage("Tekstas per trumpas", minLength(3)),
+            minLength: helpers.withMessage("Tekstas per trumpas", minLength(2)),
             structureExists: helpers.withMessage("Toks pavadinimas jau egzistuoja", structureExists)
           },
         },
