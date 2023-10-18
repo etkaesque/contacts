@@ -44,6 +44,7 @@ export default {
       "filterData",
       "searchTerm",
       "maxPages",
+  
     ]),
   },
   methods: {
@@ -71,7 +72,13 @@ export default {
         this.buttonDisabled = false
       }
 
-
+      if(page > this.maxPages) {
+        console.log("stop")
+        return
+      } else if (page < 1) {
+        console.log("stop")
+        return
+      }
 
 
       if (this.type == `contact`) {

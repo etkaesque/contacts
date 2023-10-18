@@ -30,7 +30,6 @@ export default {
   methods: {
     ...mapActions([
       "deleteContact",
-      "deleteCompany",
       "deleteStructure",
       "deleteAdmin"
     ]),
@@ -51,10 +50,8 @@ export default {
       this.CONTROL_MODAL();
     },
     async handleDelete() {
-      if (this.type == `company`) {
-
-        await this.deleteCompany(this.id);
-      } else if (this.type == `contact`) {
+      
+      if (this.type == `contact`) {
         await this.deleteContact(this.id);
       } else if (this.type == `admin`) {
         await this.deleteAdmin({admin_id:this.propData.admin_id, permissions_id: this.propData.permissions_id});

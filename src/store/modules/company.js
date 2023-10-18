@@ -237,7 +237,13 @@ export default {
       let collection;
       let target;
 
-      if (type == "offices") {
+      if(type == 'company') {
+        console.log("deleting company")
+        collection = "companies_offices"
+        target = "company_id"
+        errorMessage = "Įmonė turi priskirtų ofisų.";
+        deleteAction = "deleteCompany";
+      } else if (type == "offices") {
         collection = "offices_divisions";
         target = "office_id";
         errorMessage = "Ofisas turi prikirtų padalinių.";
